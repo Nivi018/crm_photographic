@@ -1,0 +1,14 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "skills": {
+    "paths": [
+      "C:/Users/prestamo/Desktop/Nueva carpeta/sdd-skills/skills"
+    ]
+  },
+  "references": {
+    "design-mocks": {
+      "path": "mocks",
+      "description": "Visual reference mocks for the CRM UI. Use for identity, composition, themes, component patterns and hierarchy only; specs define behavior and scope."
+    }
+  }
+}
