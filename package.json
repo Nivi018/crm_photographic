@@ -1,0 +1,17 @@
+{
+  "name": "crm-photografy",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "npm@11.6.4",
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=11.0.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "typescript": "~5.9.3"
+  }
+}
