@@ -2,7 +2,7 @@
 
 - [x] T1. Crear la configuracion raiz de npm workspaces y TypeScript. (Soporte RF-1 a RF-110)
       Hecho cuando: `apps/*` y `packages/*` son workspaces reconocidos sin incluir Docker ni secretos.
-- [ ] T2. Inicializar `apps/api` con NestJS y pruebas basicas. (Soporte RF-1 a RF-110)
+- [x] T2. Inicializar `apps/api` con NestJS y pruebas basicas. (Soporte RF-1 a RF-110)
       Hecho cuando: la API compila y su prueba inicial pasa.
 - [ ] T3. Inicializar `apps/web` con React, Vite y pruebas basicas. (Soporte RF-8, RF-12, RF-40 a RF-46, RF-62 a RF-66, RF-92 a RF-94, RF-106 a RF-108)
       Hecho cuando: la aplicacion web compila y su prueba inicial pasa.
