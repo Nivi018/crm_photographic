@@ -1,6 +1,6 @@
 # Tareas - Spec 001 Inventario del estudio fotografico
 
-- [ ] T1. Crear la configuracion raiz de npm workspaces y TypeScript. (Soporte RF-1 a RF-110)
+- [x] T1. Crear la configuracion raiz de npm workspaces y TypeScript. (Soporte RF-1 a RF-110)
       Hecho cuando: `apps/*` y `packages/*` son workspaces reconocidos sin incluir Docker ni secretos.
 - [ ] T2. Inicializar `apps/api` con NestJS y pruebas basicas. (Soporte RF-1 a RF-110)
       Hecho cuando: la API compila y su prueba inicial pasa.
