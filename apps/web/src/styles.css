@@ -1,0 +1,129 @@
+:root {
+  color: #f7faff;
+  background: #071a2d;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  color: #071a2d;
+  background: #ffc955;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+  background: linear-gradient(145deg, #071a2d 0%, #0b2138 58%, #10263a 100%);
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 5.25rem;
+  padding: 1rem clamp(1.5rem, 5vw, 5rem);
+  border-bottom: 1px solid rgb(247 250 255 / 14%);
+}
+
+.brand-placeholder {
+  display: grid;
+  gap: 0.08rem;
+  color: #f7faff;
+  line-height: 1;
+}
+
+.brand-placeholder span {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+}
+
+.brand-placeholder small {
+  padding-left: 0.14rem;
+  color: #9eb2c9;
+  font-size: 0.65rem;
+  letter-spacing: 0.13em;
+}
+
+.header-status,
+.startup-status,
+.startup-copy {
+  margin: 0;
+}
+
+.header-status {
+  color: #b9c9dc;
+  font-size: 0.875rem;
+}
+
+.startup-panel {
+  align-self: center;
+  width: min(100% - 3rem, 50rem);
+  margin: 0 auto;
+  padding: clamp(2.5rem, 8vw, 6rem) 0;
+}
+
+.startup-rule {
+  width: 4.25rem;
+  height: 0.25rem;
+  margin-bottom: 1.5rem;
+  border-radius: 999px;
+  background: #ffc955;
+}
+
+.startup-status {
+  margin-bottom: 0.75rem;
+  color: #ffc955;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+h1 {
+  max-width: 16ch;
+  margin: 0;
+  font-size: clamp(2.5rem, 7vw, 5.75rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+.startup-copy {
+  max-width: 58ch;
+  margin-top: 1.5rem;
+  color: #c3d1e0;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+
+@media (max-width: 560px) {
+  .app-header {
+    align-items: flex-start;
+    gap: 1rem;
+    flex-direction: column;
+  }
+
+  .startup-panel {
+    width: min(100% - 2.5rem, 50rem);
+  }
+}
