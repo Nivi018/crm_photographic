@@ -30,7 +30,7 @@
       Hecho cuando: `prisma validate` acepta entidades, relaciones, indices, versiones y secuencia.
 - [x] T15. Crear y aplicar la primera migracion Prisma. (RF-1 a RF-110)
       Hecho cuando: existe aprobacion explicita y la migracion se aplica en PostgreSQL local de pruebas.
-- [ ] T16. Escribir pruebas e implementar el repositorio Prisma de categorias. (RF-47 a RF-52, RF-61, RF-63, RF-71, RF-74, RF-75)
+- [x] T16. Escribir pruebas e implementar el repositorio Prisma de categorias. (RF-47 a RF-52, RF-61, RF-63, RF-71, RF-74, RF-75)
       Hecho cuando: unicidad, asociaciones, orden y paginacion se verifican contra PostgreSQL.
 - [ ] T17. Escribir pruebas e implementar el repositorio Prisma de articulos. (RF-7, RF-10, RF-42 a RF-46, RF-60, RF-62, RF-65)
       Hecho cuando: busqueda normalizada, filtros, alertas, orden y paginacion pasan integracion.
