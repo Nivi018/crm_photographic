@@ -9,16 +9,8 @@
     "sourceMap": true,
     "outDir": "./dist",
     "rootDir": ".",
-    "types": [
-      "node",
-      "vitest/globals"
-    ]
+    "types": ["node", "vitest/globals"]
   },
-  "include": [
-    "src/**/*.ts",
-    "vitest.config.mts"
-  ],
-  "exclude": [
-    "dist"
-  ]
+  "include": ["src/**/*.ts", "vitest.config.mts"],
+  "exclude": ["dist"]
 }

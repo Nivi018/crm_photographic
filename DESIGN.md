@@ -2,31 +2,31 @@
 name: crm-photografy
 description: Technical premium CRM interface for a photography studio inventory.
 colors:
-  navy-deep: "#071a2d"
-  navy-panel: "#10263a"
-  navy-muted: "#17334d"
-  surface-light: "#f7faff"
-  surface-card: "#ffffff"
-  accent-gold: "#ffc955"
-  accent-blue: "#2f64b8"
-  success: "#36b37e"
-  warning: "#f2a900"
-  danger: "#e94b5f"
-  text-strong: "#0c1f3a"
-  text-muted: "#6f7d91"
+  navy-deep: '#071a2d'
+  navy-panel: '#10263a'
+  navy-muted: '#17334d'
+  surface-light: '#f7faff'
+  surface-card: '#ffffff'
+  accent-gold: '#ffc955'
+  accent-blue: '#2f64b8'
+  success: '#36b37e'
+  warning: '#f2a900'
+  danger: '#e94b5f'
+  text-strong: '#0c1f3a'
+  text-muted: '#6f7d91'
 rounded:
-  sm: "8px"
-  md: "14px"
-  lg: "22px"
+  sm: '8px'
+  md: '14px'
+  lg: '22px'
 components:
   button-primary:
-    backgroundColor: "{colors.accent-gold}"
-    textColor: "{colors.text-strong}"
-    rounded: "{rounded.md}"
+    backgroundColor: '{colors.accent-gold}'
+    textColor: '{colors.text-strong}'
+    rounded: '{rounded.md}'
   button-secondary:
-    backgroundColor: "{colors.accent-blue}"
-    textColor: "{colors.surface-card}"
-    rounded: "{rounded.md}"
+    backgroundColor: '{colors.accent-blue}'
+    textColor: '{colors.surface-card}'
+    rounded: '{rounded.md}'
 ---
 
 # Design System: crm-photografy
