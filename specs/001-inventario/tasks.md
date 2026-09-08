@@ -16,7 +16,7 @@
       Hecho cuando: mayusculas, acentos y espacios exteriores producen los resultados definidos.
 - [x] T8. Escribir pruebas e implementar cantidades y rango de stock. (RF-3 a RF-6, RF-17, RF-20, RF-27, RF-29, RF-35, RF-95 a RF-101)
       Hecho cuando: limites, enteros, cero, negativos y desbordamientos quedan cubiertos.
-- [ ] T9. Escribir pruebas e implementar la entidad categoria. (RF-47 a RF-52, RF-61, RF-71, RF-74, RF-75, RF-78, RF-85)
+- [x] T9. Escribir pruebas e implementar la entidad categoria. (RF-47 a RF-52, RF-61, RF-71, RF-74, RF-75, RF-78, RF-85)
       Hecho cuando: sus transiciones e invariantes pasan pruebas unitarias.
 - [ ] T10. Escribir pruebas e implementar la entidad articulo. (RF-1 a RF-16, RF-46, RF-56, RF-60, RF-72, RF-73, RF-77, RF-84)
       Hecho cuando: clasificacion, edicion, estado, categoria y eliminacion pasan pruebas unitarias.
