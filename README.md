@@ -23,6 +23,7 @@ npm run dev
 El comando compila los contratos compartidos e inicia:
 
 - API: `http://127.0.0.1:3002` (`GET /health`).
+- Swagger: `http://127.0.0.1:3002/api/docs`.
 - Web: `http://127.0.0.1:5175`.
 
 ## Verificacion
