@@ -6,7 +6,7 @@
       Hecho cuando: la API compila y su prueba inicial pasa.
 - [x] T3. Inicializar `apps/web` con React, Vite y pruebas basicas. (Soporte RF-8, RF-12, RF-40 a RF-46, RF-62 a RF-66, RF-92 a RF-94, RF-106 a RF-108)
       Hecho cuando: la aplicacion web compila y su prueba inicial pasa.
-- [ ] T4. Crear `packages/shared` con contratos realmente consumidos por web y API. (RF-1 a RF-110)
+- [x] T4. Crear `packages/shared` con contratos realmente consumidos por web y API. (RF-1 a RF-110)
       Hecho cuando: enums, limites, paginacion y errores se importan desde ambas aplicaciones.
 - [ ] T5. Configurar scripts agregados y documentacion operativa. (Soporte RF-1 a RF-110)
       Hecho cuando: existen `dev`, `test`, `lint`, `format:check` y `build` en la raiz y estan documentados.
