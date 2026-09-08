@@ -6,15 +6,34 @@ import {
 } from '@crm-photografy/shared';
 
 import { trimRequiredText } from '../text/normalization';
-import { calculateStockAfter, validateEntryQuantity, validateExitQuantity } from './quantities';
+import {
+  calculateStockAfter,
+  validateAdjustmentDelta,
+  validateEntryQuantity,
+  validateExitQuantity,
+  validateFinalStock,
+  validateInitialStock,
+} from './quantities';
 
-export interface ManualMovementProperties {
+export interface MovementIdentity {
   id: string;
   sequence: bigint;
   articleId: string;
+}
+
+export interface ManualMovementProperties extends MovementIdentity {
   stockBefore: number;
   quantity: number;
   reason: string;
+}
+
+export interface FinalStockAdjustmentProperties extends MovementIdentity {
+  stockBefore: number;
+  finalStock: number;
+}
+
+export interface InitialStockMovementProperties extends MovementIdentity {
+  initialStock: number;
 }
 
 export class MovementReasonTooLongError extends Error {
@@ -23,6 +42,13 @@ export class MovementReasonTooLongError extends Error {
       `movement reason cannot exceed ${INVENTORY_LIMITS.maximumMovementReasonLength} characters`,
     );
     this.name = 'MovementReasonTooLongError';
+  }
+}
+
+export class NoStockDifferenceError extends Error {
+  constructor() {
+    super('final stock adjustment must produce a difference');
+    this.name = 'NoStockDifferenceError';
   }
 }
 
@@ -40,18 +66,21 @@ export class Movement {
   private readonly occurredAtValue: Date;
 
   private constructor(
-    properties: ManualMovementProperties,
-    kind: MovementKind.Entry | MovementKind.Exit,
+    properties: MovementIdentity & { stockBefore: number },
+    kind: MovementKind,
+    adjustmentMode: AdjustmentMode | null,
+    source: MovementSource,
     appliedQuantity: number,
+    reason: string,
   ) {
     this.id = properties.id;
     this.sequence = properties.sequence;
     this.articleId = properties.articleId;
     this.kind = kind;
-    this.adjustmentMode = null;
-    this.source = MovementSource.Manual;
+    this.adjustmentMode = adjustmentMode;
+    this.source = source;
     this.appliedQuantity = appliedQuantity;
-    this.reason = prepareReason(properties.reason);
+    this.reason = reason;
     this.stockBefore = properties.stockBefore;
     this.stockAfter = calculateStockAfter(properties.stockBefore, appliedQuantity);
     this.occurredAtValue = new Date();
@@ -60,11 +89,71 @@ export class Movement {
   }
 
   static recordEntry(properties: ManualMovementProperties): Movement {
-    return new Movement(properties, MovementKind.Entry, validateEntryQuantity(properties.quantity));
+    return new Movement(
+      properties,
+      MovementKind.Entry,
+      null,
+      MovementSource.Manual,
+      validateEntryQuantity(properties.quantity),
+      prepareReason(properties.reason),
+    );
   }
 
   static recordExit(properties: ManualMovementProperties): Movement {
-    return new Movement(properties, MovementKind.Exit, -validateExitQuantity(properties.quantity));
+    return new Movement(
+      properties,
+      MovementKind.Exit,
+      null,
+      MovementSource.Manual,
+      -validateExitQuantity(properties.quantity),
+      prepareReason(properties.reason),
+    );
+  }
+
+  static recordFinalStockAdjustment(properties: FinalStockAdjustmentProperties): Movement {
+    const finalStock = validateFinalStock(properties.finalStock);
+    const appliedQuantity = finalStock - properties.stockBefore;
+
+    if (appliedQuantity === 0) {
+      throw new NoStockDifferenceError();
+    }
+
+    return new Movement(
+      properties,
+      MovementKind.Adjustment,
+      AdjustmentMode.FinalStock,
+      MovementSource.Manual,
+      appliedQuantity,
+      'Ajuste de inventario',
+    );
+  }
+
+  static recordDeltaAdjustment(properties: ManualMovementProperties): Movement {
+    return new Movement(
+      properties,
+      MovementKind.Adjustment,
+      AdjustmentMode.Delta,
+      MovementSource.Manual,
+      validateAdjustmentDelta(properties.quantity),
+      prepareReason(properties.reason),
+    );
+  }
+
+  static recordInitialStock(properties: InitialStockMovementProperties): Movement | null {
+    const initialStock = validateInitialStock(properties.initialStock);
+
+    if (initialStock === 0) {
+      return null;
+    }
+
+    return new Movement(
+      { ...properties, stockBefore: 0 },
+      MovementKind.Entry,
+      null,
+      MovementSource.InitialStock,
+      initialStock,
+      'Stock inicial',
+    );
   }
 
   get occurredAt(): Date {

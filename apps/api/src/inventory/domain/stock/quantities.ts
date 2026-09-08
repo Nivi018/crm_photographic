@@ -55,7 +55,7 @@ export function validateStock(value: number): number {
 export function calculateStockAfter(currentStock: number, appliedQuantity: number): number {
   validateStock(currentStock);
 
-  if (!isIntegerWithinRange(appliedQuantity, -maximumQuantity, maximumQuantity)) {
+  if (!Number.isInteger(appliedQuantity)) {
     throw new InvalidQuantityError('applied quantity');
   }
 
