@@ -1,4 +1,8 @@
-import { ARTICLE_PAGE_SIZE, InventoryErrorCode, type PaginatedResponse } from '@crm-photografy/shared';
+import {
+  ARTICLE_PAGE_SIZE,
+  InventoryErrorCode,
+  type PaginatedResponse,
+} from '@crm-photografy/shared';
 import { describe, expect, it } from 'vitest';
 
 describe('shared inventory contracts', () => {

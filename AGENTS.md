@@ -8,10 +8,11 @@ La arquitectura prevista usa un monorepo con npm workspaces, TypeScript bien tip
 
 ## Comandos
 
-- Ejecutar: `[NECESITA ACLARACION: comando raiz para levantar frontend y backend con npm workspaces]`
-- Tests: `[NECESITA ACLARACION: comando raiz de tests con npm workspaces]`
-- Lint/formato: `[NECESITA ACLARACION: comando raiz de lint/formato con npm workspaces]`
-- Build: `[NECESITA ACLARACION: comando raiz de build con npm workspaces]`
+- Ejecutar: `npm run dev` inicia API en `http://127.0.0.1:3002` y web en `http://127.0.0.1:5175`.
+- Tests: `npm run test`.
+- Lint: `npm run lint`.
+- Formato: `npm run format:check`; para aplicar formato, `npm run format`.
+- Build: `npm run build`.
 
 ## Estilo y convenciones
 

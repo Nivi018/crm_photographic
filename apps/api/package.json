@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "tsc --project tsconfig.build.json",
+    "dev": "npm run build && concurrently --kill-others-on-fail \"tsc --project tsconfig.build.json --watch\" \"node --watch dist/main.js\"",
     "start": "node dist/main.js",
     "test": "vitest run"
   },

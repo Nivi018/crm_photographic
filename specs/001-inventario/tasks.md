@@ -8,7 +8,7 @@
       Hecho cuando: la aplicacion web compila y su prueba inicial pasa.
 - [x] T4. Crear `packages/shared` con contratos realmente consumidos por web y API. (RF-1 a RF-110)
       Hecho cuando: enums, limites, paginacion y errores se importan desde ambas aplicaciones.
-- [ ] T5. Configurar scripts agregados y documentacion operativa. (Soporte RF-1 a RF-110)
+- [x] T5. Configurar scripts agregados y documentacion operativa. (Soporte RF-1 a RF-110)
       Hecho cuando: existen `dev`, `test`, `lint`, `format:check` y `build` en la raiz y estan documentados.
 - [ ] T6. Configurar `ValidationPipe`, error envelope y Swagger. (RF-1 a RF-110)
       Hecho cuando: una prueba demuestra validacion global, error tipado y generacion OpenAPI.

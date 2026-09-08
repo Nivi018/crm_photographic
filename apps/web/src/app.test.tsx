@@ -8,7 +8,9 @@ describe('App', () => {
     render(<App />);
 
     expect(
-      screen.getByRole('heading', { name: 'El espacio de trabajo esta listo.' }),
+      screen.getByRole('heading', {
+        name: 'El espacio de trabajo esta listo.',
+      }),
     ).toBeInTheDocument();
     expect(screen.getByText('Frontend operativo')).toBeInTheDocument();
   });
