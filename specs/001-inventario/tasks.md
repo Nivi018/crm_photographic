@@ -24,7 +24,7 @@
       Hecho cuando: cada movimiento calcula signo y stock anterior/posterior correctamente.
 - [x] T12. Escribir pruebas e implementar ajustes y replay del stock inicial. (RF-27 a RF-35, RF-53 a RF-58, RF-69, RF-70, RF-80, RF-81, RF-86, RF-100, RF-109)
       Hecho cuando: el replay usa diferencias historicas y preserva el movimiento inicial visible.
-- [ ] T13. Definir puertos de repositorio y unidad de trabajo. (Soporte RF-1 a RF-110)
+- [x] T13. Definir puertos de repositorio y unidad de trabajo. (Soporte RF-1 a RF-110)
       Hecho cuando: dominio y aplicacion no importan Prisma.
 - [ ] T14. Definir el esquema Prisma sin crear migraciones. (RF-1 a RF-110)
       Hecho cuando: `prisma validate` acepta entidades, relaciones, indices, versiones y secuencia.
