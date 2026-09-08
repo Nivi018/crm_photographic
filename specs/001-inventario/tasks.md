@@ -26,7 +26,7 @@
       Hecho cuando: el replay usa diferencias historicas y preserva el movimiento inicial visible.
 - [x] T13. Definir puertos de repositorio y unidad de trabajo. (Soporte RF-1 a RF-110)
       Hecho cuando: dominio y aplicacion no importan Prisma.
-- [ ] T14. Definir el esquema Prisma sin crear migraciones. (RF-1 a RF-110)
+- [x] T14. Definir el esquema Prisma sin crear migraciones. (RF-1 a RF-110)
       Hecho cuando: `prisma validate` acepta entidades, relaciones, indices, versiones y secuencia.
 - [ ] T15. Crear y aplicar la primera migracion Prisma. (RF-1 a RF-110)
       Hecho cuando: existe aprobacion explicita y la migracion se aplica en PostgreSQL local de pruebas.
