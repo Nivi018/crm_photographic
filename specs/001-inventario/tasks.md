@@ -14,7 +14,7 @@
       Hecho cuando: una prueba demuestra validacion global, error tipado y generacion OpenAPI.
 - [x] T7. Escribir pruebas e implementar normalizacion de nombres y motivos. (RF-7, RF-10, RF-42, RF-48, RF-50, RF-60, RF-61, RF-89, RF-90)
       Hecho cuando: mayusculas, acentos y espacios exteriores producen los resultados definidos.
-- [ ] T8. Escribir pruebas e implementar cantidades y rango de stock. (RF-3 a RF-6, RF-17, RF-20, RF-27, RF-29, RF-35, RF-95 a RF-101)
+- [x] T8. Escribir pruebas e implementar cantidades y rango de stock. (RF-3 a RF-6, RF-17, RF-20, RF-27, RF-29, RF-35, RF-95 a RF-101)
       Hecho cuando: limites, enteros, cero, negativos y desbordamientos quedan cubiertos.
 - [ ] T9. Escribir pruebas e implementar la entidad categoria. (RF-47 a RF-52, RF-61, RF-71, RF-74, RF-75, RF-78, RF-85)
       Hecho cuando: sus transiciones e invariantes pasan pruebas unitarias.
