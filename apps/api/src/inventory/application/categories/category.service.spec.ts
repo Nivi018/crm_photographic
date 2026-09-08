@@ -8,6 +8,10 @@ import {
 } from '../ports/inventory-ports';
 import { Category } from '../../domain/categories/category';
 import {
+  ActiveArticleAssociationError,
+  CategoryAssociationError,
+} from '../../domain/categories/category';
+import {
   CategoryNameConflictError,
   CategoryNotFoundError,
   CategoryService,
@@ -93,10 +97,70 @@ describe('CategoryService', () => {
     });
     expect(result.items[0]?.entity).toBe(category);
   });
+
+  it('deactivates a category with inactive article associations', async () => {
+    const repository = new InMemoryCategoryRepository();
+    await repository.save(Category.create({ id: 'category-1', name: 'Fondos' }));
+    repository.setArticleCounts('category-1', { active: 0, inactive: 2 });
+    const service = new CategoryService(repository);
+
+    const deactivated = await service.deactivate({ id: 'category-1', expectedVersion: 0 });
+
+    expect(deactivated).toMatchObject({ version: 1, entity: { isActive: false } });
+  });
+
+  it('blocks deactivation when active articles remain associated', async () => {
+    const repository = new InMemoryCategoryRepository();
+    await repository.save(Category.create({ id: 'category-1', name: 'Fondos' }));
+    repository.setArticleCounts('category-1', { active: 1, inactive: 0 });
+    const service = new CategoryService(repository);
+
+    await expect(service.deactivate({ id: 'category-1', expectedVersion: 0 })).rejects.toThrow(
+      ActiveArticleAssociationError,
+    );
+  });
+
+  it('reactivates an inactive category', async () => {
+    const repository = new InMemoryCategoryRepository();
+    await repository.save(
+      Category.rehydrate({ id: 'category-1', name: 'Fondos', isActive: false }),
+    );
+    const service = new CategoryService(repository);
+
+    const reactivated = await service.reactivate({ id: 'category-1', expectedVersion: 0 });
+
+    expect(reactivated).toMatchObject({ version: 1, entity: { isActive: true } });
+  });
+
+  it('deletes a category only when it has no article associations', async () => {
+    const repository = new InMemoryCategoryRepository();
+    await repository.save(Category.create({ id: 'category-1', name: 'Fondos' }));
+    const service = new CategoryService(repository);
+
+    await service.delete({ id: 'category-1', expectedVersion: 0 });
+
+    await expect(repository.findById('category-1')).resolves.toBeNull();
+  });
+
+  it('blocks deletion when active or inactive articles remain associated', async () => {
+    const repository = new InMemoryCategoryRepository();
+    await repository.save(Category.create({ id: 'category-1', name: 'Fondos' }));
+    repository.setArticleCounts('category-1', { active: 0, inactive: 1 });
+    const service = new CategoryService(repository);
+
+    await expect(service.delete({ id: 'category-1', expectedVersion: 0 })).rejects.toThrow(
+      CategoryAssociationError,
+    );
+  });
 });
 
 class InMemoryCategoryRepository implements CategoryRepository {
   private readonly categories = new Map<string, Versioned<Category>>();
+  private readonly articleCounts = new Map<string, { active: number; inactive: number }>();
+
+  setArticleCounts(categoryId: string, counts: { active: number; inactive: number }): void {
+    this.articleCounts.set(categoryId, counts);
+  }
 
   async findById(id: string): Promise<Versioned<Category> | null> {
     return this.categories.get(id) ?? null;
@@ -110,8 +174,10 @@ class InMemoryCategoryRepository implements CategoryRepository {
     );
   }
 
-  async countArticleAssociations(): Promise<{ active: number; inactive: number }> {
-    return { active: 0, inactive: 0 };
+  async countArticleAssociations(
+    categoryId: string,
+  ): Promise<{ active: number; inactive: number }> {
+    return this.articleCounts.get(categoryId) ?? { active: 0, inactive: 0 };
   }
 
   async save(category: Category, expectedVersion?: number): Promise<Versioned<Category>> {
@@ -122,7 +188,9 @@ class InMemoryCategoryRepository implements CategoryRepository {
     return saved;
   }
 
-  async delete(): Promise<void> {}
+  async delete(id: string): Promise<void> {
+    this.categories.delete(id);
+  }
 
   async list(criteria: CategoryListCriteria): Promise<PaginatedResponse<Versioned<Category>>> {
     const items = [...this.categories.values()].filter(
