@@ -36,6 +36,16 @@ export interface InitialStockMovementProperties extends MovementIdentity {
   initialStock: number;
 }
 
+export interface PersistedMovementProperties extends MovementIdentity {
+  kind: MovementKind;
+  adjustmentMode: AdjustmentMode | null;
+  source: MovementSource;
+  appliedQuantity: number;
+  reason: string;
+  occurredAt: Date;
+  stockBefore: number;
+}
+
 export class MovementReasonTooLongError extends Error {
   constructor() {
     super(
@@ -72,6 +82,7 @@ export class Movement {
     source: MovementSource,
     appliedQuantity: number,
     reason: string,
+    occurredAt = new Date(),
   ) {
     this.id = properties.id;
     this.sequence = properties.sequence;
@@ -83,7 +94,7 @@ export class Movement {
     this.reason = reason;
     this.stockBefore = properties.stockBefore;
     this.stockAfter = calculateStockAfter(properties.stockBefore, appliedQuantity);
-    this.occurredAtValue = new Date();
+    this.occurredAtValue = new Date(occurredAt);
 
     Object.freeze(this);
   }
@@ -153,6 +164,18 @@ export class Movement {
       MovementSource.InitialStock,
       initialStock,
       'Stock inicial',
+    );
+  }
+
+  static rehydrate(properties: PersistedMovementProperties): Movement {
+    return new Movement(
+      properties,
+      properties.kind,
+      properties.adjustmentMode,
+      properties.source,
+      properties.appliedQuantity,
+      properties.reason,
+      properties.occurredAt,
     );
   }
 
