@@ -36,7 +36,7 @@
       Hecho cuando: busqueda normalizada, filtros, alertas, orden y paginacion pasan integracion.
 - [x] T18. Escribir pruebas e implementar el repositorio inmutable de movimientos. (RF-36 a RF-41, RF-54, RF-59, RF-64, RF-109)
       Hecho cuando: puede crear y consultar movimientos, pero no editarlos ni eliminarlos.
-- [ ] T19. Implementar creacion, edicion y listado de categorias con pruebas. (RF-47 a RF-50, RF-61, RF-63, RF-78, RF-85)
+- [x] T19. Implementar creacion, edicion y listado de categorias con pruebas. (RF-47 a RF-50, RF-61, RF-63, RF-78, RF-85)
       Hecho cuando: los casos de uso devuelven categorias o errores tipados.
 - [ ] T20. Implementar ciclo de estado y eliminacion de categorias con pruebas. (RF-51, RF-52, RF-71, RF-74, RF-75)
       Hecho cuando: se respetan asociaciones activas e inactivas.
