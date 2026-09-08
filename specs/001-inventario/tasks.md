@@ -10,7 +10,7 @@
       Hecho cuando: enums, limites, paginacion y errores se importan desde ambas aplicaciones.
 - [x] T5. Configurar scripts agregados y documentacion operativa. (Soporte RF-1 a RF-110)
       Hecho cuando: existen `dev`, `test`, `lint`, `format:check` y `build` en la raiz y estan documentados.
-- [ ] T6. Configurar `ValidationPipe`, error envelope y Swagger. (RF-1 a RF-110)
+- [x] T6. Configurar `ValidationPipe`, error envelope y Swagger. (RF-1 a RF-110)
       Hecho cuando: una prueba demuestra validacion global, error tipado y generacion OpenAPI.
 - [ ] T7. Escribir pruebas e implementar normalizacion de nombres y motivos. (RF-7, RF-10, RF-42, RF-48, RF-50, RF-60, RF-61, RF-89, RF-90)
       Hecho cuando: mayusculas, acentos y espacios exteriores producen los resultados definidos.
