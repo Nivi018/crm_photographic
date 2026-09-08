@@ -12,7 +12,7 @@
       Hecho cuando: existen `dev`, `test`, `lint`, `format:check` y `build` en la raiz y estan documentados.
 - [x] T6. Configurar `ValidationPipe`, error envelope y Swagger. (RF-1 a RF-110)
       Hecho cuando: una prueba demuestra validacion global, error tipado y generacion OpenAPI.
-- [ ] T7. Escribir pruebas e implementar normalizacion de nombres y motivos. (RF-7, RF-10, RF-42, RF-48, RF-50, RF-60, RF-61, RF-89, RF-90)
+- [x] T7. Escribir pruebas e implementar normalizacion de nombres y motivos. (RF-7, RF-10, RF-42, RF-48, RF-50, RF-60, RF-61, RF-89, RF-90)
       Hecho cuando: mayusculas, acentos y espacios exteriores producen los resultados definidos.
 - [ ] T8. Escribir pruebas e implementar cantidades y rango de stock. (RF-3 a RF-6, RF-17, RF-20, RF-27, RF-29, RF-35, RF-95 a RF-101)
       Hecho cuando: limites, enteros, cero, negativos y desbordamientos quedan cubiertos.
