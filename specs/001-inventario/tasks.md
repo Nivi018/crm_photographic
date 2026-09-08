@@ -34,7 +34,7 @@
       Hecho cuando: unicidad, asociaciones, orden y paginacion se verifican contra PostgreSQL.
 - [x] T17. Escribir pruebas e implementar el repositorio Prisma de articulos. (RF-7, RF-10, RF-42 a RF-46, RF-60, RF-62, RF-65)
       Hecho cuando: busqueda normalizada, filtros, alertas, orden y paginacion pasan integracion.
-- [ ] T18. Escribir pruebas e implementar el repositorio inmutable de movimientos. (RF-36 a RF-41, RF-54, RF-59, RF-64, RF-109)
+- [x] T18. Escribir pruebas e implementar el repositorio inmutable de movimientos. (RF-36 a RF-41, RF-54, RF-59, RF-64, RF-109)
       Hecho cuando: puede crear y consultar movimientos, pero no editarlos ni eliminarlos.
 - [ ] T19. Implementar creacion, edicion y listado de categorias con pruebas. (RF-47 a RF-50, RF-61, RF-63, RF-78, RF-85)
       Hecho cuando: los casos de uso devuelven categorias o errores tipados.
