@@ -20,7 +20,7 @@
       Hecho cuando: sus transiciones e invariantes pasan pruebas unitarias.
 - [x] T10. Escribir pruebas e implementar la entidad articulo. (RF-1 a RF-16, RF-46, RF-56, RF-60, RF-72, RF-73, RF-77, RF-84)
       Hecho cuando: clasificacion, edicion, estado, categoria y eliminacion pasan pruebas unitarias.
-- [ ] T11. Escribir pruebas e implementar entradas, salidas y representacion de movimientos. (RF-17 a RF-26, RF-36 a RF-41, RF-59, RF-79, RF-87, RF-88)
+- [x] T11. Escribir pruebas e implementar entradas, salidas y representacion de movimientos. (RF-17 a RF-26, RF-36 a RF-41, RF-59, RF-79, RF-87, RF-88)
       Hecho cuando: cada movimiento calcula signo y stock anterior/posterior correctamente.
 - [ ] T12. Escribir pruebas e implementar ajustes y replay del stock inicial. (RF-27 a RF-35, RF-53 a RF-58, RF-69, RF-70, RF-80, RF-81, RF-86, RF-100, RF-109)
       Hecho cuando: el replay usa diferencias historicas y preserva el movimiento inicial visible.
