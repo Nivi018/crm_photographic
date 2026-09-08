@@ -28,7 +28,7 @@
       Hecho cuando: dominio y aplicacion no importan Prisma.
 - [x] T14. Definir el esquema Prisma sin crear migraciones. (RF-1 a RF-110)
       Hecho cuando: `prisma validate` acepta entidades, relaciones, indices, versiones y secuencia.
-- [ ] T15. Crear y aplicar la primera migracion Prisma. (RF-1 a RF-110)
+- [x] T15. Crear y aplicar la primera migracion Prisma. (RF-1 a RF-110)
       Hecho cuando: existe aprobacion explicita y la migracion se aplica en PostgreSQL local de pruebas.
 - [ ] T16. Escribir pruebas e implementar el repositorio Prisma de categorias. (RF-47 a RF-52, RF-61, RF-63, RF-71, RF-74, RF-75)
       Hecho cuando: unicidad, asociaciones, orden y paginacion se verifican contra PostgreSQL.
