@@ -14,6 +14,11 @@ export interface RenameCategoryCommand {
   expectedVersion: number;
 }
 
+export interface CategoryStateCommand {
+  id: string;
+  expectedVersion: number;
+}
+
 export class CategoryNameConflictError extends Error {
   constructor() {
     super('a category with the same normalized name already exists');
@@ -60,6 +65,31 @@ export class CategoryService {
     return this.categories.list(criteria);
   }
 
+  async deactivate(command: CategoryStateCommand): Promise<Versioned<Category>> {
+    const stored = await this.findCategory(command.id);
+    const category = rehydrateCategory(stored.entity);
+    const articleCounts = await this.categories.countArticleAssociations(command.id);
+    category.deactivate(articleCounts);
+
+    return this.categories.save(category, command.expectedVersion);
+  }
+
+  async reactivate(command: CategoryStateCommand): Promise<Versioned<Category>> {
+    const stored = await this.findCategory(command.id);
+    const category = rehydrateCategory(stored.entity);
+    category.reactivate();
+
+    return this.categories.save(category, command.expectedVersion);
+  }
+
+  async delete(command: CategoryStateCommand): Promise<void> {
+    const stored = await this.findCategory(command.id);
+    const articleCounts = await this.categories.countArticleAssociations(command.id);
+    stored.entity.assertCanBeDeleted(articleCounts);
+
+    await this.categories.delete(command.id, command.expectedVersion);
+  }
+
   private async assertNameIsAvailable(category: Category): Promise<void> {
     const existing = await this.categories.findByNormalizedName(category.normalizedName);
 
@@ -67,4 +97,18 @@ export class CategoryService {
       throw new CategoryNameConflictError();
     }
   }
+
+  private async findCategory(id: string): Promise<Versioned<Category>> {
+    const stored = await this.categories.findById(id);
+
+    if (!stored) {
+      throw new CategoryNotFoundError();
+    }
+
+    return stored;
+  }
+}
+
+function rehydrateCategory(category: Category): Category {
+  return Category.rehydrate({ id: category.id, name: category.name, isActive: category.isActive });
 }

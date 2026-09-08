@@ -38,7 +38,7 @@
       Hecho cuando: puede crear y consultar movimientos, pero no editarlos ni eliminarlos.
 - [x] T19. Implementar creacion, edicion y listado de categorias con pruebas. (RF-47 a RF-50, RF-61, RF-63, RF-78, RF-85)
       Hecho cuando: los casos de uso devuelven categorias o errores tipados.
-- [ ] T20. Implementar ciclo de estado y eliminacion de categorias con pruebas. (RF-51, RF-52, RF-71, RF-74, RF-75)
+- [x] T20. Implementar ciclo de estado y eliminacion de categorias con pruebas. (RF-51, RF-52, RF-71, RF-74, RF-75)
       Hecho cuando: se respetan asociaciones activas e inactivas.
 - [ ] T21. Implementar creacion atomica de articulos con pruebas. (RF-1 a RF-7, RF-56, RF-69, RF-70, RF-76, RF-82 a RF-85, RF-95)
       Hecho cuando: articulo y entrada inicial se guardan juntos o no se guarda ninguno.
