@@ -9,6 +9,7 @@ import {
 } from '../ports/inventory-ports';
 import { Article } from '../../domain/articles/article';
 import { Movement } from '../../domain/stock/movement';
+import { replayCurrentStock } from '../../domain/stock/stock-replay';
 import { normalizeName } from '../../domain/text/normalization';
 
 export interface CreateArticleCommand {
@@ -21,6 +22,24 @@ export interface CreateArticleCommand {
 
 export interface ListArticlesQuery extends Omit<ArticleListCriteria, 'normalizedName'> {
   name?: string;
+}
+
+export interface EditArticleCommand {
+  id: string;
+  name: string;
+  type: ArticleType;
+  categoryId: string;
+  initialStock: number;
+  minimumStock: number;
+  expectedVersion: number;
+  confirmNegativeStock?: boolean;
+}
+
+export class NegativeStockConfirmationRequiredError extends Error {
+  constructor(readonly stockAfter: number) {
+    super('editing initial stock would produce negative stock');
+    this.name = 'NegativeStockConfirmationRequiredError';
+  }
 }
 
 export class ArticleNameConflictError extends Error {
@@ -94,6 +113,47 @@ export class ArticleService {
     );
   }
 
+  async edit(command: EditArticleCommand): Promise<Versioned<Article>> {
+    return this.unitOfWork.execute(async (repositories) => {
+      const stored = await repositories.articles.findById(command.id);
+
+      if (!stored) {
+        throw new ArticleCategoryNotFoundError();
+      }
+
+      const category = await this.findCategory(repositories, command.categoryId);
+      const article = Article.rehydrate({
+        id: stored.entity.id,
+        name: stored.entity.name,
+        type: stored.entity.type,
+        categoryId: stored.entity.categoryId,
+        initialStock: stored.entity.initialStock,
+        currentStock: stored.entity.currentStock,
+        minimumStock: stored.entity.minimumStock,
+        isActive: stored.entity.isActive,
+      });
+      article.edit({
+        name: command.name,
+        type: command.type,
+        category: { id: category.entity.id, isActive: category.entity.isActive },
+        initialStock: command.initialStock,
+        minimumStock: command.minimumStock,
+      });
+      await this.assertNameIsAvailable(repositories, article, article.id);
+      const movements = await this.listArticleMovements(repositories, article.id);
+      const currentStock = replayCurrentStock(article.initialStock, movements);
+
+      if (currentStock < 0 && !command.confirmNegativeStock) {
+        throw new NegativeStockConfirmationRequiredError(currentStock);
+      }
+
+      return repositories.articles.save(
+        Article.rehydrate({ ...article, currentStock }),
+        command.expectedVersion,
+      );
+    });
+  }
+
   private async findCategory(
     repositories: InventoryRepositories,
     categoryId: string,
@@ -116,11 +176,31 @@ export class ArticleService {
   private async assertNameIsAvailable(
     repositories: InventoryRepositories,
     article: Article,
+    articleId?: string,
   ): Promise<void> {
     const existing = await repositories.articles.findByNormalizedName(article.normalizedName);
 
-    if (existing) {
+    if (existing && existing.entity.id !== articleId) {
       throw new ArticleNameConflictError();
     }
+  }
+
+  private async listArticleMovements(
+    repositories: InventoryRepositories,
+    articleId: string,
+  ): Promise<Movement[]> {
+    const movements: Movement[] = [];
+    let page = 1;
+
+    let hasMore = true;
+
+    while (hasMore) {
+      const result = await repositories.movements.list({ articleId, page });
+      movements.push(...result.items);
+      hasMore = page < result.totalPages;
+      page += 1;
+    }
+
+    return movements;
   }
 }

@@ -47,7 +47,7 @@ export class PrismaMovementRepository implements MovementRepository {
   async list(criteria: MovementListCriteria): Promise<PaginatedResponse<Movement>> {
     const page = Math.max(criteria.page, 1);
     const where = criteria.articleId ? { articleId: criteria.articleId } : {};
-    const [records, totalItems] = await this.prisma.$transaction([
+    const [records, totalItems] = await Promise.all([
       this.prisma.movement.findMany({
         where,
         orderBy: [

@@ -159,6 +159,36 @@ describe('ArticleService', () => {
       isActive: true,
     });
   });
+
+  it('edits initial stock and recalculates current stock without creating a movement', async () => {
+    const harness = new ArticleCreationHarness();
+    const article = Article.rehydrate({
+      id: 'article-edit',
+      name: 'Fondo editable',
+      type: ArticleType.Sale,
+      categoryId: 'category-1',
+      initialStock: 2,
+      currentStock: 2,
+      minimumStock: 0,
+      isActive: true,
+    });
+    harness.addArticle(article);
+    harness.addCategory(Category.create({ id: 'category-1', name: 'Fondos' }));
+    const service = new ArticleService(harness);
+
+    const updated = await service.edit({
+      id: article.id,
+      name: article.name,
+      type: article.type,
+      categoryId: article.categoryId,
+      initialStock: 8,
+      minimumStock: 0,
+      expectedVersion: 0,
+    });
+
+    expect(updated.entity).toMatchObject({ initialStock: 8, currentStock: 8 });
+    expect(harness.savedMovements).toHaveLength(0);
+  });
 });
 
 class ArticleCreationHarness implements InventoryUnitOfWork {
