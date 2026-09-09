@@ -82,6 +82,10 @@ describe('API bootstrap', () => {
     expect(document.paths).toHaveProperty('/api/inventory/categories');
     expect(document.paths).toHaveProperty('/api/inventory/articles');
     expect(document.paths).toHaveProperty('/api/inventory/movements');
+    expect(document.paths).toHaveProperty('/api/inventory/articles/{id}/movements');
+    expect(document.paths).toHaveProperty('/api/inventory/articles/{id}/movements/entries');
+    expect(document.paths).toHaveProperty('/api/inventory/articles/{id}/deactivate');
+    expect(document.paths).toHaveProperty('/api/inventory/categories/{id}/reactivate');
   });
 
   it('maps category domain errors to the typed HTTP envelope', async () => {
