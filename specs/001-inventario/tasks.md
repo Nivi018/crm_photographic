@@ -90,7 +90,7 @@
       Hecho cuando: validacion, envio y errores observables pasan pruebas sin logica en componentes.
 - [x] T45. Implementar UI de alta y edicion de articulos. (RF-1 a RF-10, RF-53 a RF-56, RF-69, RF-76 a RF-85, RF-95, RF-100, RF-109)
       Hecho cuando: formularios muestran validaciones y resultados definidos.
-- [ ] T46. Implementar detalle e historial por articulo. (RF-8, RF-12, RF-36 a RF-41, RF-54, RF-109)
+- [x] T46. Implementar detalle e historial por articulo. (RF-8, RF-12, RF-36 a RF-41, RF-54, RF-109)
       Hecho cuando: datos, stock e historial inmutable se muestran correctamente.
 - [ ] T47. Implementar acciones de estado y eliminacion de articulos. (RF-11 a RF-16, RF-72, RF-73)
       Hecho cuando: confirmaciones, bloqueos y reasignacion durante reactivacion pasan pruebas UI.
