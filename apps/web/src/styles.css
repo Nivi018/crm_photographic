@@ -156,6 +156,22 @@ select {
   padding: clamp(2rem, 5vw, 4.5rem) 0;
 }
 
+.article-detail {
+  width: min(100% - 3rem, 90rem);
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 4.5rem) 0;
+}
+.article-detail header {
+  margin-bottom: 2rem;
+}
+.article-detail header h1 {
+  max-width: none;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+}
+.article-detail header p {
+  color: var(--muted);
+}
+
 .article-form-page__header {
   margin-bottom: 2rem;
 }

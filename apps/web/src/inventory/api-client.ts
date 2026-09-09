@@ -105,6 +105,10 @@ export class InventoryApiClient {
     return this.get('/movements?page=1');
   }
 
+  listArticleMovements(id: string, page = 1): Promise<PaginatedResponse<MovementRecord>> {
+    return this.get(`/articles/${id}/movements?page=${page}`);
+  }
+
   private async get<T>(path: string): Promise<T> {
     return this.send(path);
   }

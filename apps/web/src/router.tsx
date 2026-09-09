@@ -1,6 +1,7 @@
 import { useSyncExternalStore, type ReactElement } from 'react';
 import { ArticleListScreen } from './inventory/article-list-screen';
 import { ArticleEditScreen, ArticleFormScreen } from './inventory/article-form-screen';
+import { ArticleDetailScreen } from './inventory/article-detail-screen';
 
 export type InventoryRoute = '/inventory' | '/inventory/categories' | '/inventory/movements';
 
@@ -25,6 +26,8 @@ export function InventoryRouter(): ReactElement {
   if (path === '/inventory/articles/new') return <ArticleFormScreen />;
   const editMatch = path.match(/^\/inventory\/articles\/([^/]+)\/edit$/);
   if (editMatch?.[1]) return <ArticleEditScreen articleId={editMatch[1]} />;
+  const detailMatch = path.match(/^\/inventory\/articles\/([^/]+)$/);
+  if (detailMatch?.[1]) return <ArticleDetailScreen articleId={detailMatch[1]} />;
   const route = routes[path as InventoryRoute] ?? routes['/inventory'];
 
   return (
