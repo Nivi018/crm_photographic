@@ -114,7 +114,7 @@
       Hecho cuando: los mismos flujos cumplen `DESIGN.md` en ambos temas.
 - [x] T57. Verificar sincronizacion entre contratos compartidos, DTOs y Swagger. (RF-1 a RF-110)
       Hecho cuando: OpenAPI representa entradas, respuestas y errores implementados.
-- [ ] T58. Ejecutar verificacion completa desde la raiz. (RF-1 a RF-110)
+- [x] T58. Ejecutar verificacion completa desde la raiz. (RF-1 a RF-110)
       Hecho cuando: `npm run test`, `npm run lint`, `npm run format:check` y `npm run build` terminan sin errores y se documenta la validacion manual.
 
 ## Orden y dependencias
