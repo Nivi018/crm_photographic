@@ -104,7 +104,7 @@
       Hecho cuando: entradas, salidas y ajustes muestran impacto y validaciones correctas.
 - [x] T52. Implementar listado global de movimientos. (RF-36 a RF-41, RF-64)
       Hecho cuando: historial paginado, ordenado e inmutable pasa pruebas UI.
-- [ ] T53. Implementar vista de alertas de stock bajo. (RF-46, RF-65)
+- [x] T53. Implementar vista de alertas de stock bajo. (RF-46, RF-65)
       Hecho cuando: solo muestra articulos activos en condicion de alerta.
 - [ ] T54. Integrar estados vacios, carga y errores observables. (RF-76, RF-99, RF-103, RF-108, RF-110)
       Hecho cuando: inventario vacio, resultados vacios y errores recuperables tienen salida visible.
