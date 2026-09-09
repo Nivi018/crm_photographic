@@ -81,6 +81,7 @@ describe('API bootstrap', () => {
     expect(document.paths).toHaveProperty('/health');
     expect(document.paths).toHaveProperty('/api/inventory/categories');
     expect(document.paths).toHaveProperty('/api/inventory/articles');
+    expect(document.paths).toHaveProperty('/api/inventory/movements');
   });
 
   it('maps category domain errors to the typed HTTP envelope', async () => {
