@@ -74,7 +74,7 @@
       Hecho cuando: entradas, salidas, ajustes e historial pasan contra PostgreSQL.
 - [x] T37. Agregar pruebas E2E de concurrencia. (RF-67, RF-68, RF-82, RF-83, RF-91, RF-102 a RF-105, RF-110)
       Hecho cuando: se reproducen dos conflictos y se verifican reintento, reconfirmacion y cancelacion.
-- [ ] T38. Crear router, cliente HTTP tipado y harness de pruebas web. (Soporte RF de UI)
+- [x] T38. Crear router, cliente HTTP tipado y harness de pruebas web. (Soporte RF de UI)
       Hecho cuando: rutas de inventario, categorias y movimientos usan el cliente compartido.
 - [ ] T39. Escribir pruebas e implementar gestion de tema. (RF-92 a RF-94, RF-107, RF-108)
       Hecho cuando: tema claro inicial, persistencia, fallback por pestana y mensaje de fallo pasan pruebas.
