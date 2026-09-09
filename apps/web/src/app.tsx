@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react';
+import { InventoryRouter } from './router';
 
 export function App(): ReactElement {
   return (
@@ -14,14 +15,7 @@ export function App(): ReactElement {
         <p className="header-status">Preparacion del espacio de trabajo</p>
       </header>
 
-      <main className="startup-panel">
-        <div className="startup-rule" />
-        <p className="startup-status">Frontend operativo</p>
-        <h1>El espacio de trabajo esta listo.</h1>
-        <p className="startup-copy">
-          El inventario del estudio se habilitara al completar los modulos aprobados.
-        </p>
-      </main>
+      <InventoryRouter />
     </div>
   );
 }

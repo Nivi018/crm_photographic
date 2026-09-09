@@ -4,14 +4,11 @@ import { describe, expect, it } from 'vitest';
 import { App } from './app';
 
 describe('App', () => {
-  it('renders the prepared workspace shell', () => {
+  it('renders the inventory route', () => {
+    window.history.replaceState({}, '', '/inventory');
     render(<App />);
 
-    expect(
-      screen.getByRole('heading', {
-        name: 'El espacio de trabajo esta listo.',
-      }),
-    ).toBeInTheDocument();
-    expect(screen.getByText('Frontend operativo')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Inventario' })).toBeInTheDocument();
+    expect(screen.getByText('Modulo de inventario')).toBeInTheDocument();
   });
 });
