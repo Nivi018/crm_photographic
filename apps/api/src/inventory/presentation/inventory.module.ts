@@ -5,10 +5,11 @@ import { ArticleService } from '../application/articles/article.service';
 import { LazyCategoryRepository } from '../infrastructure/prisma/lazy-category.repository';
 import { LazyInventoryUnitOfWork } from '../infrastructure/prisma/lazy-inventory.unit-of-work';
 import { ArticleController } from './article.controller';
+import { MovementController } from './movement.controller';
 import { CategoryController } from './category.controller';
 
 @Module({
-  controllers: [CategoryController, ArticleController],
+  controllers: [CategoryController, ArticleController, MovementController],
   providers: [
     LazyCategoryRepository,
     LazyInventoryUnitOfWork,
