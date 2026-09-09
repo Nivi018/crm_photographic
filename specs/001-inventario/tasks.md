@@ -82,7 +82,7 @@
       Hecho cuando: navegacion aprobada y superficies claro/oscuro funcionan sin modulos fuera de alcance.
 - [x] T41. Implementar componentes reutilizables de formularios, tablas, estados y paginacion. (RF-40, RF-62 a RF-65)
       Hecho cuando: componentes tienen pruebas de interaccion y accesibilidad basica.
-- [ ] T42. Implementar modelo de pantalla del listado de articulos. (RF-42 a RF-46, RF-62, RF-66, RF-106)
+- [x] T42. Implementar modelo de pantalla del listado de articulos. (RF-42 a RF-46, RF-62, RF-66, RF-106)
       Hecho cuando: hooks controlan consulta, filtros y reinicio de pagina.
 - [ ] T43. Implementar UI del listado de articulos. (RF-42 a RF-46, RF-62, RF-66, RF-106)
       Hecho cuando: busqueda, filtros activos/inactivos, paginacion y stock bajo pasan pruebas.
