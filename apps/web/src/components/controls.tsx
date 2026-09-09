@@ -6,7 +6,7 @@ export function Field({
   children,
 }: {
   children: ReactElement<{ id?: string }>;
-  error?: string;
+  error?: string | undefined;
   label: string;
 }) {
   const id = useId();
