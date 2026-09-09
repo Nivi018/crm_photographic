@@ -50,7 +50,7 @@
       Hecho cuando: las transiciones permitidas y bloqueadas pasan pruebas.
 - [x] T25. Implementar registro de entradas con pruebas. (RF-17 a RF-19, RF-40, RF-59, RF-79, RF-87, RF-90, RF-96, RF-98, RF-99)
       Hecho cuando: una entrada valida crea movimiento y actualiza stock atomicamente.
-- [ ] T26. Implementar salidas y confirmacion de stock negativo. (RF-20 a RF-26, RF-40, RF-59, RF-79, RF-88, RF-90, RF-96, RF-98, RF-99, RF-101)
+- [x] T26. Implementar salidas y confirmacion de stock negativo. (RF-20 a RF-26, RF-40, RF-59, RF-79, RF-88, RF-90, RF-96, RF-98, RF-99, RF-101)
       Hecho cuando: advertencia, confirmacion, rechazo y limites pasan pruebas.
 - [ ] T27. Implementar ajustes por existencia final y diferencia. (RF-27 a RF-35, RF-39 a RF-41, RF-57, RF-58, RF-79, RF-86 a RF-90, RF-97 a RF-99)
       Hecho cuando: ambos modos producen cantidad, motivo y stock correctos.

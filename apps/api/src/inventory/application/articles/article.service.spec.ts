@@ -13,6 +13,7 @@ import { Movement } from '../../domain/stock/movement';
 import {
   ArticleNameConflictError,
   ArticleService,
+  NegativeStockConfirmationRequiredError,
   NoActiveCategoriesError,
 } from './article.service';
 
@@ -243,16 +244,58 @@ describe('ArticleService', () => {
       reason: 'Reposicion',
     });
   });
+
+  it('requires confirmation before a negative-stock exit and persists nothing', async () => {
+    const harness = new ArticleCreationHarness();
+    const article = articleWithStock('article-exit-warning', 2);
+    harness.addArticle(article);
+    const service = new ArticleService(harness);
+
+    await expect(
+      service.registerExit({
+        articleId: article.id,
+        quantity: 3,
+        reason: 'Uso interno',
+        expectedVersion: 0,
+      }),
+    ).rejects.toMatchObject({
+      name: NegativeStockConfirmationRequiredError.name,
+      stockAfter: -1,
+    });
+    expect(harness.savedMovements).toHaveLength(0);
+  });
+
+  it('records a confirmed exit that results in negative stock', async () => {
+    const harness = new ArticleCreationHarness();
+    const article = articleWithStock('article-exit-confirmed', 2);
+    harness.addArticle(article);
+    const service = new ArticleService(harness);
+
+    const updated = await service.registerExit({
+      articleId: article.id,
+      quantity: 3,
+      reason: 'Uso interno',
+      expectedVersion: 0,
+      confirmNegativeStock: true,
+    });
+
+    expect(updated.entity.currentStock).toBe(-1);
+    expect(harness.savedMovements[0]).toMatchObject({ appliedQuantity: -3, stockAfter: -1 });
+  });
 });
 
 function activeArticle(id: string): Article {
+  return articleWithStock(id, 0);
+}
+
+function articleWithStock(id: string, currentStock: number): Article {
   return Article.rehydrate({
     id,
     name: 'Articulo activo',
     type: ArticleType.Sale,
     categoryId: 'category-1',
     initialStock: 0,
-    currentStock: 0,
+    currentStock,
     minimumStock: 0,
     isActive: true,
   });
