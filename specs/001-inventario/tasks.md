@@ -84,7 +84,7 @@
       Hecho cuando: componentes tienen pruebas de interaccion y accesibilidad basica.
 - [x] T42. Implementar modelo de pantalla del listado de articulos. (RF-42 a RF-46, RF-62, RF-66, RF-106)
       Hecho cuando: hooks controlan consulta, filtros y reinicio de pagina.
-- [ ] T43. Implementar UI del listado de articulos. (RF-42 a RF-46, RF-62, RF-66, RF-106)
+- [x] T43. Implementar UI del listado de articulos. (RF-42 a RF-46, RF-62, RF-66, RF-106)
       Hecho cuando: busqueda, filtros activos/inactivos, paginacion y stock bajo pasan pruebas.
 - [ ] T44. Implementar modelo de formulario de articulos. (RF-1 a RF-10, RF-56, RF-69, RF-76 a RF-85, RF-95)
       Hecho cuando: validacion, envio y errores observables pasan pruebas sin logica en componentes.
