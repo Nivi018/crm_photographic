@@ -31,7 +31,7 @@ export class PrismaCategoryRepository implements CategoryRepository {
   }
 
   async countArticleAssociations(categoryId: string): Promise<CategoryArticleCounts> {
-    const [active, inactive] = await this.prisma.$transaction([
+    const [active, inactive] = await Promise.all([
       this.prisma.article.count({ where: { categoryId, isActive: true } }),
       this.prisma.article.count({ where: { categoryId, isActive: false } }),
     ]);
@@ -86,7 +86,7 @@ export class PrismaCategoryRepository implements CategoryRepository {
       ...(criteria.normalizedName ? { normalizedName: { contains: criteria.normalizedName } } : {}),
       ...(criteria.isActive === undefined ? {} : { isActive: criteria.isActive }),
     };
-    const [records, totalItems] = await this.prisma.$transaction([
+    const [records, totalItems] = await Promise.all([
       this.prisma.category.findMany({
         where,
         orderBy: { normalizedName: 'asc' },

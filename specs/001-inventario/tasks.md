@@ -40,7 +40,7 @@
       Hecho cuando: los casos de uso devuelven categorias o errores tipados.
 - [x] T20. Implementar ciclo de estado y eliminacion de categorias con pruebas. (RF-51, RF-52, RF-71, RF-74, RF-75)
       Hecho cuando: se respetan asociaciones activas e inactivas.
-- [ ] T21. Implementar creacion atomica de articulos con pruebas. (RF-1 a RF-7, RF-56, RF-69, RF-70, RF-76, RF-82 a RF-85, RF-95)
+- [x] T21. Implementar creacion atomica de articulos con pruebas. (RF-1 a RF-7, RF-56, RF-69, RF-70, RF-76, RF-82 a RF-85, RF-95)
       Hecho cuando: articulo y entrada inicial se guardan juntos o no se guarda ninguno.
 - [ ] T22. Implementar consulta, busqueda, filtros y paginacion de articulos. (RF-8, RF-42 a RF-45, RF-62, RF-66, RF-106)
       Hecho cuando: pruebas de 25, 26 y ultima pagina incompleta pasan.
