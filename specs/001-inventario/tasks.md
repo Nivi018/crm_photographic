@@ -98,7 +98,7 @@
       Hecho cuando: consultas y mutaciones se prueban independientemente de la UI.
 - [x] T49. Implementar UI de gestion de categorias. (RF-47 a RF-52, RF-61, RF-63, RF-71, RF-74, RF-75, RF-78, RF-85)
       Hecho cuando: listado y operaciones muestran estados y errores correctos.
-- [ ] T50. Implementar cliente y hooks de movimientos. (RF-17 a RF-41, RF-57 a RF-59, RF-64, RF-67, RF-68, RF-91, RF-110)
+- [x] T50. Implementar cliente y hooks de movimientos. (RF-17 a RF-41, RF-57 a RF-59, RF-64, RF-67, RF-68, RF-91, RF-110)
       Hecho cuando: preview, confirmacion, reconfirmacion y conflicto se prueban sin componentes.
 - [ ] T51. Implementar formulario de movimientos. (RF-17 a RF-35, RF-57 a RF-59, RF-79, RF-86 a RF-101)
       Hecho cuando: entradas, salidas y ajustes muestran impacto y validaciones correctas.

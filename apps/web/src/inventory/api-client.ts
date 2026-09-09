@@ -70,6 +70,16 @@ export interface MovementRecord {
   stockAfter: number;
   stockBefore: number;
 }
+export interface MovementInput {
+  confirmNegativeStock?: boolean;
+  expectedVersion: number;
+  quantity: number;
+  reason: string;
+}
+export interface FinalStockAdjustmentInput {
+  expectedVersion: number;
+  finalStock: number;
+}
 
 export class InventoryApiClient {
   constructor(
@@ -140,12 +150,27 @@ export class InventoryApiClient {
     return this.get(`/articles/${id}`);
   }
 
-  listMovements(): Promise<PaginatedResponse<MovementRecord>> {
-    return this.get('/movements?page=1');
+  listMovements(page = 1): Promise<PaginatedResponse<MovementRecord>> {
+    return this.get(`/movements?page=${page}`);
   }
 
   listArticleMovements(id: string, page = 1): Promise<PaginatedResponse<MovementRecord>> {
     return this.get(`/articles/${id}/movements?page=${page}`);
+  }
+  createEntry(id: string, input: MovementInput): Promise<MovementRecord> {
+    return this.post(`/articles/${id}/movements/entries`, input);
+  }
+  createExit(id: string, input: MovementInput): Promise<MovementRecord> {
+    return this.post(`/articles/${id}/movements/exits`, input);
+  }
+  createFinalStockAdjustment(
+    id: string,
+    input: FinalStockAdjustmentInput,
+  ): Promise<MovementRecord> {
+    return this.post(`/articles/${id}/movements/final-stock-adjustments`, input);
+  }
+  createDeltaAdjustment(id: string, input: MovementInput): Promise<MovementRecord> {
+    return this.post(`/articles/${id}/movements/delta-adjustments`, input);
   }
 
   private async get<T>(path: string): Promise<T> {
