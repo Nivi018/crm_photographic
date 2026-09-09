@@ -9,21 +9,49 @@ interface ErrorResponseBody {
   message?: unknown;
 }
 
-@Catch(HttpException)
+@Catch()
 export class ApiExceptionFilter implements ExceptionFilter {
-  catch(exception: HttpException, host: ArgumentsHost): void {
+  catch(exception: unknown, host: ArgumentsHost): void {
     const response = host.switchToHttp().getResponse<Response>();
-    const statusCode = exception.getStatus();
-    const body = exception.getResponse();
+    const httpException = exception instanceof HttpException ? exception : undefined;
+    const statusCode = httpException?.getStatus() ?? domainErrorStatus(exception);
+    const body = httpException?.getResponse() ?? {};
     const error = isErrorResponseBody(body) ? body : {};
 
     response.status(statusCode).json({
-      code: errorCode(error.code, statusCode),
+      code: httpException ? errorCode(error.code, statusCode) : domainErrorCode(exception),
       ...(error.details === undefined ? {} : { details: error.details }),
-      message: errorMessage(error.message, body),
+      message: httpException
+        ? errorMessage(error.message, body)
+        : errorMessageFromException(exception),
       statusCode,
     });
   }
+}
+
+function domainErrorStatus(error: unknown): HttpStatus {
+  return domainErrorCode(error) === InventoryErrorCode.NotFound
+    ? HttpStatus.NOT_FOUND
+    : domainErrorCode(error) === InventoryErrorCode.NameConflict ||
+        domainErrorCode(error) === InventoryErrorCode.DependencyConflict
+      ? HttpStatus.CONFLICT
+      : HttpStatus.BAD_REQUEST;
+}
+
+function domainErrorCode(error: unknown): InventoryErrorCode {
+  const name = error instanceof Error ? error.name : '';
+
+  if (name === 'CategoryNotFoundError') return InventoryErrorCode.NotFound;
+  if (name === 'CategoryNameConflictError') return InventoryErrorCode.NameConflict;
+  if (name === 'ActiveArticleAssociationError' || name === 'CategoryAssociationError') {
+    return InventoryErrorCode.DependencyConflict;
+  }
+
+  return InventoryErrorCode.Validation;
+}
+
+function errorMessageFromException(error: unknown): string {
+  return error instanceof Error ? error.message : 'Request failed';
 }
 
 function isErrorResponseBody(value: unknown): value is ErrorResponseBody {
