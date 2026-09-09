@@ -56,7 +56,7 @@
       Hecho cuando: ambos modos producen cantidad, motivo y stock correctos.
 - [x] T28. Implementar revalidacion y unico reintento concurrente. (RF-67, RF-68, RF-91, RF-102 a RF-105, RF-110)
       Hecho cuando: pruebas controladas demuestran exito, reconfirmacion y cancelacion en segundo conflicto.
-- [ ] T29. Implementar historial global y por articulo. (RF-12, RF-36 a RF-41, RF-64)
+- [x] T29. Implementar historial global y por articulo. (RF-12, RF-36 a RF-41, RF-64)
       Hecho cuando: ambos listados son inmutables, paginados y deterministas.
 - [ ] T30. Implementar listado de stock bajo. (RF-46, RF-65)
       Hecho cuando: incluye solo articulos activos con stock igual o inferior al minimo.

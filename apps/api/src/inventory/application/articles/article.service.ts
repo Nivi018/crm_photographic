@@ -24,6 +24,10 @@ export interface ListArticlesQuery extends Omit<ArticleListCriteria, 'normalized
   name?: string;
 }
 
+export interface ListMovementsQuery {
+  page: number;
+}
+
 export interface EditArticleCommand {
   id: string;
   name: string;
@@ -157,6 +161,21 @@ export class ArticleService {
     );
   }
 
+  async listMovements(query: ListMovementsQuery): Promise<PaginatedResponse<Movement>> {
+    return this.unitOfWork.execute(({ movements }) => movements.list({ page: query.page }));
+  }
+
+  async listArticleMovements(
+    articleId: string,
+    query: ListMovementsQuery,
+  ): Promise<PaginatedResponse<Movement>> {
+    return this.unitOfWork.execute(async (repositories) => {
+      await this.findArticle(repositories, articleId);
+
+      return repositories.movements.list({ articleId, page: query.page });
+    });
+  }
+
   async edit(command: EditArticleCommand): Promise<Versioned<Article>> {
     return this.withSingleRetry(command.id, command.expectedVersion, async (expectedVersion) =>
       this.unitOfWork.execute(async (repositories) => {
@@ -185,7 +204,7 @@ export class ArticleService {
           minimumStock: command.minimumStock,
         });
         await this.assertNameIsAvailable(repositories, article, article.id);
-        const movements = await this.listArticleMovements(repositories, article.id);
+        const movements = await this.listAllArticleMovements(repositories, article.id);
         const currentStock = replayCurrentStock(article.initialStock, movements);
 
         if (currentStock < 0 && !command.confirmNegativeStock) {
@@ -463,7 +482,7 @@ export class ArticleService {
     }
   }
 
-  private async listArticleMovements(
+  private async listAllArticleMovements(
     repositories: InventoryRepositories,
     articleId: string,
   ): Promise<Movement[]> {
