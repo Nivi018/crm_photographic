@@ -3,6 +3,7 @@ import { ArticleListScreen } from './inventory/article-list-screen';
 import { ArticleEditScreen, ArticleFormScreen } from './inventory/article-form-screen';
 import { ArticleDetailScreen } from './inventory/article-detail-screen';
 import { CategoryManagementScreen } from './inventory/category-management-screen';
+import { MovementFormScreen } from './inventory/movement-form-screen';
 
 export type InventoryRoute = '/inventory' | '/inventory/categories' | '/inventory/movements';
 
@@ -26,6 +27,8 @@ export function InventoryRouter(): ReactElement {
   if (path === '/inventory') return <ArticleListScreen />;
   if (path === '/inventory/categories') return <CategoryManagementScreen />;
   if (path === '/inventory/articles/new') return <ArticleFormScreen />;
+  const movementMatch = path.match(/^\/inventory\/articles\/([^/]+)\/movements\/new$/);
+  if (movementMatch?.[1]) return <MovementFormScreen articleId={movementMatch[1]} />;
   const editMatch = path.match(/^\/inventory\/articles\/([^/]+)\/edit$/);
   if (editMatch?.[1]) return <ArticleEditScreen articleId={editMatch[1]} />;
   const detailMatch = path.match(/^\/inventory\/articles\/([^/]+)$/);
