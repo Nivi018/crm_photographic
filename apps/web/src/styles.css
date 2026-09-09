@@ -1,6 +1,6 @@
 :root {
-  color: #f7faff;
-  background: #071a2d;
+  color: #0c1f3a;
+  background: #f7faff;
   font-family:
     Inter,
     ui-sans-serif,
@@ -11,6 +11,11 @@
     sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+}
+
+:root[data-theme='dark'] {
+  color: #f7faff;
+  background: #071a2d;
 }
 
 * {
@@ -39,6 +44,10 @@ select {
   display: grid;
   grid-template-rows: auto 1fr;
   min-height: 100vh;
+  background: #f7faff;
+}
+
+:root[data-theme='dark'] .app-shell {
   background: linear-gradient(145deg, #071a2d 0%, #0b2138 58%, #10263a 100%);
 }
 
@@ -48,7 +57,8 @@ select {
   justify-content: space-between;
   min-height: 5.25rem;
   padding: 1rem clamp(1.5rem, 5vw, 5rem);
-  border-bottom: 1px solid rgb(247 250 255 / 14%);
+  border-bottom: 1px solid #d8e2ef;
+  background: #071a2d;
 }
 
 .brand-placeholder {
@@ -71,15 +81,41 @@ select {
   letter-spacing: 0.13em;
 }
 
-.header-status,
 .startup-status,
 .startup-copy {
   margin: 0;
 }
 
-.header-status {
-  color: #b9c9dc;
-  font-size: 0.875rem;
+.theme-control {
+  display: grid;
+  justify-items: end;
+  gap: 0.4rem;
+  color: #c3d1e0;
+  font-size: 0.75rem;
+}
+
+.theme-control p {
+  max-width: 24ch;
+  margin: 0;
+  text-align: right;
+}
+
+.theme-button {
+  padding: 0.55rem 0.85rem;
+  border: 1px solid #58738e;
+  border-radius: 8px;
+  color: #f7faff;
+  background: transparent;
+  cursor: pointer;
+}
+
+.theme-button:hover {
+  background: #17334d;
+}
+
+.theme-button:focus-visible {
+  outline: 3px solid #ffc955;
+  outline-offset: 3px;
 }
 
 .startup-panel {
@@ -121,6 +157,10 @@ h1 {
   color: #c3d1e0;
   font-size: 1.0625rem;
   line-height: 1.65;
+}
+
+:root:not([data-theme='dark']) .startup-copy {
+  color: #47627e;
 }
 
 @media (max-width: 560px) {
