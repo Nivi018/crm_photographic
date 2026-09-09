@@ -70,7 +70,7 @@
       Hecho cuando: el flujo completo de categorias pasa contra PostgreSQL.
 - [x] T35. Agregar pruebas E2E de articulos. (RF-1 a RF-16, RF-42 a RF-45, RF-53 a RF-56, RF-60, RF-62, RF-69, RF-72, RF-73)
       Hecho cuando: CRUD permitido, estados, filtros y recalculo pasan contra PostgreSQL.
-- [ ] T36. Agregar pruebas E2E de movimientos y limites. (RF-17 a RF-41, RF-57 a RF-59, RF-64, RF-65, RF-79 a RF-101, RF-109)
+- [x] T36. Agregar pruebas E2E de movimientos y limites. (RF-17 a RF-41, RF-57 a RF-59, RF-64, RF-65, RF-79 a RF-101, RF-109)
       Hecho cuando: entradas, salidas, ajustes e historial pasan contra PostgreSQL.
 - [ ] T37. Agregar pruebas E2E de concurrencia. (RF-67, RF-68, RF-82, RF-83, RF-91, RF-102 a RF-105, RF-110)
       Hecho cuando: se reproducen dos conflictos y se verifican reintento, reconfirmacion y cancelacion.
