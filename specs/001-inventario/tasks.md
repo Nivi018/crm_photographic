@@ -94,7 +94,7 @@
       Hecho cuando: datos, stock e historial inmutable se muestran correctamente.
 - [x] T47. Implementar acciones de estado y eliminacion de articulos. (RF-11 a RF-16, RF-72, RF-73)
       Hecho cuando: confirmaciones, bloqueos y reasignacion durante reactivacion pasan pruebas UI.
-- [ ] T48. Implementar cliente y hooks de categorias. (RF-47 a RF-52, RF-61, RF-63, RF-71, RF-74, RF-75)
+- [x] T48. Implementar cliente y hooks de categorias. (RF-47 a RF-52, RF-61, RF-63, RF-71, RF-74, RF-75)
       Hecho cuando: consultas y mutaciones se prueban independientemente de la UI.
 - [ ] T49. Implementar UI de gestion de categorias. (RF-47 a RF-52, RF-61, RF-63, RF-71, RF-74, RF-75, RF-78, RF-85)
       Hecho cuando: listado y operaciones muestran estados y errores correctos.

@@ -18,6 +18,11 @@ export interface CategoryRecord {
   version: number;
 }
 
+export interface UpdateCategoryInput {
+  expectedVersion: number;
+  name: string;
+}
+
 export interface ArticleRecord {
   entity: {
     categoryId: string;
@@ -110,6 +115,25 @@ export class InventoryApiClient {
     const parameters = new URLSearchParams({ page: String(query.page ?? 1) });
     if (query.isActive !== undefined) parameters.set('isActive', String(query.isActive));
     return this.get(`/categories?${parameters}`);
+  }
+
+  createCategory(name: string): Promise<CategoryRecord> {
+    return this.post('/categories', { name });
+  }
+  updateCategory(id: string, input: UpdateCategoryInput): Promise<CategoryRecord> {
+    return this.send(`/categories/${id}`, { body: JSON.stringify(input), method: 'PATCH' });
+  }
+  deactivateCategory(id: string, expectedVersion: number): Promise<CategoryRecord> {
+    return this.post(`/categories/${id}/deactivate`, { expectedVersion });
+  }
+  reactivateCategory(id: string, expectedVersion: number): Promise<CategoryRecord> {
+    return this.post(`/categories/${id}/reactivate`, { expectedVersion });
+  }
+  deleteCategory(id: string, expectedVersion: number): Promise<void> {
+    return this.send(`/categories/${id}`, {
+      body: JSON.stringify({ expectedVersion }),
+      method: 'DELETE',
+    });
   }
 
   findArticle(id: string): Promise<ArticleRecord> {

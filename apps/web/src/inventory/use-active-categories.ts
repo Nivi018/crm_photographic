@@ -27,5 +27,5 @@ export function useActiveCategories(client: ActiveCategoryClient = inventoryApi)
     void loadCategories();
   }, []);
 
-  return { categories, error, isLoading };
+  return { categories, error, isLoading, reload: loadCategories };
 }
