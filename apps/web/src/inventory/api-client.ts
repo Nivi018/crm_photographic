@@ -8,6 +8,11 @@ export interface ArticleListQuery {
   type?: ArticleType;
 }
 
+export interface CategoryListQuery {
+  isActive?: boolean;
+  page?: number;
+}
+
 export interface CategoryRecord {
   entity: { id: string; isActive: boolean; name: string };
   version: number;
@@ -86,8 +91,14 @@ export class InventoryApiClient {
     return this.send(`/articles/${id}`, { body: JSON.stringify(input), method: 'PATCH' });
   }
 
-  listCategories(): Promise<PaginatedResponse<CategoryRecord>> {
-    return this.get('/categories?page=1');
+  listCategories(query: CategoryListQuery = {}): Promise<PaginatedResponse<CategoryRecord>> {
+    const parameters = new URLSearchParams({ page: String(query.page ?? 1) });
+    if (query.isActive !== undefined) parameters.set('isActive', String(query.isActive));
+    return this.get(`/categories?${parameters}`);
+  }
+
+  findArticle(id: string): Promise<ArticleRecord> {
+    return this.get(`/articles/${id}`);
   }
 
   listMovements(): Promise<PaginatedResponse<MovementRecord>> {

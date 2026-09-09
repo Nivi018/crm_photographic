@@ -1,5 +1,6 @@
 import { useSyncExternalStore, type ReactElement } from 'react';
 import { ArticleListScreen } from './inventory/article-list-screen';
+import { ArticleEditScreen, ArticleFormScreen } from './inventory/article-form-screen';
 
 export type InventoryRoute = '/inventory' | '/inventory/categories' | '/inventory/movements';
 
@@ -21,6 +22,9 @@ const routes: Record<InventoryRoute, { description: string; title: string }> = {
 export function InventoryRouter(): ReactElement {
   const path = useSyncExternalStore(subscribeToLocation, currentPath, currentPath);
   if (path === '/inventory') return <ArticleListScreen />;
+  if (path === '/inventory/articles/new') return <ArticleFormScreen />;
+  const editMatch = path.match(/^\/inventory\/articles\/([^/]+)\/edit$/);
+  if (editMatch?.[1]) return <ArticleEditScreen articleId={editMatch[1]} />;
   const route = routes[path as InventoryRoute] ?? routes['/inventory'];
 
   return (
