@@ -15,13 +15,15 @@ export class MovementController {
   @Get('movements') @ApiOperation({ summary: 'List inventory movements' }) list(
     @Query() query: MovementListDto,
   ) {
-    return this.articles.listMovements(query);
+    return this.articles.listMovements(query).then((result) => this.serializeMovements(result));
   }
   @Get('articles/:id/movements') @ApiOperation({ summary: 'List article movements' }) listByArticle(
     @Param('id') id: string,
     @Query() query: MovementListDto,
   ) {
-    return this.articles.listArticleMovements(id, query);
+    return this.articles
+      .listArticleMovements(id, query)
+      .then((result) => this.serializeMovements(result));
   }
   @Post('articles/:id/movements/entries') @ApiOperation({ summary: 'Register an entry' }) entry(
     @Param('id') articleId: string,
@@ -44,5 +46,15 @@ export class MovementController {
   @ApiOperation({ summary: 'Adjust stock by difference' })
   delta(@Param('id') articleId: string, @Body() body: DeltaAdjustmentDto) {
     return this.articles.registerDeltaAdjustment({ ...body, articleId });
+  }
+
+  private serializeMovements(result: Awaited<ReturnType<ArticleService['listMovements']>>) {
+    return {
+      ...result,
+      items: result.items.map(({ sequence, ...movement }) => ({
+        ...movement,
+        sequence: sequence.toString(),
+      })),
+    };
   }
 }
