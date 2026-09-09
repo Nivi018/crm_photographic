@@ -161,6 +161,10 @@ export class ArticleService {
     );
   }
 
+  async listLowStock(query: ListMovementsQuery): Promise<PaginatedResponse<Versioned<Article>>> {
+    return this.unitOfWork.execute(({ articles }) => articles.listLowStock({ page: query.page }));
+  }
+
   async listMovements(query: ListMovementsQuery): Promise<PaginatedResponse<Movement>> {
     return this.unitOfWork.execute(({ movements }) => movements.list({ page: query.page }));
   }
