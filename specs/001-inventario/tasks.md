@@ -42,7 +42,7 @@
       Hecho cuando: se respetan asociaciones activas e inactivas.
 - [x] T21. Implementar creacion atomica de articulos con pruebas. (RF-1 a RF-7, RF-56, RF-69, RF-70, RF-76, RF-82 a RF-85, RF-95)
       Hecho cuando: articulo y entrada inicial se guardan juntos o no se guarda ninguno.
-- [ ] T22. Implementar consulta, busqueda, filtros y paginacion de articulos. (RF-8, RF-42 a RF-45, RF-62, RF-66, RF-106)
+- [x] T22. Implementar consulta, busqueda, filtros y paginacion de articulos. (RF-8, RF-42 a RF-45, RF-62, RF-66, RF-106)
       Hecho cuando: pruebas de 25, 26 y ultima pagina incompleta pasan.
 - [ ] T23. Implementar edicion y recalculo del stock inicial con pruebas. (RF-9, RF-53 a RF-55, RF-80, RF-81, RF-100, RF-109)
       Hecho cuando: el stock se recalcula y el historial visible permanece inmutable.

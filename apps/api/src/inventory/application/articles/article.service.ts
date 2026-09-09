@@ -1,13 +1,15 @@
-import { type ArticleType } from '@crm-photografy/shared';
+import { type ArticleType, type PaginatedResponse } from '@crm-photografy/shared';
 import { randomUUID } from 'node:crypto';
 
 import {
   type InventoryRepositories,
   type InventoryUnitOfWork,
+  type ArticleListCriteria,
   type Versioned,
 } from '../ports/inventory-ports';
 import { Article } from '../../domain/articles/article';
 import { Movement } from '../../domain/stock/movement';
+import { normalizeName } from '../../domain/text/normalization';
 
 export interface CreateArticleCommand {
   name: string;
@@ -15,6 +17,10 @@ export interface CreateArticleCommand {
   categoryId: string;
   initialStock: number;
   minimumStock: number;
+}
+
+export interface ListArticlesQuery extends Omit<ArticleListCriteria, 'normalizedName'> {
+  name?: string;
 }
 
 export class ArticleNameConflictError extends Error {
@@ -68,6 +74,24 @@ export class ArticleService {
 
       return saved;
     });
+  }
+
+  async findById(id: string): Promise<Versioned<Article> | null> {
+    return this.unitOfWork.execute(({ articles }) => articles.findById(id));
+  }
+
+  async list(query: ListArticlesQuery): Promise<PaginatedResponse<Versioned<Article>>> {
+    const name = query.name?.trim();
+
+    return this.unitOfWork.execute(({ articles }) =>
+      articles.list({
+        page: query.page,
+        ...(name ? { normalizedName: normalizeName(name) } : {}),
+        ...(query.type ? { type: query.type } : {}),
+        ...(query.categoryId ? { categoryId: query.categoryId } : {}),
+        ...(query.isActive === undefined ? {} : { isActive: query.isActive }),
+      }),
+    );
   }
 
   private async findCategory(
