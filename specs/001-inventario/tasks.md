@@ -110,7 +110,7 @@
       Hecho cuando: inventario vacio, resultados vacios y errores recuperables tienen salida visible.
 - [x] T55. Verificar y corregir todos los flujos a 390 px. (RF de UI)
       Hecho cuando: alta, edicion, movimientos, categorias, filtros y alertas funcionan en ambos temas.
-- [ ] T56. Verificar y corregir todos los flujos a 1440 px. (RF de UI)
+- [x] T56. Verificar y corregir todos los flujos a 1440 px. (RF de UI)
       Hecho cuando: los mismos flujos cumplen `DESIGN.md` en ambos temas.
 - [ ] T57. Verificar sincronizacion entre contratos compartidos, DTOs y Swagger. (RF-1 a RF-110)
       Hecho cuando: OpenAPI representa entradas, respuestas y errores implementados.
