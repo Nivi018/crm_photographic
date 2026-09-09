@@ -4,6 +4,7 @@ import { ArticleEditScreen, ArticleFormScreen } from './inventory/article-form-s
 import { ArticleDetailScreen } from './inventory/article-detail-screen';
 import { CategoryManagementScreen } from './inventory/category-management-screen';
 import { MovementFormScreen } from './inventory/movement-form-screen';
+import { MovementListScreen } from './inventory/movement-list-screen';
 
 export type InventoryRoute = '/inventory' | '/inventory/categories' | '/inventory/movements';
 
@@ -26,6 +27,7 @@ export function InventoryRouter(): ReactElement {
   const path = useSyncExternalStore(subscribeToLocation, currentPath, currentPath);
   if (path === '/inventory') return <ArticleListScreen />;
   if (path === '/inventory/categories') return <CategoryManagementScreen />;
+  if (path === '/inventory/movements') return <MovementListScreen />;
   if (path === '/inventory/articles/new') return <ArticleFormScreen />;
   const movementMatch = path.match(/^\/inventory\/articles\/([^/]+)\/movements\/new$/);
   if (movementMatch?.[1]) return <MovementFormScreen articleId={movementMatch[1]} />;
