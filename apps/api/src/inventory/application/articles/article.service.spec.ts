@@ -162,6 +162,22 @@ describe('ArticleService', () => {
     });
   });
 
+  it('lists the global history and history for inactive articles', async () => {
+    const harness = new ArticleCreationHarness();
+    const article = Article.rehydrate({
+      ...activeArticle('article-history'),
+      isActive: false,
+    });
+    harness.addArticle(article);
+    const service = new ArticleService(harness);
+
+    await service.listMovements({ page: 2 });
+    expect(harness.lastMovementListCriteria).toEqual({ page: 2 });
+
+    await service.listArticleMovements(article.id, { page: 3 });
+    expect(harness.lastMovementListCriteria).toEqual({ articleId: article.id, page: 3 });
+  });
+
   it('edits initial stock and recalculates current stock without creating a movement', async () => {
     const harness = new ArticleCreationHarness();
     const article = Article.rehydrate({
@@ -401,6 +417,7 @@ class ArticleCreationHarness implements InventoryUnitOfWork {
   readonly savedArticles: Versioned<Article>[] = [];
   readonly savedMovements: Movement[] = [];
   lastArticleListCriteria: ArticleListCriteria | undefined;
+  lastMovementListCriteria: { articleId?: string; page: number } | undefined;
   private readonly categories = new Map<string, Versioned<Category>>();
   private readonly articles = new Map<string, Versioned<Article>>();
 
@@ -519,6 +536,7 @@ class ArticleCreationHarness implements InventoryUnitOfWork {
         },
         countByArticleId: async () => 0,
         list: async (criteria) => ({
+          ...(this.lastMovementListCriteria = criteria),
           items: [],
           page: criteria.page,
           pageSize: 25 as const,
