@@ -45,7 +45,10 @@ class InventoryErrorBoundary extends Component<{ children: ReactNode }, { failed
   static getDerivedStateFromError(): { failed: boolean } {
     return { failed: true };
   }
-  componentDidCatch(_error: Error, _info: ErrorInfo) {}
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    void error;
+    void info;
+  }
   render(): ReactNode {
     return this.state.failed ? (
       <main className="startup-panel" role="alert">

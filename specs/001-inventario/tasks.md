@@ -112,7 +112,7 @@
       Hecho cuando: alta, edicion, movimientos, categorias, filtros y alertas funcionan en ambos temas.
 - [x] T56. Verificar y corregir todos los flujos a 1440 px. (RF de UI)
       Hecho cuando: los mismos flujos cumplen `DESIGN.md` en ambos temas.
-- [ ] T57. Verificar sincronizacion entre contratos compartidos, DTOs y Swagger. (RF-1 a RF-110)
+- [x] T57. Verificar sincronizacion entre contratos compartidos, DTOs y Swagger. (RF-1 a RF-110)
       Hecho cuando: OpenAPI representa entradas, respuestas y errores implementados.
 - [ ] T58. Ejecutar verificacion completa desde la raiz. (RF-1 a RF-110)
       Hecho cuando: `npm run test`, `npm run lint`, `npm run format:check` y `npm run build` terminan sin errores y se documenta la validacion manual.
