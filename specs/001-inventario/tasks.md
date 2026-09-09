@@ -48,7 +48,7 @@
       Hecho cuando: el stock se recalcula y el historial visible permanece inmutable.
 - [x] T24. Implementar desactivacion, reactivacion y eliminacion de articulos. (RF-11 a RF-16, RF-72, RF-73)
       Hecho cuando: las transiciones permitidas y bloqueadas pasan pruebas.
-- [ ] T25. Implementar registro de entradas con pruebas. (RF-17 a RF-19, RF-40, RF-59, RF-79, RF-87, RF-90, RF-96, RF-98, RF-99)
+- [x] T25. Implementar registro de entradas con pruebas. (RF-17 a RF-19, RF-40, RF-59, RF-79, RF-87, RF-90, RF-96, RF-98, RF-99)
       Hecho cuando: una entrada valida crea movimiento y actualiza stock atomicamente.
 - [ ] T26. Implementar salidas y confirmacion de stock negativo. (RF-20 a RF-26, RF-40, RF-59, RF-79, RF-88, RF-90, RF-96, RF-98, RF-99, RF-101)
       Hecho cuando: advertencia, confirmacion, rechazo y limites pasan pruebas.
