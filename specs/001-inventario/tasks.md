@@ -100,7 +100,7 @@
       Hecho cuando: listado y operaciones muestran estados y errores correctos.
 - [x] T50. Implementar cliente y hooks de movimientos. (RF-17 a RF-41, RF-57 a RF-59, RF-64, RF-67, RF-68, RF-91, RF-110)
       Hecho cuando: preview, confirmacion, reconfirmacion y conflicto se prueban sin componentes.
-- [ ] T51. Implementar formulario de movimientos. (RF-17 a RF-35, RF-57 a RF-59, RF-79, RF-86 a RF-101)
+- [x] T51. Implementar formulario de movimientos. (RF-17 a RF-35, RF-57 a RF-59, RF-79, RF-86 a RF-101)
       Hecho cuando: entradas, salidas y ajustes muestran impacto y validaciones correctas.
 - [ ] T52. Implementar listado global de movimientos. (RF-36 a RF-41, RF-64)
       Hecho cuando: historial paginado, ordenado e inmutable pasa pruebas UI.
