@@ -219,6 +219,30 @@ describe('ArticleService', () => {
 
     await expect(service.findById(article.id)).resolves.toBeNull();
   });
+
+  it('records an entry and updates stock atomically', async () => {
+    const harness = new ArticleCreationHarness();
+    const article = activeArticle('article-entry');
+    harness.addArticle(article);
+    const service = new ArticleService(harness);
+
+    const updated = await service.registerEntry({
+      articleId: article.id,
+      quantity: 4,
+      reason: '  Reposicion  ',
+      expectedVersion: 0,
+    });
+
+    expect(updated.entity.currentStock).toBe(4);
+    expect(harness.savedMovements).toHaveLength(1);
+    expect(harness.savedMovements[0]).toMatchObject({
+      articleId: article.id,
+      stockBefore: 0,
+      stockAfter: 4,
+      appliedQuantity: 4,
+      reason: 'Reposicion',
+    });
+  });
 });
 
 function activeArticle(id: string): Article {

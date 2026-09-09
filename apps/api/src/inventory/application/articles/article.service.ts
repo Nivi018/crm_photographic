@@ -44,6 +44,13 @@ export interface ReactivateArticleCommand extends ArticleStateCommand {
   categoryId?: string;
 }
 
+export interface RegisterEntryCommand {
+  articleId: string;
+  quantity: number;
+  reason: string;
+  expectedVersion: number;
+}
+
 export class NegativeStockConfirmationRequiredError extends Error {
   constructor(readonly stockAfter: number) {
     super('editing initial stock would produce negative stock');
@@ -201,6 +208,36 @@ export class ArticleService {
       stored.entity.assertCanBeDeleted(movementCount);
 
       await repositories.articles.delete(command.id, command.expectedVersion);
+    });
+  }
+
+  async registerEntry(command: RegisterEntryCommand): Promise<Versioned<Article>> {
+    return this.unitOfWork.execute(async (repositories) => {
+      const stored = await this.findArticle(repositories, command.articleId);
+      const article = rehydrateArticle(stored.entity);
+      article.assertCanReceiveMovement();
+      const movement = Movement.recordEntry({
+        id: randomUUID(),
+        sequence: await repositories.movements.nextSequence(),
+        articleId: article.id,
+        stockBefore: article.currentStock,
+        quantity: command.quantity,
+        reason: command.reason,
+      });
+      const updatedArticle = Article.rehydrate({
+        id: article.id,
+        name: article.name,
+        type: article.type,
+        categoryId: article.categoryId,
+        initialStock: article.initialStock,
+        currentStock: movement.stockAfter,
+        minimumStock: article.minimumStock,
+        isActive: article.isActive,
+      });
+
+      await repositories.movements.append(movement);
+
+      return repositories.articles.save(updatedArticle, command.expectedVersion);
     });
   }
 
