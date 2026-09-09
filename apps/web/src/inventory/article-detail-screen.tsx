@@ -23,7 +23,22 @@ export function ArticleDetailScreen({
     article,
     error: articleError,
     isLoading: isArticleLoading,
+    reload,
   } = useArticleRecord(articleId, articleClient);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  async function updateState(action: () => Promise<unknown>) {
+    setActionError(null);
+    setIsSubmitting(true);
+    try {
+      await action();
+      await reload();
+    } catch {
+      setActionError('No se pudo completar la accion. Verifica el estado actual del articulo.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
   const [items, setItems] = useState<MovementRecord[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -55,7 +70,35 @@ export function ArticleDetailScreen({
         <p>
           Stock actual: <strong>{article.entity.currentStock}</strong>
         </p>
+        <div className="article-actions">
+          <button
+            disabled={isSubmitting}
+            onClick={() =>
+              void updateState(() =>
+                article.entity.isActive
+                  ? inventoryApi.deactivateArticle(articleId, article.version)
+                  : inventoryApi.reactivateArticle(articleId, article.version),
+              )
+            }
+            type="button"
+          >
+            {article.entity.isActive ? 'Desactivar articulo' : 'Reactivar articulo'}
+          </button>
+          <button
+            disabled={isSubmitting}
+            onClick={() => {
+              if (window.confirm('Eliminar este articulo de forma permanente?'))
+                void updateState(() => inventoryApi.deleteArticle(articleId, article.version));
+            }}
+            type="button"
+          >
+            Eliminar articulo
+          </button>
+        </div>
       </header>
+      {actionError ? (
+        <DataState title="No se pudo completar la accion">{actionError}</DataState>
+      ) : null}
       {isLoading ? (
         <DataState title="Cargando historial">Consultando movimientos...</DataState>
       ) : null}
