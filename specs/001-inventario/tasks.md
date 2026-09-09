@@ -80,7 +80,7 @@
       Hecho cuando: tema claro inicial, persistencia, fallback por pestana y mensaje de fallo pasan pruebas.
 - [x] T40. Implementar tokens visuales y shell responsive. (RF-92)
       Hecho cuando: navegacion aprobada y superficies claro/oscuro funcionan sin modulos fuera de alcance.
-- [ ] T41. Implementar componentes reutilizables de formularios, tablas, estados y paginacion. (RF-40, RF-62 a RF-65)
+- [x] T41. Implementar componentes reutilizables de formularios, tablas, estados y paginacion. (RF-40, RF-62 a RF-65)
       Hecho cuando: componentes tienen pruebas de interaccion y accesibilidad basica.
 - [ ] T42. Implementar modelo de pantalla del listado de articulos. (RF-42 a RF-46, RF-62, RF-66, RF-106)
       Hecho cuando: hooks controlan consulta, filtros y reinicio de pagina.

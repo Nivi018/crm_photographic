@@ -47,6 +47,45 @@ select {
   font: inherit;
 }
 
+.field {
+  display: grid;
+  gap: 0.4rem;
+  font-weight: 650;
+}
+.field small {
+  color: #e94b5f;
+}
+.data-state {
+  padding: 2rem;
+  text-align: center;
+}
+.data-table {
+  overflow-x: auto;
+}
+.data-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.data-table th,
+.data-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.pagination button {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--content);
+}
+
 ::selection {
   color: #071a2d;
   background: #ffc955;
