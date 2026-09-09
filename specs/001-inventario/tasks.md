@@ -102,7 +102,7 @@
       Hecho cuando: preview, confirmacion, reconfirmacion y conflicto se prueban sin componentes.
 - [x] T51. Implementar formulario de movimientos. (RF-17 a RF-35, RF-57 a RF-59, RF-79, RF-86 a RF-101)
       Hecho cuando: entradas, salidas y ajustes muestran impacto y validaciones correctas.
-- [ ] T52. Implementar listado global de movimientos. (RF-36 a RF-41, RF-64)
+- [x] T52. Implementar listado global de movimientos. (RF-36 a RF-41, RF-64)
       Hecho cuando: historial paginado, ordenado e inmutable pasa pruebas UI.
 - [ ] T53. Implementar vista de alertas de stock bajo. (RF-46, RF-65)
       Hecho cuando: solo muestra articulos activos en condicion de alerta.
