@@ -96,7 +96,7 @@
       Hecho cuando: confirmaciones, bloqueos y reasignacion durante reactivacion pasan pruebas UI.
 - [x] T48. Implementar cliente y hooks de categorias. (RF-47 a RF-52, RF-61, RF-63, RF-71, RF-74, RF-75)
       Hecho cuando: consultas y mutaciones se prueban independientemente de la UI.
-- [ ] T49. Implementar UI de gestion de categorias. (RF-47 a RF-52, RF-61, RF-63, RF-71, RF-74, RF-75, RF-78, RF-85)
+- [x] T49. Implementar UI de gestion de categorias. (RF-47 a RF-52, RF-61, RF-63, RF-71, RF-74, RF-75, RF-78, RF-85)
       Hecho cuando: listado y operaciones muestran estados y errores correctos.
 - [ ] T50. Implementar cliente y hooks de movimientos. (RF-17 a RF-41, RF-57 a RF-59, RF-64, RF-67, RF-68, RF-91, RF-110)
       Hecho cuando: preview, confirmacion, reconfirmacion y conflicto se prueban sin componentes.
