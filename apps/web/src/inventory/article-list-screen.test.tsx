@@ -11,6 +11,7 @@ const response: PaginatedResponse<ArticleRecord> = {
         categoryId: 'cat-1',
         currentStock: 2,
         id: 'article-1',
+        initialStock: 2,
         isActive: true,
         minimumStock: 2,
         name: 'Papel fotografico',

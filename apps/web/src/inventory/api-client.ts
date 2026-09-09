@@ -18,12 +18,34 @@ export interface ArticleRecord {
     categoryId: string;
     currentStock: number;
     id: string;
+    initialStock: number;
     isActive: boolean;
     minimumStock: number;
     name: string;
     type: string;
   };
   version: number;
+}
+
+export interface ArticleInput {
+  categoryId: string;
+  initialStock: number;
+  minimumStock: number;
+  name: string;
+  type: ArticleType;
+}
+
+export interface UpdateArticleInput extends ArticleInput {
+  expectedVersion: number;
+}
+
+export class InventoryApiError extends Error {
+  constructor(
+    message: string,
+    readonly code?: string,
+  ) {
+    super(message);
+  }
 }
 
 export interface MovementRecord {
@@ -56,6 +78,14 @@ export class InventoryApiClient {
     return this.get(`/articles?${parameters}`);
   }
 
+  createArticle(input: ArticleInput): Promise<ArticleRecord> {
+    return this.post('/articles', input);
+  }
+
+  updateArticle(id: string, input: UpdateArticleInput): Promise<ArticleRecord> {
+    return this.send(`/articles/${id}`, { body: JSON.stringify(input), method: 'PATCH' });
+  }
+
   listCategories(): Promise<PaginatedResponse<CategoryRecord>> {
     return this.get('/categories?page=1');
   }
@@ -65,10 +95,30 @@ export class InventoryApiClient {
   }
 
   private async get<T>(path: string): Promise<T> {
-    const response = await this.fetcher(`${this.baseUrl}${path}`);
+    return this.send(path);
+  }
+
+  private post<T>(path: string, body: unknown): Promise<T> {
+    return this.send(path, { body: JSON.stringify(body), method: 'POST' });
+  }
+
+  private async send<T>(path: string, init?: RequestInit): Promise<T> {
+    const response = await this.fetcher(`${this.baseUrl}${path}`, {
+      ...init,
+      headers: { 'Content-Type': 'application/json', ...init?.headers },
+    });
 
     if (!response.ok) {
-      throw new Error(`Inventory request failed with status ${response.status}`);
+      const body = (await response.json().catch(() => null)) as {
+        code?: unknown;
+        message?: unknown;
+      } | null;
+      throw new InventoryApiError(
+        typeof body?.message === 'string'
+          ? body.message
+          : `Inventory request failed with status ${response.status}`,
+        typeof body?.code === 'string' ? body.code : undefined,
+      );
     }
 
     return response.json() as Promise<T>;
