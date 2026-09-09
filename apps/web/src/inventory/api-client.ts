@@ -1,4 +1,12 @@
-import { type PaginatedResponse } from '@crm-photografy/shared';
+import { ArticleType, type PaginatedResponse } from '@crm-photografy/shared';
+
+export interface ArticleListQuery {
+  categoryId?: string;
+  isActive?: boolean;
+  name?: string;
+  page?: number;
+  type?: ArticleType;
+}
 
 export interface CategoryRecord {
   entity: { id: string; isActive: boolean; name: string };
@@ -37,8 +45,15 @@ export class InventoryApiClient {
     private readonly baseUrl = '/api/inventory',
   ) {}
 
-  listArticles(): Promise<PaginatedResponse<ArticleRecord>> {
-    return this.get('/articles?page=1');
+  listArticles(query: ArticleListQuery = {}): Promise<PaginatedResponse<ArticleRecord>> {
+    const parameters = new URLSearchParams({ page: String(query.page ?? 1) });
+
+    if (query.name) parameters.set('name', query.name);
+    if (query.type) parameters.set('type', query.type);
+    if (query.categoryId) parameters.set('categoryId', query.categoryId);
+    if (query.isActive !== undefined) parameters.set('isActive', String(query.isActive));
+
+    return this.get(`/articles?${parameters}`);
   }
 
   listCategories(): Promise<PaginatedResponse<CategoryRecord>> {
