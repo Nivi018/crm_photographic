@@ -35,6 +35,15 @@ export interface EditArticleCommand {
   confirmNegativeStock?: boolean;
 }
 
+export interface ArticleStateCommand {
+  id: string;
+  expectedVersion: number;
+}
+
+export interface ReactivateArticleCommand extends ArticleStateCommand {
+  categoryId?: string;
+}
+
 export class NegativeStockConfirmationRequiredError extends Error {
   constructor(readonly stockAfter: number) {
     super('editing initial stock would produce negative stock');
@@ -53,6 +62,13 @@ export class ArticleCategoryNotFoundError extends Error {
   constructor() {
     super('article category was not found');
     this.name = 'ArticleCategoryNotFoundError';
+  }
+}
+
+export class ArticleNotFoundError extends Error {
+  constructor() {
+    super('article was not found');
+    this.name = 'ArticleNotFoundError';
   }
 }
 
@@ -118,7 +134,7 @@ export class ArticleService {
       const stored = await repositories.articles.findById(command.id);
 
       if (!stored) {
-        throw new ArticleCategoryNotFoundError();
+        throw new ArticleNotFoundError();
       }
 
       const category = await this.findCategory(repositories, command.categoryId);
@@ -154,6 +170,40 @@ export class ArticleService {
     });
   }
 
+  async deactivate(command: ArticleStateCommand): Promise<Versioned<Article>> {
+    return this.unitOfWork.execute(async (repositories) => {
+      const stored = await this.findArticle(repositories, command.id);
+      const article = rehydrateArticle(stored.entity);
+      article.deactivate();
+
+      return repositories.articles.save(article, command.expectedVersion);
+    });
+  }
+
+  async reactivate(command: ReactivateArticleCommand): Promise<Versioned<Article>> {
+    return this.unitOfWork.execute(async (repositories) => {
+      const stored = await this.findArticle(repositories, command.id);
+      const article = rehydrateArticle(stored.entity);
+      const category = await this.findCategory(
+        repositories,
+        command.categoryId ?? article.categoryId,
+      );
+      article.reactivate({ id: category.entity.id, isActive: category.entity.isActive });
+
+      return repositories.articles.save(article, command.expectedVersion);
+    });
+  }
+
+  async delete(command: ArticleStateCommand): Promise<void> {
+    return this.unitOfWork.execute(async (repositories) => {
+      const stored = await this.findArticle(repositories, command.id);
+      const movementCount = await repositories.movements.countByArticleId(command.id);
+      stored.entity.assertCanBeDeleted(movementCount);
+
+      await repositories.articles.delete(command.id, command.expectedVersion);
+    });
+  }
+
   private async findCategory(
     repositories: InventoryRepositories,
     categoryId: string,
@@ -171,6 +221,19 @@ export class ArticleService {
     }
 
     throw new ArticleCategoryNotFoundError();
+  }
+
+  private async findArticle(
+    repositories: InventoryRepositories,
+    id: string,
+  ): Promise<Versioned<Article>> {
+    const stored = await repositories.articles.findById(id);
+
+    if (!stored) {
+      throw new ArticleNotFoundError();
+    }
+
+    return stored;
   }
 
   private async assertNameIsAvailable(
@@ -203,4 +266,17 @@ export class ArticleService {
 
     return movements;
   }
+}
+
+function rehydrateArticle(article: Article): Article {
+  return Article.rehydrate({
+    id: article.id,
+    name: article.name,
+    type: article.type,
+    categoryId: article.categoryId,
+    initialStock: article.initialStock,
+    currentStock: article.currentStock,
+    minimumStock: article.minimumStock,
+    isActive: article.isActive,
+  });
 }

@@ -44,9 +44,9 @@
       Hecho cuando: articulo y entrada inicial se guardan juntos o no se guarda ninguno.
 - [x] T22. Implementar consulta, busqueda, filtros y paginacion de articulos. (RF-8, RF-42 a RF-45, RF-62, RF-66, RF-106)
       Hecho cuando: pruebas de 25, 26 y ultima pagina incompleta pasan.
-- [ ] T23. Implementar edicion y recalculo del stock inicial con pruebas. (RF-9, RF-53 a RF-55, RF-80, RF-81, RF-100, RF-109)
+- [x] T23. Implementar edicion y recalculo del stock inicial con pruebas. (RF-9, RF-53 a RF-55, RF-80, RF-81, RF-100, RF-109)
       Hecho cuando: el stock se recalcula y el historial visible permanece inmutable.
-- [ ] T24. Implementar desactivacion, reactivacion y eliminacion de articulos. (RF-11 a RF-16, RF-72, RF-73)
+- [x] T24. Implementar desactivacion, reactivacion y eliminacion de articulos. (RF-11 a RF-16, RF-72, RF-73)
       Hecho cuando: las transiciones permitidas y bloqueadas pasan pruebas.
 - [ ] T25. Implementar registro de entradas con pruebas. (RF-17 a RF-19, RF-40, RF-59, RF-79, RF-87, RF-90, RF-96, RF-98, RF-99)
       Hecho cuando: una entrada valida crea movimiento y actualiza stock atomicamente.

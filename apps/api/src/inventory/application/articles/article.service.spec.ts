@@ -189,7 +189,50 @@ describe('ArticleService', () => {
     expect(updated.entity).toMatchObject({ initialStock: 8, currentStock: 8 });
     expect(harness.savedMovements).toHaveLength(0);
   });
+
+  it('deactivates and reactivates an article with its active category', async () => {
+    const harness = new ArticleCreationHarness();
+    const article = activeArticle('article-state');
+    harness.addArticle(article);
+    harness.addCategory(Category.create({ id: 'category-1', name: 'Fondos' }));
+    const service = new ArticleService(harness);
+
+    await expect(service.deactivate({ id: article.id, expectedVersion: 0 })).resolves.toMatchObject(
+      {
+        entity: { isActive: false },
+      },
+    );
+    await expect(service.reactivate({ id: article.id, expectedVersion: 0 })).resolves.toMatchObject(
+      {
+        entity: { isActive: true, categoryId: 'category-1' },
+      },
+    );
+  });
+
+  it('deletes an article only when it has zero stock and no movements', async () => {
+    const harness = new ArticleCreationHarness();
+    const article = activeArticle('article-delete');
+    harness.addArticle(article);
+    const service = new ArticleService(harness);
+
+    await service.delete({ id: article.id, expectedVersion: 0 });
+
+    await expect(service.findById(article.id)).resolves.toBeNull();
+  });
 });
+
+function activeArticle(id: string): Article {
+  return Article.rehydrate({
+    id,
+    name: 'Articulo activo',
+    type: ArticleType.Sale,
+    categoryId: 'category-1',
+    initialStock: 0,
+    currentStock: 0,
+    minimumStock: 0,
+    isActive: true,
+  });
+}
 
 class ArticleCreationHarness implements InventoryUnitOfWork {
   readonly savedArticles: Versioned<Article>[] = [];
