@@ -9,6 +9,8 @@ describe('App', () => {
     render(<App />);
 
     expect(screen.getByRole('heading', { name: 'Inventario' })).toBeInTheDocument();
-    expect(screen.getByText('Modulo de inventario')).toBeInTheDocument();
+    expect(
+      screen.getByText('Consulta existencias y localiza articulos del estudio.'),
+    ).toBeInTheDocument();
   });
 });
