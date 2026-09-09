@@ -178,6 +178,15 @@ describe('ArticleService', () => {
     expect(harness.lastMovementListCriteria).toEqual({ articleId: article.id, page: 3 });
   });
 
+  it('lists low-stock articles through the active-only repository query', async () => {
+    const harness = new ArticleCreationHarness();
+    const service = new ArticleService(harness);
+
+    await service.listLowStock({ page: 2 });
+
+    expect(harness.lastLowStockCriteria).toEqual({ page: 2 });
+  });
+
   it('edits initial stock and recalculates current stock without creating a movement', async () => {
     const harness = new ArticleCreationHarness();
     const article = Article.rehydrate({
@@ -418,6 +427,7 @@ class ArticleCreationHarness implements InventoryUnitOfWork {
   readonly savedMovements: Movement[] = [];
   lastArticleListCriteria: ArticleListCriteria | undefined;
   lastMovementListCriteria: { articleId?: string; page: number } | undefined;
+  lastLowStockCriteria: { page: number } | undefined;
   private readonly categories = new Map<string, Versioned<Category>>();
   private readonly articles = new Map<string, Versioned<Article>>();
 
@@ -517,13 +527,17 @@ class ArticleCreationHarness implements InventoryUnitOfWork {
             totalPages: 0,
           };
         },
-        listLowStock: async (criteria) => ({
-          items: [],
-          page: criteria.page,
-          pageSize: 25 as const,
-          totalItems: 0,
-          totalPages: 0,
-        }),
+        listLowStock: async (criteria) => {
+          this.lastLowStockCriteria = criteria;
+
+          return {
+            items: [],
+            page: criteria.page,
+            pageSize: 25 as const,
+            totalItems: 0,
+            totalPages: 0,
+          };
+        },
       },
       movements: {
         nextSequence: async () => 1n,

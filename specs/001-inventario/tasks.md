@@ -58,7 +58,7 @@
       Hecho cuando: pruebas controladas demuestran exito, reconfirmacion y cancelacion en segundo conflicto.
 - [x] T29. Implementar historial global y por articulo. (RF-12, RF-36 a RF-41, RF-64)
       Hecho cuando: ambos listados son inmutables, paginados y deterministas.
-- [ ] T30. Implementar listado de stock bajo. (RF-46, RF-65)
+- [x] T30. Implementar listado de stock bajo. (RF-46, RF-65)
       Hecho cuando: incluye solo articulos activos con stock igual o inferior al minimo.
 - [ ] T31. Exponer y documentar endpoints de categorias. (RF-47 a RF-52, RF-61, RF-63, RF-71, RF-74, RF-75, RF-78, RF-85)
       Hecho cuando: DTOs, validaciones, errores y Swagger pasan pruebas.
