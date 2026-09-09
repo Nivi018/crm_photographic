@@ -100,6 +100,13 @@ export class NoActiveCategoriesError extends Error {
   }
 }
 
+export class ConcurrentModificationError extends Error {
+  constructor() {
+    super('article changed again while retrying the operation');
+    this.name = 'ConcurrentModificationError';
+  }
+}
+
 export class ArticleService {
   constructor(private readonly unitOfWork: InventoryUnitOfWork) {}
 
@@ -151,186 +158,214 @@ export class ArticleService {
   }
 
   async edit(command: EditArticleCommand): Promise<Versioned<Article>> {
-    return this.unitOfWork.execute(async (repositories) => {
-      const stored = await repositories.articles.findById(command.id);
+    return this.withSingleRetry(command.id, command.expectedVersion, async (expectedVersion) =>
+      this.unitOfWork.execute(async (repositories) => {
+        const stored = await repositories.articles.findById(command.id);
 
-      if (!stored) {
-        throw new ArticleNotFoundError();
-      }
+        if (!stored) {
+          throw new ArticleNotFoundError();
+        }
 
-      const category = await this.findCategory(repositories, command.categoryId);
-      const article = Article.rehydrate({
-        id: stored.entity.id,
-        name: stored.entity.name,
-        type: stored.entity.type,
-        categoryId: stored.entity.categoryId,
-        initialStock: stored.entity.initialStock,
-        currentStock: stored.entity.currentStock,
-        minimumStock: stored.entity.minimumStock,
-        isActive: stored.entity.isActive,
-      });
-      article.edit({
-        name: command.name,
-        type: command.type,
-        category: { id: category.entity.id, isActive: category.entity.isActive },
-        initialStock: command.initialStock,
-        minimumStock: command.minimumStock,
-      });
-      await this.assertNameIsAvailable(repositories, article, article.id);
-      const movements = await this.listArticleMovements(repositories, article.id);
-      const currentStock = replayCurrentStock(article.initialStock, movements);
+        const category = await this.findCategory(repositories, command.categoryId);
+        const article = Article.rehydrate({
+          id: stored.entity.id,
+          name: stored.entity.name,
+          type: stored.entity.type,
+          categoryId: stored.entity.categoryId,
+          initialStock: stored.entity.initialStock,
+          currentStock: stored.entity.currentStock,
+          minimumStock: stored.entity.minimumStock,
+          isActive: stored.entity.isActive,
+        });
+        article.edit({
+          name: command.name,
+          type: command.type,
+          category: { id: category.entity.id, isActive: category.entity.isActive },
+          initialStock: command.initialStock,
+          minimumStock: command.minimumStock,
+        });
+        await this.assertNameIsAvailable(repositories, article, article.id);
+        const movements = await this.listArticleMovements(repositories, article.id);
+        const currentStock = replayCurrentStock(article.initialStock, movements);
 
-      if (currentStock < 0 && !command.confirmNegativeStock) {
-        throw new NegativeStockConfirmationRequiredError(currentStock);
-      }
+        if (currentStock < 0 && !command.confirmNegativeStock) {
+          throw new NegativeStockConfirmationRequiredError(currentStock);
+        }
 
-      return repositories.articles.save(
-        Article.rehydrate({ ...article, currentStock }),
-        command.expectedVersion,
-      );
-    });
+        return repositories.articles.save(
+          Article.rehydrate({ ...article, currentStock }),
+          expectedVersion,
+        );
+      }),
+    );
   }
 
   async deactivate(command: ArticleStateCommand): Promise<Versioned<Article>> {
-    return this.unitOfWork.execute(async (repositories) => {
-      const stored = await this.findArticle(repositories, command.id);
-      const article = rehydrateArticle(stored.entity);
-      article.deactivate();
+    return this.withSingleRetry(command.id, command.expectedVersion, async (expectedVersion) =>
+      this.unitOfWork.execute(async (repositories) => {
+        const stored = await this.findArticle(repositories, command.id);
+        const article = rehydrateArticle(stored.entity);
+        article.deactivate();
 
-      return repositories.articles.save(article, command.expectedVersion);
-    });
+        return repositories.articles.save(article, expectedVersion);
+      }),
+    );
   }
 
   async reactivate(command: ReactivateArticleCommand): Promise<Versioned<Article>> {
-    return this.unitOfWork.execute(async (repositories) => {
-      const stored = await this.findArticle(repositories, command.id);
-      const article = rehydrateArticle(stored.entity);
-      const category = await this.findCategory(
-        repositories,
-        command.categoryId ?? article.categoryId,
-      );
-      article.reactivate({ id: category.entity.id, isActive: category.entity.isActive });
+    return this.withSingleRetry(command.id, command.expectedVersion, async (expectedVersion) =>
+      this.unitOfWork.execute(async (repositories) => {
+        const stored = await this.findArticle(repositories, command.id);
+        const article = rehydrateArticle(stored.entity);
+        const category = await this.findCategory(
+          repositories,
+          command.categoryId ?? article.categoryId,
+        );
+        article.reactivate({ id: category.entity.id, isActive: category.entity.isActive });
 
-      return repositories.articles.save(article, command.expectedVersion);
-    });
+        return repositories.articles.save(article, expectedVersion);
+      }),
+    );
   }
 
   async delete(command: ArticleStateCommand): Promise<void> {
-    return this.unitOfWork.execute(async (repositories) => {
-      const stored = await this.findArticle(repositories, command.id);
-      const movementCount = await repositories.movements.countByArticleId(command.id);
-      stored.entity.assertCanBeDeleted(movementCount);
+    return this.withSingleRetry(command.id, command.expectedVersion, async (expectedVersion) =>
+      this.unitOfWork.execute(async (repositories) => {
+        const stored = await this.findArticle(repositories, command.id);
+        const movementCount = await repositories.movements.countByArticleId(command.id);
+        stored.entity.assertCanBeDeleted(movementCount);
 
-      await repositories.articles.delete(command.id, command.expectedVersion);
-    });
+        await repositories.articles.delete(command.id, expectedVersion);
+      }),
+    );
   }
 
   async registerEntry(command: RegisterEntryCommand): Promise<Versioned<Article>> {
-    return this.unitOfWork.execute(async (repositories) => {
-      const stored = await this.findArticle(repositories, command.articleId);
-      const article = rehydrateArticle(stored.entity);
-      article.assertCanReceiveMovement();
-      const movement = Movement.recordEntry({
-        id: randomUUID(),
-        sequence: await repositories.movements.nextSequence(),
-        articleId: article.id,
-        stockBefore: article.currentStock,
-        quantity: command.quantity,
-        reason: command.reason,
-      });
-      const updatedArticle = Article.rehydrate({
-        id: article.id,
-        name: article.name,
-        type: article.type,
-        categoryId: article.categoryId,
-        initialStock: article.initialStock,
-        currentStock: movement.stockAfter,
-        minimumStock: article.minimumStock,
-        isActive: article.isActive,
-      });
+    return this.withSingleRetry(
+      command.articleId,
+      command.expectedVersion,
+      async (expectedVersion) =>
+        this.unitOfWork.execute(async (repositories) => {
+          const stored = await this.findArticle(repositories, command.articleId);
+          const article = rehydrateArticle(stored.entity);
+          article.assertCanReceiveMovement();
+          const movement = Movement.recordEntry({
+            id: randomUUID(),
+            sequence: await repositories.movements.nextSequence(),
+            articleId: article.id,
+            stockBefore: article.currentStock,
+            quantity: command.quantity,
+            reason: command.reason,
+          });
+          const updatedArticle = Article.rehydrate({
+            id: article.id,
+            name: article.name,
+            type: article.type,
+            categoryId: article.categoryId,
+            initialStock: article.initialStock,
+            currentStock: movement.stockAfter,
+            minimumStock: article.minimumStock,
+            isActive: article.isActive,
+          });
 
-      await repositories.movements.append(movement);
+          await repositories.movements.append(movement);
 
-      return repositories.articles.save(updatedArticle, command.expectedVersion);
-    });
+          return repositories.articles.save(updatedArticle, expectedVersion);
+        }),
+    );
   }
 
   async registerExit(command: RegisterExitCommand): Promise<Versioned<Article>> {
-    return this.unitOfWork.execute(async (repositories) => {
-      const stored = await this.findArticle(repositories, command.articleId);
-      const article = rehydrateArticle(stored.entity);
-      article.assertCanReceiveMovement();
-      const movement = Movement.recordExit({
-        id: randomUUID(),
-        sequence: await repositories.movements.nextSequence(),
-        articleId: article.id,
-        stockBefore: article.currentStock,
-        quantity: command.quantity,
-        reason: command.reason,
-      });
+    return this.withSingleRetry(
+      command.articleId,
+      command.expectedVersion,
+      async (expectedVersion) =>
+        this.unitOfWork.execute(async (repositories) => {
+          const stored = await this.findArticle(repositories, command.articleId);
+          const article = rehydrateArticle(stored.entity);
+          article.assertCanReceiveMovement();
+          const movement = Movement.recordExit({
+            id: randomUUID(),
+            sequence: await repositories.movements.nextSequence(),
+            articleId: article.id,
+            stockBefore: article.currentStock,
+            quantity: command.quantity,
+            reason: command.reason,
+          });
 
-      if (movement.stockAfter < 0 && !command.confirmNegativeStock) {
-        throw new NegativeStockConfirmationRequiredError(movement.stockAfter);
-      }
+          if (movement.stockAfter < 0 && !command.confirmNegativeStock) {
+            throw new NegativeStockConfirmationRequiredError(movement.stockAfter);
+          }
 
-      const updatedArticle = Article.rehydrate({
-        id: article.id,
-        name: article.name,
-        type: article.type,
-        categoryId: article.categoryId,
-        initialStock: article.initialStock,
-        currentStock: movement.stockAfter,
-        minimumStock: article.minimumStock,
-        isActive: article.isActive,
-      });
+          const updatedArticle = Article.rehydrate({
+            id: article.id,
+            name: article.name,
+            type: article.type,
+            categoryId: article.categoryId,
+            initialStock: article.initialStock,
+            currentStock: movement.stockAfter,
+            minimumStock: article.minimumStock,
+            isActive: article.isActive,
+          });
 
-      await repositories.movements.append(movement);
+          await repositories.movements.append(movement);
 
-      return repositories.articles.save(updatedArticle, command.expectedVersion);
-    });
+          return repositories.articles.save(updatedArticle, expectedVersion);
+        }),
+    );
   }
 
   async registerFinalStockAdjustment(
     command: RegisterFinalStockAdjustmentCommand,
   ): Promise<Versioned<Article>> {
-    return this.unitOfWork.execute(async (repositories) => {
-      const stored = await this.findArticle(repositories, command.articleId);
-      const article = rehydrateArticle(stored.entity);
-      article.assertCanReceiveMovement();
-      const movement = Movement.recordFinalStockAdjustment({
-        id: randomUUID(),
-        sequence: await repositories.movements.nextSequence(),
-        articleId: article.id,
-        stockBefore: article.currentStock,
-        finalStock: command.finalStock,
-      });
+    return this.withSingleRetry(
+      command.articleId,
+      command.expectedVersion,
+      async (expectedVersion) =>
+        this.unitOfWork.execute(async (repositories) => {
+          const stored = await this.findArticle(repositories, command.articleId);
+          const article = rehydrateArticle(stored.entity);
+          article.assertCanReceiveMovement();
+          const movement = Movement.recordFinalStockAdjustment({
+            id: randomUUID(),
+            sequence: await repositories.movements.nextSequence(),
+            articleId: article.id,
+            stockBefore: article.currentStock,
+            finalStock: command.finalStock,
+          });
 
-      return this.persistMovementAndStock(repositories, article, movement, command.expectedVersion);
-    });
+          return this.persistMovementAndStock(repositories, article, movement, expectedVersion);
+        }),
+    );
   }
 
   async registerDeltaAdjustment(
     command: RegisterDeltaAdjustmentCommand,
   ): Promise<Versioned<Article>> {
-    return this.unitOfWork.execute(async (repositories) => {
-      const stored = await this.findArticle(repositories, command.articleId);
-      const article = rehydrateArticle(stored.entity);
-      article.assertCanReceiveMovement();
-      const movement = Movement.recordDeltaAdjustment({
-        id: randomUUID(),
-        sequence: await repositories.movements.nextSequence(),
-        articleId: article.id,
-        stockBefore: article.currentStock,
-        quantity: command.quantity,
-        reason: command.reason,
-      });
+    return this.withSingleRetry(
+      command.articleId,
+      command.expectedVersion,
+      async (expectedVersion) =>
+        this.unitOfWork.execute(async (repositories) => {
+          const stored = await this.findArticle(repositories, command.articleId);
+          const article = rehydrateArticle(stored.entity);
+          article.assertCanReceiveMovement();
+          const movement = Movement.recordDeltaAdjustment({
+            id: randomUUID(),
+            sequence: await repositories.movements.nextSequence(),
+            articleId: article.id,
+            stockBefore: article.currentStock,
+            quantity: command.quantity,
+            reason: command.reason,
+          });
 
-      if (movement.stockAfter < 0 && !command.confirmNegativeStock) {
-        throw new NegativeStockConfirmationRequiredError(movement.stockAfter);
-      }
+          if (movement.stockAfter < 0 && !command.confirmNegativeStock) {
+            throw new NegativeStockConfirmationRequiredError(movement.stockAfter);
+          }
 
-      return this.persistMovementAndStock(repositories, article, movement, command.expectedVersion);
-    });
+          return this.persistMovementAndStock(repositories, article, movement, expectedVersion);
+        }),
+    );
   }
 
   private async findCategory(
@@ -350,6 +385,35 @@ export class ArticleService {
     }
 
     throw new ArticleCategoryNotFoundError();
+  }
+
+  private async withSingleRetry<T>(
+    articleId: string,
+    expectedVersion: number,
+    operation: (version: number) => Promise<T>,
+  ): Promise<T> {
+    try {
+      return await operation(expectedVersion);
+    } catch (error) {
+      if (!(error instanceof Error) || !error.name.endsWith('VersionConflictError')) {
+        throw error;
+      }
+
+      const current = await this.findById(articleId);
+      if (!current) {
+        throw new ArticleNotFoundError();
+      }
+
+      try {
+        return await operation(current.version);
+      } catch (retryError) {
+        if (retryError instanceof Error && retryError.name.endsWith('VersionConflictError')) {
+          throw new ConcurrentModificationError();
+        }
+
+        throw retryError;
+      }
+    }
   }
 
   private async findArticle(

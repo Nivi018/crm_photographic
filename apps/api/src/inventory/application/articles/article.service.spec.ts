@@ -13,6 +13,7 @@ import { Movement } from '../../domain/stock/movement';
 import {
   ArticleNameConflictError,
   ArticleService,
+  ConcurrentModificationError,
   NegativeStockConfirmationRequiredError,
   NoActiveCategoriesError,
 } from './article.service';
@@ -320,6 +321,63 @@ describe('ArticleService', () => {
     ).rejects.toBeInstanceOf(NegativeStockConfirmationRequiredError);
     expect(harness.savedMovements).toHaveLength(0);
   });
+
+  it('retries an entry once after an article version conflict', async () => {
+    const harness = new ArticleCreationHarness({ articleSaveConflicts: 1 });
+    const article = activeArticle('article-retry');
+    harness.addArticle(article);
+    const service = new ArticleService(harness);
+
+    const updated = await service.registerEntry({
+      articleId: article.id,
+      quantity: 1,
+      reason: 'Reposicion',
+      expectedVersion: 0,
+    });
+
+    expect(updated.entity.currentStock).toBe(1);
+    expect(harness.savedMovements).toHaveLength(1);
+  });
+
+  it('cancels an entry after a second article version conflict', async () => {
+    const harness = new ArticleCreationHarness({ articleSaveConflicts: 2 });
+    const article = activeArticle('article-second-conflict');
+    harness.addArticle(article);
+    const service = new ArticleService(harness);
+
+    await expect(
+      service.registerEntry({
+        articleId: article.id,
+        quantity: 1,
+        reason: 'Reposicion',
+        expectedVersion: 0,
+      }),
+    ).rejects.toBeInstanceOf(ConcurrentModificationError);
+    expect(harness.savedMovements).toHaveLength(0);
+  });
+
+  it('requires reconfirmation when a retried exit becomes negative', async () => {
+    const article = articleWithStock('article-reconfirmation', 1);
+    const harness = new ArticleCreationHarness({
+      articleSaveConflicts: 1,
+      articleAfterConflict: articleWithStock(article.id, 0),
+    });
+    harness.addArticle(article);
+    const service = new ArticleService(harness);
+
+    await expect(
+      service.registerExit({
+        articleId: article.id,
+        quantity: 1,
+        reason: 'Uso interno',
+        expectedVersion: 0,
+      }),
+    ).rejects.toMatchObject({
+      name: NegativeStockConfirmationRequiredError.name,
+      stockAfter: -1,
+    });
+    expect(harness.savedMovements).toHaveLength(0);
+  });
 });
 
 function activeArticle(id: string): Article {
@@ -346,7 +404,17 @@ class ArticleCreationHarness implements InventoryUnitOfWork {
   private readonly categories = new Map<string, Versioned<Category>>();
   private readonly articles = new Map<string, Versioned<Article>>();
 
-  constructor(private readonly options: { failOnMovementAppend?: boolean } = {}) {}
+  private remainingArticleSaveConflicts: number;
+
+  constructor(
+    private readonly options: {
+      failOnMovementAppend?: boolean;
+      articleSaveConflicts?: number;
+      articleAfterConflict?: Article;
+    } = {},
+  ) {
+    this.remainingArticleSaveConflicts = options.articleSaveConflicts ?? 0;
+  }
 
   addCategory(category: Category): void {
     this.categories.set(category.id, { entity: category, version: 0 });
@@ -398,6 +466,19 @@ class ArticleCreationHarness implements InventoryUnitOfWork {
         findByNormalizedName: async (name: string) =>
           [...this.articles.values()].find(({ entity }) => entity.normalizedName === name) ?? null,
         save: async (article: Article, expectedVersion?: number) => {
+          if (this.remainingArticleSaveConflicts > 0) {
+            this.remainingArticleSaveConflicts -= 1;
+            if (this.options.articleAfterConflict) {
+              this.articles.set(article.id, {
+                entity: this.options.articleAfterConflict,
+                version: expectedVersion === undefined ? 1 : expectedVersion + 1,
+              });
+            }
+            const error = new Error('article version conflict');
+            error.name = 'ArticleVersionConflictError';
+            throw error;
+          }
+
           const saved = {
             entity: article,
             version: expectedVersion === undefined ? 0 : expectedVersion + 1,
