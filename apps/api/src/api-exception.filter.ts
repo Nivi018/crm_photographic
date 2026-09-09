@@ -42,10 +42,20 @@ function domainErrorCode(error: unknown): InventoryErrorCode {
   const name = error instanceof Error ? error.name : '';
 
   if (name === 'CategoryNotFoundError') return InventoryErrorCode.NotFound;
+  if (name === 'ArticleNotFoundError') return InventoryErrorCode.NotFound;
   if (name === 'CategoryNameConflictError') return InventoryErrorCode.NameConflict;
+  if (name === 'ArticleNameConflictError') return InventoryErrorCode.NameConflict;
   if (name === 'ActiveArticleAssociationError' || name === 'CategoryAssociationError') {
     return InventoryErrorCode.DependencyConflict;
   }
+  if (name === 'ArticleInactiveError') return InventoryErrorCode.ArticleInactive;
+  if (name === 'CategoryInactiveError') return InventoryErrorCode.CategoryInactive;
+  if (name === 'NegativeStockConfirmationRequiredError') {
+    return InventoryErrorCode.NegativeStockConfirmationRequired;
+  }
+  if (name === 'ConcurrentModificationError') return InventoryErrorCode.ConcurrentModification;
+  if (name === 'StockOutOfRangeError') return InventoryErrorCode.StockOutOfRange;
+  if (name === 'NoStockDifferenceError') return InventoryErrorCode.NoStockDifference;
 
   return InventoryErrorCode.Validation;
 }
