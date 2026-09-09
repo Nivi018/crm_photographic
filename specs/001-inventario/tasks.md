@@ -108,7 +108,7 @@
       Hecho cuando: solo muestra articulos activos en condicion de alerta.
 - [x] T54. Integrar estados vacios, carga y errores observables. (RF-76, RF-99, RF-103, RF-108, RF-110)
       Hecho cuando: inventario vacio, resultados vacios y errores recuperables tienen salida visible.
-- [ ] T55. Verificar y corregir todos los flujos a 390 px. (RF de UI)
+- [x] T55. Verificar y corregir todos los flujos a 390 px. (RF de UI)
       Hecho cuando: alta, edicion, movimientos, categorias, filtros y alertas funcionan en ambos temas.
 - [ ] T56. Verificar y corregir todos los flujos a 1440 px. (RF de UI)
       Hecho cuando: los mismos flujos cumplen `DESIGN.md` en ambos temas.
