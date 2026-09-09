@@ -106,7 +106,7 @@
       Hecho cuando: historial paginado, ordenado e inmutable pasa pruebas UI.
 - [x] T53. Implementar vista de alertas de stock bajo. (RF-46, RF-65)
       Hecho cuando: solo muestra articulos activos en condicion de alerta.
-- [ ] T54. Integrar estados vacios, carga y errores observables. (RF-76, RF-99, RF-103, RF-108, RF-110)
+- [x] T54. Integrar estados vacios, carga y errores observables. (RF-76, RF-99, RF-103, RF-108, RF-110)
       Hecho cuando: inventario vacio, resultados vacios y errores recuperables tienen salida visible.
 - [ ] T55. Verificar y corregir todos los flujos a 390 px. (RF de UI)
       Hecho cuando: alta, edicion, movimientos, categorias, filtros y alertas funcionan en ambos temas.

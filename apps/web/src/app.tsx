@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import { Component, type ErrorInfo, type ReactElement, type ReactNode } from 'react';
 import { InventoryRouter } from './router';
 import { useTheme } from './theme';
 
@@ -33,7 +33,28 @@ export function App(): ReactElement {
         </div>
       </header>
 
-      <InventoryRouter />
+      <InventoryErrorBoundary>
+        <InventoryRouter />
+      </InventoryErrorBoundary>
     </div>
   );
+}
+
+class InventoryErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError(): { failed: boolean } {
+    return { failed: true };
+  }
+  componentDidCatch(_error: Error, _info: ErrorInfo) {}
+  render(): ReactNode {
+    return this.state.failed ? (
+      <main className="startup-panel" role="alert">
+        <h1>No se pudo mostrar esta vista</h1>
+        <p>Recarga la pagina o vuelve al inventario para intentarlo nuevamente.</p>
+        <a href="/inventory">Volver al inventario</a>
+      </main>
+    ) : (
+      this.props.children
+    );
+  }
 }
