@@ -97,6 +97,9 @@ export class InventoryApiClient {
 
     return this.get(`/articles?${parameters}`);
   }
+  listLowStock(page = 1): Promise<PaginatedResponse<ArticleRecord>> {
+    return this.get(`/articles/low-stock?page=${page}`);
+  }
 
   createArticle(input: ArticleInput): Promise<ArticleRecord> {
     return this.post('/articles', input);
