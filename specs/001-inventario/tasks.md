@@ -68,7 +68,7 @@
       Hecho cuando: movimientos, confirmaciones, historial y alertas tienen contratos Swagger verificables.
 - [x] T34. Agregar pruebas E2E de categorias. (RF-47 a RF-52, RF-61, RF-63, RF-71, RF-74, RF-75)
       Hecho cuando: el flujo completo de categorias pasa contra PostgreSQL.
-- [ ] T35. Agregar pruebas E2E de articulos. (RF-1 a RF-16, RF-42 a RF-45, RF-53 a RF-56, RF-60, RF-62, RF-69, RF-72, RF-73)
+- [x] T35. Agregar pruebas E2E de articulos. (RF-1 a RF-16, RF-42 a RF-45, RF-53 a RF-56, RF-60, RF-62, RF-69, RF-72, RF-73)
       Hecho cuando: CRUD permitido, estados, filtros y recalculo pasan contra PostgreSQL.
 - [ ] T36. Agregar pruebas E2E de movimientos y limites. (RF-17 a RF-41, RF-57 a RF-59, RF-64, RF-65, RF-79 a RF-101, RF-109)
       Hecho cuando: entradas, salidas, ajustes e historial pasan contra PostgreSQL.

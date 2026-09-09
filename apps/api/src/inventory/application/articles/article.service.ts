@@ -127,13 +127,14 @@ export class ArticleService {
       });
       await this.assertNameIsAvailable(repositories, article);
 
-      const saved = await repositories.articles.save(article);
       const initialMovement = Movement.recordInitialStock({
         id: randomUUID(),
         sequence: await repositories.movements.nextSequence(),
         articleId: article.id,
         initialStock: article.initialStock,
       });
+
+      const saved = await repositories.articles.save(article);
 
       if (initialMovement) {
         await repositories.movements.append(initialMovement);
