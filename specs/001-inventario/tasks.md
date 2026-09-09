@@ -78,7 +78,7 @@
       Hecho cuando: rutas de inventario, categorias y movimientos usan el cliente compartido.
 - [x] T39. Escribir pruebas e implementar gestion de tema. (RF-92 a RF-94, RF-107, RF-108)
       Hecho cuando: tema claro inicial, persistencia, fallback por pestana y mensaje de fallo pasan pruebas.
-- [ ] T40. Implementar tokens visuales y shell responsive. (RF-92)
+- [x] T40. Implementar tokens visuales y shell responsive. (RF-92)
       Hecho cuando: navegacion aprobada y superficies claro/oscuro funcionan sin modulos fuera de alcance.
 - [ ] T41. Implementar componentes reutilizables de formularios, tablas, estados y paginacion. (RF-40, RF-62 a RF-65)
       Hecho cuando: componentes tienen pruebas de interaccion y accesibilidad basica.

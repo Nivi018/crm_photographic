@@ -15,6 +15,11 @@ export function App(): ReactElement {
           <span>TONY</span>
           <small>photography</small>
         </div>
+        <nav aria-label="Navegacion principal" className="app-nav">
+          <a href="/inventory">Inventario</a>
+          <a href="/inventory/categories">Categorias</a>
+          <a href="/inventory/movements">Movimientos</a>
+        </nav>
         <div className="theme-control">
           <button
             aria-label="Cambiar tema"
