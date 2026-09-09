@@ -107,7 +107,7 @@ export class PrismaArticleRepository implements ArticleRepository {
     where: Prisma.ArticleWhereInput,
   ): Promise<PaginatedResponse<Versioned<Article>>> {
     const page = Math.max(criteria.page, 1);
-    const [records, totalItems] = await this.prisma.$transaction([
+    const [records, totalItems] = await Promise.all([
       this.prisma.article.findMany({
         where,
         orderBy: { normalizedName: 'asc' },

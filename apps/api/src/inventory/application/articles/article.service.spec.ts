@@ -2,6 +2,7 @@ import { ArticleType, MovementSource } from '@crm-photografy/shared';
 import { describe, expect, it } from 'vitest';
 
 import {
+  type ArticleListCriteria,
   type InventoryRepositories,
   type InventoryUnitOfWork,
   type Versioned,
@@ -117,11 +118,53 @@ describe('ArticleService', () => {
 
     expect(harness.savedArticles).toHaveLength(0);
   });
+
+  it('retrieves an article by identifier, including inactive articles', async () => {
+    const harness = new ArticleCreationHarness();
+    const article = Article.rehydrate({
+      id: 'inactive-article',
+      name: 'Fondo archivado',
+      type: ArticleType.Sale,
+      categoryId: 'category-1',
+      initialStock: 0,
+      currentStock: 3,
+      minimumStock: 1,
+      isActive: false,
+    });
+    harness.addArticle(article);
+    const service = new ArticleService(harness);
+
+    await expect(service.findById(article.id)).resolves.toMatchObject({
+      entity: { id: article.id, currentStock: 3, isActive: false },
+    });
+  });
+
+  it('normalizes a partial name search and delegates combined filters with the requested page', async () => {
+    const harness = new ArticleCreationHarness();
+    const service = new ArticleService(harness);
+
+    await service.list({
+      page: 2,
+      name: '  Ca\u0301mara ',
+      type: ArticleType.Sale,
+      categoryId: 'category-1',
+      isActive: true,
+    });
+
+    expect(harness.lastArticleListCriteria).toEqual({
+      page: 2,
+      normalizedName: 'camara',
+      type: ArticleType.Sale,
+      categoryId: 'category-1',
+      isActive: true,
+    });
+  });
 });
 
 class ArticleCreationHarness implements InventoryUnitOfWork {
   readonly savedArticles: Versioned<Article>[] = [];
   readonly savedMovements: Movement[] = [];
+  lastArticleListCriteria: ArticleListCriteria | undefined;
   private readonly categories = new Map<string, Versioned<Category>>();
   private readonly articles = new Map<string, Versioned<Article>>();
 
@@ -187,13 +230,17 @@ class ArticleCreationHarness implements InventoryUnitOfWork {
         delete: async (id: string) => {
           this.articles.delete(id);
         },
-        list: async (criteria) => ({
-          items: [],
-          page: criteria.page,
-          pageSize: 25 as const,
-          totalItems: 0,
-          totalPages: 0,
-        }),
+        list: async (criteria) => {
+          this.lastArticleListCriteria = criteria;
+
+          return {
+            items: [],
+            page: criteria.page,
+            pageSize: 25 as const,
+            totalItems: 0,
+            totalPages: 0,
+          };
+        },
         listLowStock: async (criteria) => ({
           items: [],
           page: criteria.page,
