@@ -55,6 +55,16 @@ export interface RegisterExitCommand extends RegisterEntryCommand {
   confirmNegativeStock?: boolean;
 }
 
+export interface RegisterFinalStockAdjustmentCommand {
+  articleId: string;
+  finalStock: number;
+  expectedVersion: number;
+}
+
+export interface RegisterDeltaAdjustmentCommand extends RegisterEntryCommand {
+  confirmNegativeStock?: boolean;
+}
+
 export class NegativeStockConfirmationRequiredError extends Error {
   constructor(readonly stockAfter: number) {
     super('editing initial stock would produce negative stock');
@@ -280,6 +290,49 @@ export class ArticleService {
     });
   }
 
+  async registerFinalStockAdjustment(
+    command: RegisterFinalStockAdjustmentCommand,
+  ): Promise<Versioned<Article>> {
+    return this.unitOfWork.execute(async (repositories) => {
+      const stored = await this.findArticle(repositories, command.articleId);
+      const article = rehydrateArticle(stored.entity);
+      article.assertCanReceiveMovement();
+      const movement = Movement.recordFinalStockAdjustment({
+        id: randomUUID(),
+        sequence: await repositories.movements.nextSequence(),
+        articleId: article.id,
+        stockBefore: article.currentStock,
+        finalStock: command.finalStock,
+      });
+
+      return this.persistMovementAndStock(repositories, article, movement, command.expectedVersion);
+    });
+  }
+
+  async registerDeltaAdjustment(
+    command: RegisterDeltaAdjustmentCommand,
+  ): Promise<Versioned<Article>> {
+    return this.unitOfWork.execute(async (repositories) => {
+      const stored = await this.findArticle(repositories, command.articleId);
+      const article = rehydrateArticle(stored.entity);
+      article.assertCanReceiveMovement();
+      const movement = Movement.recordDeltaAdjustment({
+        id: randomUUID(),
+        sequence: await repositories.movements.nextSequence(),
+        articleId: article.id,
+        stockBefore: article.currentStock,
+        quantity: command.quantity,
+        reason: command.reason,
+      });
+
+      if (movement.stockAfter < 0 && !command.confirmNegativeStock) {
+        throw new NegativeStockConfirmationRequiredError(movement.stockAfter);
+      }
+
+      return this.persistMovementAndStock(repositories, article, movement, command.expectedVersion);
+    });
+  }
+
   private async findCategory(
     repositories: InventoryRepositories,
     categoryId: string,
@@ -310,6 +363,28 @@ export class ArticleService {
     }
 
     return stored;
+  }
+
+  private async persistMovementAndStock(
+    repositories: InventoryRepositories,
+    article: Article,
+    movement: Movement,
+    expectedVersion: number,
+  ): Promise<Versioned<Article>> {
+    const updatedArticle = Article.rehydrate({
+      id: article.id,
+      name: article.name,
+      type: article.type,
+      categoryId: article.categoryId,
+      initialStock: article.initialStock,
+      currentStock: movement.stockAfter,
+      minimumStock: article.minimumStock,
+      isActive: article.isActive,
+    });
+
+    await repositories.movements.append(movement);
+
+    return repositories.articles.save(updatedArticle, expectedVersion);
   }
 
   private async assertNameIsAvailable(

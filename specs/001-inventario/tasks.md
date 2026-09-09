@@ -52,7 +52,7 @@
       Hecho cuando: una entrada valida crea movimiento y actualiza stock atomicamente.
 - [x] T26. Implementar salidas y confirmacion de stock negativo. (RF-20 a RF-26, RF-40, RF-59, RF-79, RF-88, RF-90, RF-96, RF-98, RF-99, RF-101)
       Hecho cuando: advertencia, confirmacion, rechazo y limites pasan pruebas.
-- [ ] T27. Implementar ajustes por existencia final y diferencia. (RF-27 a RF-35, RF-39 a RF-41, RF-57, RF-58, RF-79, RF-86 a RF-90, RF-97 a RF-99)
+- [x] T27. Implementar ajustes por existencia final y diferencia. (RF-27 a RF-35, RF-39 a RF-41, RF-57, RF-58, RF-79, RF-86 a RF-90, RF-97 a RF-99)
       Hecho cuando: ambos modos producen cantidad, motivo y stock correctos.
 - [ ] T28. Implementar revalidacion y unico reintento concurrente. (RF-67, RF-68, RF-91, RF-102 a RF-105, RF-110)
       Hecho cuando: pruebas controladas demuestran exito, reconfirmacion y cancelacion en segundo conflicto.

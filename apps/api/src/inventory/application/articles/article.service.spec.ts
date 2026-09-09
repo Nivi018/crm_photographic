@@ -282,6 +282,44 @@ describe('ArticleService', () => {
     expect(updated.entity.currentStock).toBe(-1);
     expect(harness.savedMovements[0]).toMatchObject({ appliedQuantity: -3, stockAfter: -1 });
   });
+
+  it('records a final-stock adjustment with the automatic reason and applied difference', async () => {
+    const harness = new ArticleCreationHarness();
+    const article = articleWithStock('article-final-adjustment', 5);
+    harness.addArticle(article);
+    const service = new ArticleService(harness);
+
+    const updated = await service.registerFinalStockAdjustment({
+      articleId: article.id,
+      finalStock: 2,
+      expectedVersion: 0,
+    });
+
+    expect(updated.entity.currentStock).toBe(2);
+    expect(harness.savedMovements[0]).toMatchObject({
+      appliedQuantity: -3,
+      reason: 'Ajuste de inventario',
+      stockBefore: 5,
+      stockAfter: 2,
+    });
+  });
+
+  it('requires confirmation before a negative delta adjustment', async () => {
+    const harness = new ArticleCreationHarness();
+    const article = articleWithStock('article-delta-adjustment', 1);
+    harness.addArticle(article);
+    const service = new ArticleService(harness);
+
+    await expect(
+      service.registerDeltaAdjustment({
+        articleId: article.id,
+        quantity: -2,
+        reason: 'Correccion',
+        expectedVersion: 0,
+      }),
+    ).rejects.toBeInstanceOf(NegativeStockConfirmationRequiredError);
+    expect(harness.savedMovements).toHaveLength(0);
+  });
 });
 
 function activeArticle(id: string): Article {
