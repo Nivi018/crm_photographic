@@ -9,7 +9,7 @@ export function useArticleRecord(id: string, client: ArticleRecordClient = inven
   const [article, setArticle] = useState<ArticleRecord | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const loadArticle = useEffectEvent(async () => {
+  const reload = useEffectEvent(async () => {
     try {
       setArticle(await client.findArticle(id));
     } catch {
@@ -20,8 +20,8 @@ export function useArticleRecord(id: string, client: ArticleRecordClient = inven
   });
 
   useEffect(() => {
-    void loadArticle();
+    void reload();
   }, [id]);
 
-  return { article, error, isLoading };
+  return { article, error, isLoading, reload };
 }

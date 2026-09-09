@@ -92,7 +92,7 @@
       Hecho cuando: formularios muestran validaciones y resultados definidos.
 - [x] T46. Implementar detalle e historial por articulo. (RF-8, RF-12, RF-36 a RF-41, RF-54, RF-109)
       Hecho cuando: datos, stock e historial inmutable se muestran correctamente.
-- [ ] T47. Implementar acciones de estado y eliminacion de articulos. (RF-11 a RF-16, RF-72, RF-73)
+- [x] T47. Implementar acciones de estado y eliminacion de articulos. (RF-11 a RF-16, RF-72, RF-73)
       Hecho cuando: confirmaciones, bloqueos y reasignacion durante reactivacion pasan pruebas UI.
 - [ ] T48. Implementar cliente y hooks de categorias. (RF-47 a RF-52, RF-61, RF-63, RF-71, RF-74, RF-75)
       Hecho cuando: consultas y mutaciones se prueban independientemente de la UI.

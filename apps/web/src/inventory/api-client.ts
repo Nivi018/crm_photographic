@@ -91,6 +91,21 @@ export class InventoryApiClient {
     return this.send(`/articles/${id}`, { body: JSON.stringify(input), method: 'PATCH' });
   }
 
+  deactivateArticle(id: string, expectedVersion: number): Promise<ArticleRecord> {
+    return this.post(`/articles/${id}/deactivate`, { expectedVersion });
+  }
+
+  reactivateArticle(id: string, expectedVersion: number): Promise<ArticleRecord> {
+    return this.post(`/articles/${id}/reactivate`, { expectedVersion });
+  }
+
+  deleteArticle(id: string, expectedVersion: number): Promise<void> {
+    return this.send(`/articles/${id}`, {
+      body: JSON.stringify({ expectedVersion }),
+      method: 'DELETE',
+    });
+  }
+
   listCategories(query: CategoryListQuery = {}): Promise<PaginatedResponse<CategoryRecord>> {
     const parameters = new URLSearchParams({ page: String(query.page ?? 1) });
     if (query.isActive !== undefined) parameters.set('isActive', String(query.isActive));
