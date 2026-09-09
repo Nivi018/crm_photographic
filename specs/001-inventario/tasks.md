@@ -76,7 +76,7 @@
       Hecho cuando: se reproducen dos conflictos y se verifican reintento, reconfirmacion y cancelacion.
 - [x] T38. Crear router, cliente HTTP tipado y harness de pruebas web. (Soporte RF de UI)
       Hecho cuando: rutas de inventario, categorias y movimientos usan el cliente compartido.
-- [ ] T39. Escribir pruebas e implementar gestion de tema. (RF-92 a RF-94, RF-107, RF-108)
+- [x] T39. Escribir pruebas e implementar gestion de tema. (RF-92 a RF-94, RF-107, RF-108)
       Hecho cuando: tema claro inicial, persistencia, fallback por pestana y mensaje de fallo pasan pruebas.
 - [ ] T40. Implementar tokens visuales y shell responsive. (RF-92)
       Hecho cuando: navegacion aprobada y superficies claro/oscuro funcionan sin modulos fuera de alcance.
