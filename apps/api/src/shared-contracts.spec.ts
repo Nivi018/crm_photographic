@@ -1,6 +1,7 @@
 import {
   ARTICLE_PAGE_SIZE,
   InventoryErrorCode,
+  type ApiPaginatedResponse,
   type PaginatedResponse,
 } from '@crm-photografy/shared';
 import { describe, expect, it } from 'vitest';
@@ -17,5 +18,14 @@ describe('shared inventory contracts', () => {
 
     expect(response.pageSize).toBe(25);
     expect(InventoryErrorCode.Validation).toBe('VALIDATION_ERROR');
+  });
+
+  it('imports the public paginated envelope', () => {
+    const response: ApiPaginatedResponse<{ id: string }> = {
+      data: [],
+      meta: { page: 1, pageSize: ARTICLE_PAGE_SIZE, totalItems: 0, totalPages: 0 },
+    };
+
+    expect(response.meta.totalPages).toBe(0);
   });
 });
