@@ -9,7 +9,7 @@
 - [x] T3. Extraer contratos e implementar los ocho casos de uso de artículos por operación. (RF-2, RF-3, RF-48, RF-53 a RF-55, RF-65, RF-69, RF-73, RF-74)
       Hecho cuando: crear, obtener, listar, stock bajo, editar, desactivar, reactivar y eliminar se prueban de forma independiente.
 
-- [ ] T4. Extraer contratos e implementar los seis casos de uso de categorías por operación. (RF-2, RF-3, RF-49, RF-66, RF-72 a RF-74)
+- [x] T4. Extraer contratos e implementar los seis casos de uso de categorías por operación. (RF-2, RF-3, RF-49, RF-66, RF-72 a RF-74)
       Hecho cuando: cada operación de categoría tiene pruebas aisladas y conserva las reglas aprobadas.
 
 - [ ] T5. Extraer contratos e implementar los seis casos de uso de movimientos por operación. (RF-2, RF-3, RF-16, RF-50, RF-52, RF-53, RF-55, RF-67, RF-70)

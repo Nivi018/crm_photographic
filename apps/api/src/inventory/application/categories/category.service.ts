@@ -1,23 +1,13 @@
 import { randomUUID } from 'node:crypto';
 
-import {
-  type CategoryListCriteria,
-  type CategoryRepository,
-  type Versioned,
-} from '../ports/inventory-ports';
+import { type CategoryRepository, type Versioned } from '../ports/inventory-ports';
 import { Category } from '../../domain/categories/category';
-import { type PaginatedResponse } from '@crm-photografy/shared';
-
-export interface RenameCategoryCommand {
-  id: string;
-  name: string;
-  expectedVersion: number;
-}
-
-export interface CategoryStateCommand {
-  id: string;
-  expectedVersion: number;
-}
+import {
+  type CategoryListQuery,
+  type CategoryPage,
+  type CategoryStateCommand,
+  type RenameCategoryCommand,
+} from './category.contracts';
 
 export class CategoryNameConflictError extends Error {
   constructor() {
@@ -61,7 +51,7 @@ export class CategoryService {
     return this.categories.save(category, command.expectedVersion);
   }
 
-  async list(criteria: CategoryListCriteria): Promise<PaginatedResponse<Versioned<Category>>> {
+  async list(criteria: CategoryListQuery): Promise<CategoryPage> {
     return this.categories.list(criteria);
   }
 
