@@ -1,11 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  RequiredTextError,
-  normalizeName,
-  normalizeReason,
-  trimRequiredText,
-} from './normalization';
+import { normalizeName, normalizeReason, trimRequiredText } from './normalization';
+import { RequiredTextError } from './text.errors';
 
 describe('text normalization', () => {
   it('trims names, normalizes Unicode, removes diacritics, and lowercases for comparisons', () => {

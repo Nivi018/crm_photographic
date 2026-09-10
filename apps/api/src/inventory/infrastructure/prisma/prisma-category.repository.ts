@@ -5,7 +5,8 @@ import {
   type CategoryRepository,
   type Versioned,
 } from '../../application/ports/inventory-ports';
-import { Category, type CategoryArticleCounts } from '../../domain/categories/category';
+import { Category } from '../../domain/categories/category';
+import { type CategoryArticleCounts } from '../../domain/categories/category.properties';
 import { type PrismaClient } from '../../../infrastructure/prisma/generated/client';
 
 export class CategoryVersionConflictError extends Error {

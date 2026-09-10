@@ -1,13 +1,13 @@
 import { INVENTORY_LIMITS } from '@crm-photografy/shared';
 import { describe, expect, it } from 'vitest';
 
-import { RequiredTextError } from '../text/normalization';
+import { Category } from './category';
 import {
   ActiveArticleAssociationError,
-  Category,
   CategoryAssociationError,
   CategoryNameTooLongError,
-} from './category';
+} from './category.errors';
+import { RequiredTextError } from '../text/text.errors';
 
 describe('Category', () => {
   it('creates an active category with trimmed and normalized names', () => {

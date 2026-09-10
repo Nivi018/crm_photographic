@@ -1,45 +1,17 @@
 import { INVENTORY_LIMITS } from '@crm-photografy/shared';
 
+import {
+  ActiveArticleAssociationError,
+  CategoryAssociationError,
+  CategoryNameTooLongError,
+  InvalidArticleAssociationCountError,
+} from './category.errors';
+import {
+  type CategoryArticleCounts,
+  type CategoryCreateProperties,
+  type CategoryProperties,
+} from './category.properties';
 import { normalizeName, trimRequiredText } from '../text/normalization';
-
-export interface CategoryArticleCounts {
-  active: number;
-  inactive: number;
-}
-
-export interface CategoryProperties {
-  id: string;
-  name: string;
-  isActive: boolean;
-}
-
-export class CategoryNameTooLongError extends Error {
-  constructor() {
-    super(`category name cannot exceed ${INVENTORY_LIMITS.maximumCategoryNameLength} characters`);
-    this.name = 'CategoryNameTooLongError';
-  }
-}
-
-export class ActiveArticleAssociationError extends Error {
-  constructor() {
-    super('category with active articles cannot be deactivated');
-    this.name = 'ActiveArticleAssociationError';
-  }
-}
-
-export class CategoryAssociationError extends Error {
-  constructor() {
-    super('category with associated articles cannot be deleted');
-    this.name = 'CategoryAssociationError';
-  }
-}
-
-export class InvalidArticleAssociationCountError extends Error {
-  constructor() {
-    super('article association counts must be non-negative integers');
-    this.name = 'InvalidArticleAssociationCountError';
-  }
-}
 
 export class Category {
   readonly id: string;
@@ -56,7 +28,7 @@ export class Category {
     this.isActive = properties.isActive;
   }
 
-  static create(properties: Omit<CategoryProperties, 'isActive'>): Category {
+  static create(properties: CategoryCreateProperties): Category {
     return new Category({ ...properties, isActive: true });
   }
 

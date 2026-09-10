@@ -1,8 +1,9 @@
 import { AdjustmentMode, MovementKind, MovementSource } from '@crm-photografy/shared';
 import { describe, expect, it } from 'vitest';
 
-import { Movement, NoStockDifferenceError } from './movement';
-import { InvalidQuantityError, StockOutOfRangeError } from './quantities';
+import { Movement } from './movement';
+import { NoStockDifferenceError } from './movement.errors';
+import { InvalidQuantityError, StockOutOfRangeError } from './quantity.errors';
 import { replayCurrentStock } from './stock-replay';
 
 function identity(sequence = 1n) {
