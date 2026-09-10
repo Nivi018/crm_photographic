@@ -60,10 +60,12 @@ describe('API bootstrap', () => {
     expect(response.status).toBe(400);
     await expect(response.json()).resolves.toMatchObject({
       code: 'VALIDATION_ERROR',
-      details: expect.arrayContaining([
-        expect.objectContaining({ field: 'quantity' }),
-        expect.objectContaining({ field: 'extra' }),
-      ]),
+      details: {
+        fields: expect.arrayContaining([
+          expect.objectContaining({ field: 'quantity' }),
+          expect.objectContaining({ field: 'extra' }),
+        ]),
+      },
       message: 'Request validation failed',
       statusCode: 400,
     });

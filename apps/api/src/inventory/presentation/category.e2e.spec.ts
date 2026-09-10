@@ -49,10 +49,9 @@ describe('Category endpoints (E2E)', () => {
 
     expect(created.status).toBe(201);
     const category = await created.json();
-    categoryIds.push(category.entity.id);
+    categoryIds.push(category.data.id);
     expect(category).toMatchObject({
-      entity: { name: 'Iluminacion E2E', isActive: true },
-      version: 0,
+      data: { name: 'Iluminacion E2E', isActive: true, version: 0 },
     });
 
     const duplicate = await request('POST', '', { name: 'iluminacion e2e' });
@@ -62,70 +61,67 @@ describe('Category endpoints (E2E)', () => {
     const listed = await request('GET');
     expect(listed.status).toBe(200);
     const categoryList = await listed.json();
-    expect(categoryList).toMatchObject({ page: 1, pageSize: 25 });
-    expect(
-      categoryList.items.some(
-        (item: { entity: { id: string } }) => item.entity.id === category.entity.id,
-      ),
-    ).toBe(true);
+    expect(categoryList).toMatchObject({ meta: { page: 1, pageSize: 25 } });
+    expect(categoryList.data.some((item: { id: string }) => item.id === category.data.id)).toBe(
+      true,
+    );
 
-    const renamed = await request('PATCH', `/${category.entity.id}`, {
-      expectedVersion: category.version,
+    const renamed = await request('PATCH', `/${category.data.id}`, {
+      expectedVersion: category.data.version,
       name: 'Fondos E2E',
     });
     expect(renamed.status).toBe(200);
     const renamedCategory = await renamed.json();
-    expect(renamedCategory).toMatchObject({ entity: { name: 'Fondos E2E' }, version: 1 });
+    expect(renamedCategory).toMatchObject({ data: { name: 'Fondos E2E', version: 1 } });
 
-    const deactivated = await request('POST', `/${category.entity.id}/deactivate`, {
+    const deactivated = await request('POST', `/${category.data.id}/deactivate`, {
       expectedVersion: 1,
     });
-    expect(deactivated.status).toBe(201);
+    expect(deactivated.status).toBe(200);
     const inactiveCategory = await deactivated.json();
-    expect(inactiveCategory).toMatchObject({ entity: { isActive: false }, version: 2 });
+    expect(inactiveCategory).toMatchObject({ data: { isActive: false, version: 2 } });
 
-    const reactivated = await request('POST', `/${category.entity.id}/reactivate`, {
+    const reactivated = await request('POST', `/${category.data.id}/reactivate`, {
       expectedVersion: 2,
     });
-    expect(reactivated.status).toBe(201);
+    expect(reactivated.status).toBe(200);
     await expect(reactivated.json()).resolves.toMatchObject({
-      entity: { isActive: true },
-      version: 3,
+      data: { isActive: true, version: 3 },
     });
 
-    const removed = await request('DELETE', `/${category.entity.id}`, { expectedVersion: 3 });
+    const removed = await request('DELETE', `/${category.data.id}`, { expectedVersion: 3 });
     expect(removed.status).toBe(200);
     categoryIds.length = 0;
     await expect(
-      prisma.category.findUnique({ where: { id: category.entity.id } }),
+      prisma.category.findUnique({ where: { id: category.data.id } }),
     ).resolves.toBeNull();
   });
 
   it('rejects deactivation and deletion while the category has associated articles', async () => {
     const created = await request('POST', '', { name: 'Con asociaciones E2E' });
     const category = await created.json();
-    categoryIds.push(category.entity.id);
+    categoryIds.push(category.data.id);
     await prisma.article.create({
       data: {
-        categoryId: category.entity.id,
+        categoryId: category.data.id,
         currentStock: 0,
         initialStock: 0,
         isActive: true,
         minimumStock: 0,
-        name: `Articulo E2E ${category.entity.id}`,
-        normalizedName: `articulo e2e ${category.entity.id}`,
+        name: `Articulo E2E ${category.data.id}`,
+        normalizedName: `articulo e2e ${category.data.id}`,
         type: 'SALE',
       },
     });
 
-    const deactivation = await request('POST', `/${category.entity.id}/deactivate`, {
-      expectedVersion: category.version,
+    const deactivation = await request('POST', `/${category.data.id}/deactivate`, {
+      expectedVersion: category.data.version,
     });
     expect(deactivation.status).toBe(409);
     await expect(deactivation.json()).resolves.toMatchObject({ code: 'DEPENDENCY_CONFLICT' });
 
-    const deletion = await request('DELETE', `/${category.entity.id}`, {
-      expectedVersion: category.version,
+    const deletion = await request('DELETE', `/${category.data.id}`, {
+      expectedVersion: category.data.version,
     });
     expect(deletion.status).toBe(409);
     await expect(deletion.json()).resolves.toMatchObject({ code: 'DEPENDENCY_CONFLICT' });

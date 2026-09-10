@@ -21,6 +21,7 @@ import {
 import {
   type ListMovementsQuery,
   type MovementPage,
+  type MovementResult,
   type RegisterDeltaAdjustmentCommand,
   type RegisterEntryCommand,
   type RegisterExitCommand,
@@ -94,11 +95,14 @@ export class ArticleService {
 
       const saved = await repositories.articles.save(article);
 
-      if (initialMovement) {
-        await repositories.movements.append(initialMovement);
-      }
+      if (!initialMovement) return saved;
 
-      return saved;
+      await repositories.movements.append(initialMovement);
+
+      return repositories.articles.save(
+        Article.rehydrate({ ...article, currentStock: initialMovement.stockAfter }),
+        saved.version,
+      );
     });
   }
 
@@ -221,7 +225,7 @@ export class ArticleService {
     );
   }
 
-  async registerEntry(command: RegisterEntryCommand): Promise<Versioned<Article>> {
+  async registerEntry(command: RegisterEntryCommand): Promise<MovementResult> {
     return this.withSingleRetry(
       command.articleId,
       command.expectedVersion,
@@ -251,12 +255,15 @@ export class ArticleService {
 
           await repositories.movements.append(movement);
 
-          return repositories.articles.save(updatedArticle, expectedVersion);
+          return {
+            article: await repositories.articles.save(updatedArticle, expectedVersion),
+            movement,
+          };
         }),
     );
   }
 
-  async registerExit(command: RegisterExitCommand): Promise<Versioned<Article>> {
+  async registerExit(command: RegisterExitCommand): Promise<MovementResult> {
     return this.withSingleRetry(
       command.articleId,
       command.expectedVersion,
@@ -291,14 +298,17 @@ export class ArticleService {
 
           await repositories.movements.append(movement);
 
-          return repositories.articles.save(updatedArticle, expectedVersion);
+          return {
+            article: await repositories.articles.save(updatedArticle, expectedVersion),
+            movement,
+          };
         }),
     );
   }
 
   async registerFinalStockAdjustment(
     command: RegisterFinalStockAdjustmentCommand,
-  ): Promise<Versioned<Article>> {
+  ): Promise<MovementResult> {
     return this.withSingleRetry(
       command.articleId,
       command.expectedVersion,
@@ -320,9 +330,7 @@ export class ArticleService {
     );
   }
 
-  async registerDeltaAdjustment(
-    command: RegisterDeltaAdjustmentCommand,
-  ): Promise<Versioned<Article>> {
+  async registerDeltaAdjustment(command: RegisterDeltaAdjustmentCommand): Promise<MovementResult> {
     return this.withSingleRetry(
       command.articleId,
       command.expectedVersion,
@@ -415,7 +423,7 @@ export class ArticleService {
     article: Article,
     movement: Movement,
     expectedVersion: number,
-  ): Promise<Versioned<Article>> {
+  ): Promise<MovementResult> {
     const updatedArticle = Article.rehydrate({
       id: article.id,
       name: article.name,
@@ -429,7 +437,7 @@ export class ArticleService {
 
     await repositories.movements.append(movement);
 
-    return repositories.articles.save(updatedArticle, expectedVersion);
+    return { article: await repositories.articles.save(updatedArticle, expectedVersion), movement };
   }
 
   private async assertNameIsAvailable(
