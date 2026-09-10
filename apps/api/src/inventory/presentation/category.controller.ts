@@ -10,7 +10,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { CategoryService } from '../application/categories/category.service';
 import {
@@ -24,6 +24,12 @@ import {
 } from './category.dto';
 import { toCategoryResponse, toPaginatedResponse, toResponse } from './inventory.mapper';
 import type { ApiResponse, DeleteResponse } from '@crm-photografy/shared';
+import {
+  CategoryPageResponseEnvelopeDto,
+  CategoryResponseEnvelopeDto,
+  DeleteResponseEnvelopeDto,
+} from './api-response.dto';
+import { ApiInventoryErrorResponses } from './api-response.decorators';
 
 @ApiTags('inventory-categories')
 @Controller('api/inventory/categories')
@@ -32,6 +38,8 @@ export class CategoryController {
 
   @Get()
   @ApiOperation({ summary: 'List inventory categories' })
+  @ApiOkResponse({ type: CategoryPageResponseEnvelopeDto })
+  @ApiInventoryErrorResponses({ badRequest: 'Invalid category list query.' })
   list(@Query() query: ListCategoriesDto): Promise<CategoryPageResponseDto> {
     return this.categories
       .list({
@@ -43,6 +51,11 @@ export class CategoryController {
 
   @Post()
   @ApiOperation({ summary: 'Create an inventory category' })
+  @ApiCreatedResponse({ type: CategoryResponseEnvelopeDto })
+  @ApiInventoryErrorResponses({
+    badRequest: 'Invalid category data.',
+    conflict: 'Category name already exists.',
+  })
   create(@Body() body: CreateCategoryDto): Promise<CategoryResponseDto> {
     return this.categories
       .create(body.name)
@@ -51,6 +64,12 @@ export class CategoryController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Rename an inventory category' })
+  @ApiOkResponse({ type: CategoryResponseEnvelopeDto })
+  @ApiInventoryErrorResponses({
+    badRequest: 'Invalid category data.',
+    conflict: 'Category name already exists or was concurrently modified.',
+    notFound: 'Category was not found.',
+  })
   update(
     @Param() params: CategoryIdParamDto,
     @Body() body: UpdateCategoryDto,
@@ -63,6 +82,12 @@ export class CategoryController {
   @Post(':id/deactivate')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Deactivate an inventory category' })
+  @ApiOkResponse({ type: CategoryResponseEnvelopeDto })
+  @ApiInventoryErrorResponses({
+    badRequest: 'Invalid category state request.',
+    conflict: 'Category has active articles or was concurrently modified.',
+    notFound: 'Category was not found.',
+  })
   deactivate(
     @Param() params: CategoryIdParamDto,
     @Body() body: CategoryStateDto,
@@ -75,6 +100,12 @@ export class CategoryController {
   @Post(':id/reactivate')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Reactivate an inventory category' })
+  @ApiOkResponse({ type: CategoryResponseEnvelopeDto })
+  @ApiInventoryErrorResponses({
+    badRequest: 'Invalid category state request.',
+    conflict: 'Category was concurrently modified.',
+    notFound: 'Category was not found.',
+  })
   reactivate(
     @Param() params: CategoryIdParamDto,
     @Body() body: CategoryStateDto,
@@ -86,6 +117,12 @@ export class CategoryController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete an inventory category' })
+  @ApiOkResponse({ type: DeleteResponseEnvelopeDto })
+  @ApiInventoryErrorResponses({
+    badRequest: 'Invalid category state request.',
+    conflict: 'Category has associated articles or was concurrently modified.',
+    notFound: 'Category was not found.',
+  })
   remove(
     @Param() params: CategoryIdParamDto,
     @Body() body: CategoryStateDto,

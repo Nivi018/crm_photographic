@@ -1,50 +1,53 @@
-import { INVENTORY_LIMITS } from '@crm-photografy/shared';
+import { INVENTORY_LIMITS, InventoryErrorCode } from '@crm-photografy/shared';
+import { InventoryError } from '../inventory-error';
 
-export class ArticleNameTooLongError extends Error {
+export class ArticleNameTooLongError extends InventoryError {
   constructor() {
-    super(`article name cannot exceed ${INVENTORY_LIMITS.maximumArticleNameLength} characters`);
-    this.name = 'ArticleNameTooLongError';
+    super(
+      InventoryErrorCode.Validation,
+      `article name cannot exceed ${INVENTORY_LIMITS.maximumArticleNameLength} characters`,
+    );
   }
 }
 
-export class InvalidArticleTypeError extends Error {
+export class InvalidArticleTypeError extends InventoryError {
   constructor() {
-    super('article type is invalid');
-    this.name = 'InvalidArticleTypeError';
+    super(InventoryErrorCode.Validation, 'article type is invalid');
   }
 }
 
-export class CategoryInactiveError extends Error {
+export class CategoryInactiveError extends InventoryError {
   constructor() {
-    super('article category must be active');
-    this.name = 'CategoryInactiveError';
+    super(InventoryErrorCode.CategoryInactive, 'article category must be active');
   }
 }
 
-export class ArticleInactiveError extends Error {
+export class ArticleInactiveError extends InventoryError {
   constructor() {
-    super('inactive article cannot be modified or receive movements');
-    this.name = 'ArticleInactiveError';
+    super(
+      InventoryErrorCode.ArticleInactive,
+      'inactive article cannot be modified or receive movements',
+    );
   }
 }
 
-export class ArticleHasMovementsError extends Error {
+export class ArticleHasMovementsError extends InventoryError {
   constructor() {
-    super('article with movements cannot be deleted');
-    this.name = 'ArticleHasMovementsError';
+    super(InventoryErrorCode.DependencyConflict, 'article with movements cannot be deleted');
   }
 }
 
-export class ArticleStockNotZeroError extends Error {
+export class ArticleStockNotZeroError extends InventoryError {
   constructor() {
-    super('article with non-zero current stock cannot be deleted');
-    this.name = 'ArticleStockNotZeroError';
+    super(
+      InventoryErrorCode.DependencyConflict,
+      'article with non-zero current stock cannot be deleted',
+    );
   }
 }
 
-export class InvalidMovementCountError extends Error {
+export class InvalidMovementCountError extends InventoryError {
   constructor() {
-    super('movement count must be a non-negative integer');
-    this.name = 'InvalidMovementCountError';
+    super(InventoryErrorCode.Validation, 'movement count must be a non-negative integer');
   }
 }

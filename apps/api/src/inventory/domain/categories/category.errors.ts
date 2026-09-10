@@ -1,29 +1,38 @@
-import { INVENTORY_LIMITS } from '@crm-photografy/shared';
+import { INVENTORY_LIMITS, InventoryErrorCode } from '@crm-photografy/shared';
+import { InventoryError } from '../inventory-error';
 
-export class CategoryNameTooLongError extends Error {
+export class CategoryNameTooLongError extends InventoryError {
   constructor() {
-    super(`category name cannot exceed ${INVENTORY_LIMITS.maximumCategoryNameLength} characters`);
-    this.name = 'CategoryNameTooLongError';
+    super(
+      InventoryErrorCode.Validation,
+      `category name cannot exceed ${INVENTORY_LIMITS.maximumCategoryNameLength} characters`,
+    );
   }
 }
 
-export class ActiveArticleAssociationError extends Error {
+export class ActiveArticleAssociationError extends InventoryError {
   constructor() {
-    super('category with active articles cannot be deactivated');
-    this.name = 'ActiveArticleAssociationError';
+    super(
+      InventoryErrorCode.DependencyConflict,
+      'category with active articles cannot be deactivated',
+    );
   }
 }
 
-export class CategoryAssociationError extends Error {
+export class CategoryAssociationError extends InventoryError {
   constructor() {
-    super('category with associated articles cannot be deleted');
-    this.name = 'CategoryAssociationError';
+    super(
+      InventoryErrorCode.DependencyConflict,
+      'category with associated articles cannot be deleted',
+    );
   }
 }
 
-export class InvalidArticleAssociationCountError extends Error {
+export class InvalidArticleAssociationCountError extends InventoryError {
   constructor() {
-    super('article association counts must be non-negative integers');
-    this.name = 'InvalidArticleAssociationCountError';
+    super(
+      InventoryErrorCode.Validation,
+      'article association counts must be non-negative integers',
+    );
   }
 }

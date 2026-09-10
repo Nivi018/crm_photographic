@@ -3,6 +3,8 @@ import type { ExceptionFilter } from '@nestjs/common';
 import { InventoryErrorCode } from '@crm-photografy/shared';
 import type { Response } from 'express';
 
+import { isInventoryError } from './inventory/domain/inventory-error';
+
 interface ErrorResponseBody {
   code?: unknown;
   details?: unknown;
@@ -13,82 +15,95 @@ interface ErrorResponseBody {
 export class ApiExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): void {
     const response = host.switchToHttp().getResponse<Response>();
-    const httpException = exception instanceof HttpException ? exception : undefined;
-    const statusCode = httpException?.getStatus() ?? domainErrorStatus(exception);
-    const body = httpException?.getResponse() ?? {};
-    const error = isErrorResponseBody(body) ? body : {};
+    const error = classifyError(exception);
 
-    response.status(statusCode).json({
-      code: httpException ? errorCode(error.code, statusCode) : domainErrorCode(exception),
-      ...(error.details === undefined ? {} : { details: error.details }),
-      message: httpException
-        ? errorMessage(error.message, body)
-        : errorMessageFromException(exception),
-      statusCode,
-    });
+    response.status(error.statusCode).json(error);
   }
 }
 
-function domainErrorStatus(error: unknown): HttpStatus {
-  return domainErrorCode(error) === InventoryErrorCode.NotFound
-    ? HttpStatus.NOT_FOUND
-    : domainErrorCode(error) === InventoryErrorCode.NameConflict ||
-        domainErrorCode(error) === InventoryErrorCode.DependencyConflict
-      ? HttpStatus.CONFLICT
-      : HttpStatus.BAD_REQUEST;
+function classifyError(exception: unknown): {
+  code: InventoryErrorCode;
+  details?: unknown;
+  message: string;
+  statusCode: number;
+} {
+  if (isInventoryError(exception)) {
+    return {
+      code: exception.code,
+      ...(exception.details === undefined ? {} : { details: exception.details }),
+      message: exception.message,
+      statusCode: statusForCode(exception.code),
+    };
+  }
+
+  if (exception instanceof HttpException) {
+    return classifyHttpException(exception);
+  }
+
+  return {
+    code: InventoryErrorCode.Internal,
+    message: 'An unexpected error occurred',
+    statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+  };
 }
 
-function domainErrorCode(error: unknown): InventoryErrorCode {
-  const name = error instanceof Error ? error.name : '';
+function classifyHttpException(exception: HttpException): {
+  code: InventoryErrorCode;
+  details?: unknown;
+  message: string;
+  statusCode: number;
+} {
+  const statusCode = exception.getStatus();
+  const body = exception.getResponse();
+  const error = isErrorResponseBody(body) ? body : {};
+  const code = validErrorCode(error.code) ?? defaultCodeForStatus(statusCode);
 
-  if (name === 'CategoryNotFoundError') return InventoryErrorCode.NotFound;
-  if (name === 'ArticleNotFoundError') return InventoryErrorCode.NotFound;
-  if (name === 'CategoryNameConflictError') return InventoryErrorCode.NameConflict;
-  if (name === 'ArticleNameConflictError') return InventoryErrorCode.NameConflict;
-  if (name === 'ActiveArticleAssociationError' || name === 'CategoryAssociationError') {
-    return InventoryErrorCode.DependencyConflict;
+  if (statusCode >= HttpStatus.INTERNAL_SERVER_ERROR) {
+    return {
+      code: InventoryErrorCode.Internal,
+      message: 'An unexpected error occurred',
+      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+    };
   }
-  if (name === 'ArticleInactiveError') return InventoryErrorCode.ArticleInactive;
-  if (name === 'CategoryInactiveError') return InventoryErrorCode.CategoryInactive;
-  if (name === 'NegativeStockConfirmationRequiredError') {
-    return InventoryErrorCode.NegativeStockConfirmationRequired;
-  }
-  if (name === 'ConcurrentModificationError') return InventoryErrorCode.ConcurrentModification;
-  if (name === 'StockOutOfRangeError') return InventoryErrorCode.StockOutOfRange;
-  if (name === 'NoStockDifferenceError') return InventoryErrorCode.NoStockDifference;
 
-  return InventoryErrorCode.Validation;
+  return {
+    code,
+    ...(error.details === undefined ? {} : { details: error.details }),
+    message: typeof error.message === 'string' ? error.message : 'Request failed',
+    statusCode,
+  };
 }
 
-function errorMessageFromException(error: unknown): string {
-  return error instanceof Error ? error.message : 'Request failed';
+function statusForCode(code: InventoryErrorCode): HttpStatus {
+  switch (code) {
+    case InventoryErrorCode.NotFound:
+      return HttpStatus.NOT_FOUND;
+    case InventoryErrorCode.NameConflict:
+    case InventoryErrorCode.DependencyConflict:
+    case InventoryErrorCode.ConcurrentModification:
+      return HttpStatus.CONFLICT;
+    case InventoryErrorCode.Internal:
+      return HttpStatus.INTERNAL_SERVER_ERROR;
+    case InventoryErrorCode.ServiceUnavailable:
+      return HttpStatus.SERVICE_UNAVAILABLE;
+    default:
+      return HttpStatus.BAD_REQUEST;
+  }
+}
+
+function defaultCodeForStatus(statusCode: number): InventoryErrorCode {
+  return statusCode === HttpStatus.NOT_FOUND
+    ? InventoryErrorCode.NotFound
+    : InventoryErrorCode.Validation;
 }
 
 function isErrorResponseBody(value: unknown): value is ErrorResponseBody {
   return typeof value === 'object' && value !== null;
 }
 
-function errorCode(value: unknown, statusCode: number): InventoryErrorCode {
-  if (
-    typeof value === 'string' &&
+function validErrorCode(value: unknown): InventoryErrorCode | undefined {
+  return typeof value === 'string' &&
     Object.values(InventoryErrorCode).includes(value as InventoryErrorCode)
-  ) {
-    return value as InventoryErrorCode;
-  }
-
-  return statusCode === HttpStatus.NOT_FOUND
-    ? InventoryErrorCode.NotFound
-    : InventoryErrorCode.Validation;
-}
-
-function errorMessage(message: unknown, fallback: string | object): string {
-  if (typeof message === 'string') {
-    return message;
-  }
-
-  if (typeof fallback === 'string') {
-    return fallback;
-  }
-
-  return 'Request failed';
+    ? (value as InventoryErrorCode)
+    : undefined;
 }

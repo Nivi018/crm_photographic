@@ -10,12 +10,12 @@ import {
 } from '../../application/ports/article-repository.port';
 import { type PageRequest, type Versioned } from '../../application/ports/repository-types.port';
 import { Article } from '../../domain/articles/article';
+import { VersionConflictError } from '../../domain/inventory-error';
 import { type Prisma, type PrismaClient } from '../../../infrastructure/prisma/generated/client';
 
-export class ArticleVersionConflictError extends Error {
+export class ArticleVersionConflictError extends VersionConflictError {
   constructor() {
     super('article version does not match the persisted record');
-    this.name = 'ArticleVersionConflictError';
   }
 }
 

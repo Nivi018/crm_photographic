@@ -10,6 +10,7 @@ import { type Versioned } from '../ports/repository-types.port';
 import { Article } from '../../domain/articles/article';
 import { Category } from '../../domain/categories/category';
 import { Movement } from '../../domain/stock/movement';
+import { VersionConflictError } from '../../domain/inventory-error';
 import {
   ArticleNameConflictError,
   ArticleService,
@@ -501,9 +502,7 @@ class ArticleCreationHarness implements InventoryUnitOfWork {
                 version: expectedVersion === undefined ? 1 : expectedVersion + 1,
               });
             }
-            const error = new Error('article version conflict');
-            error.name = 'ArticleVersionConflictError';
-            throw error;
+            throw new VersionConflictError('article version conflict');
           }
 
           const saved = {

@@ -6,13 +6,13 @@ import {
 } from '../../application/ports/category-repository.port';
 import { type Versioned } from '../../application/ports/repository-types.port';
 import { Category } from '../../domain/categories/category';
+import { VersionConflictError } from '../../domain/inventory-error';
 import { type CategoryArticleCounts } from '../../domain/categories/category.properties';
 import { type PrismaClient } from '../../../infrastructure/prisma/generated/client';
 
-export class CategoryVersionConflictError extends Error {
+export class CategoryVersionConflictError extends VersionConflictError {
   constructor() {
     super('category version does not match the persisted record');
-    this.name = 'CategoryVersionConflictError';
   }
 }
 

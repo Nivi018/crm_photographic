@@ -1,8 +1,9 @@
 import { type RequiredTextField } from './text.properties';
+import { InventoryErrorCode } from '@crm-photografy/shared';
+import { InventoryError } from '../inventory-error';
 
-export class RequiredTextError extends Error {
+export class RequiredTextError extends InventoryError {
   constructor(field: RequiredTextField) {
-    super(`${field} is required`);
-    this.name = 'RequiredTextError';
+    super(InventoryErrorCode.Validation, `${field} is required`);
   }
 }

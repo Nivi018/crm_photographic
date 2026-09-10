@@ -1,8 +1,10 @@
 import { randomUUID } from 'node:crypto';
+import { InventoryErrorCode } from '@crm-photografy/shared';
 
 import { type CategoryRepository } from '../ports/category-repository.port';
 import { type Versioned } from '../ports/repository-types.port';
 import { Category } from '../../domain/categories/category';
+import { InventoryError } from '../../domain/inventory-error';
 import {
   type CategoryListQuery,
   type CategoryPage,
@@ -10,17 +12,18 @@ import {
   type RenameCategoryCommand,
 } from './category.contracts';
 
-export class CategoryNameConflictError extends Error {
+export class CategoryNameConflictError extends InventoryError {
   constructor() {
-    super('a category with the same normalized name already exists');
-    this.name = 'CategoryNameConflictError';
+    super(
+      InventoryErrorCode.NameConflict,
+      'a category with the same normalized name already exists',
+    );
   }
 }
 
-export class CategoryNotFoundError extends Error {
+export class CategoryNotFoundError extends InventoryError {
   constructor() {
-    super('category was not found');
-    this.name = 'CategoryNotFoundError';
+    super(InventoryErrorCode.NotFound, 'category was not found');
   }
 }
 
