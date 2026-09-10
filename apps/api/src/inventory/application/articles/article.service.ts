@@ -1,51 +1,26 @@
-import { type ArticleType, type PaginatedResponse } from '@crm-photografy/shared';
+import { type PaginatedResponse } from '@crm-photografy/shared';
 import { randomUUID } from 'node:crypto';
 
 import {
   type InventoryRepositories,
   type InventoryUnitOfWork,
-  type ArticleListCriteria,
   type Versioned,
 } from '../ports/inventory-ports';
 import { Article } from '../../domain/articles/article';
 import { Movement } from '../../domain/stock/movement';
 import { replayCurrentStock } from '../../domain/stock/stock-replay';
 import { normalizeName } from '../../domain/text/normalization';
-
-export interface CreateArticleCommand {
-  name: string;
-  type: ArticleType;
-  categoryId: string;
-  initialStock: number;
-  minimumStock: number;
-}
-
-export interface ListArticlesQuery extends Omit<ArticleListCriteria, 'normalizedName'> {
-  name?: string;
-}
+import {
+  type ArticleStateCommand,
+  type CreateArticleCommand,
+  type EditArticleCommand,
+  type ListArticlesQuery,
+  type ListLowStockArticlesQuery,
+  type ReactivateArticleCommand,
+} from './article.contracts';
 
 export interface ListMovementsQuery {
   page: number;
-}
-
-export interface EditArticleCommand {
-  id: string;
-  name: string;
-  type: ArticleType;
-  categoryId: string;
-  initialStock: number;
-  minimumStock: number;
-  expectedVersion: number;
-  confirmNegativeStock?: boolean;
-}
-
-export interface ArticleStateCommand {
-  id: string;
-  expectedVersion: number;
-}
-
-export interface ReactivateArticleCommand extends ArticleStateCommand {
-  categoryId?: string;
 }
 
 export interface RegisterEntryCommand {
@@ -162,7 +137,9 @@ export class ArticleService {
     );
   }
 
-  async listLowStock(query: ListMovementsQuery): Promise<PaginatedResponse<Versioned<Article>>> {
+  async listLowStock(
+    query: ListLowStockArticlesQuery,
+  ): Promise<PaginatedResponse<Versioned<Article>>> {
     return this.unitOfWork.execute(({ articles }) => articles.listLowStock({ page: query.page }));
   }
 
