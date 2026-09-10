@@ -12,7 +12,7 @@
 - [x] T4. Extraer contratos e implementar los seis casos de uso de categorías por operación. (RF-2, RF-3, RF-49, RF-66, RF-72 a RF-74)
       Hecho cuando: cada operación de categoría tiene pruebas aisladas y conserva las reglas aprobadas.
 
-- [ ] T5. Extraer contratos e implementar los seis casos de uso de movimientos por operación. (RF-2, RF-3, RF-16, RF-50, RF-52, RF-53, RF-55, RF-67, RF-70)
+- [x] T5. Extraer contratos e implementar los seis casos de uso de movimientos por operación. (RF-2, RF-3, RF-16, RF-50, RF-52, RF-53, RF-55, RF-67, RF-70)
       Hecho cuando: los listados y registros de movimiento se prueban de forma aislada y devuelven estado final coherente.
 
 - [ ] T6. Reorganizar repositorios, unidad de trabajo y adaptadores Prisma sin cambiar el esquema. (RF-1, RF-3, RF-36, RF-37, RNF-1, RNF-2)

@@ -18,31 +18,14 @@ import {
   type ListLowStockArticlesQuery,
   type ReactivateArticleCommand,
 } from './article.contracts';
-
-export interface ListMovementsQuery {
-  page: number;
-}
-
-export interface RegisterEntryCommand {
-  articleId: string;
-  quantity: number;
-  reason: string;
-  expectedVersion: number;
-}
-
-export interface RegisterExitCommand extends RegisterEntryCommand {
-  confirmNegativeStock?: boolean;
-}
-
-export interface RegisterFinalStockAdjustmentCommand {
-  articleId: string;
-  finalStock: number;
-  expectedVersion: number;
-}
-
-export interface RegisterDeltaAdjustmentCommand extends RegisterEntryCommand {
-  confirmNegativeStock?: boolean;
-}
+import {
+  type ListMovementsQuery,
+  type MovementPage,
+  type RegisterDeltaAdjustmentCommand,
+  type RegisterEntryCommand,
+  type RegisterExitCommand,
+  type RegisterFinalStockAdjustmentCommand,
+} from '../movements/movement.contracts';
 
 export class NegativeStockConfirmationRequiredError extends Error {
   constructor(readonly stockAfter: number) {
@@ -143,14 +126,11 @@ export class ArticleService {
     return this.unitOfWork.execute(({ articles }) => articles.listLowStock({ page: query.page }));
   }
 
-  async listMovements(query: ListMovementsQuery): Promise<PaginatedResponse<Movement>> {
+  async listMovements(query: ListMovementsQuery): Promise<MovementPage> {
     return this.unitOfWork.execute(({ movements }) => movements.list({ page: query.page }));
   }
 
-  async listArticleMovements(
-    articleId: string,
-    query: ListMovementsQuery,
-  ): Promise<PaginatedResponse<Movement>> {
+  async listArticleMovements(articleId: string, query: ListMovementsQuery): Promise<MovementPage> {
     return this.unitOfWork.execute(async (repositories) => {
       await this.findArticle(repositories, articleId);
 
