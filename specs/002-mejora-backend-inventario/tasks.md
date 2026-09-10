@@ -21,7 +21,7 @@
 - [x] T7. Implementar DTOs de entrada/salida, mapeadores y controladores organizados por funcionalidad. (RF-4, RF-7 a RF-20, RF-46, RF-47, RF-52 a RF-59, RF-75)
       Hecho cuando: todas las rutas actuales entregan envelopes, recursos públicos, paginación, UUID y booleanos con los estados HTTP definidos.
 
-- [ ] T8. Implementar la clasificación explícita de errores y actualizar Swagger de toda la API. (RF-20 a RF-28, RF-57, RF-58, RF-64 a RF-74, RNF-3, RNF-4)
+- [x] T8. Implementar la clasificación explícita de errores y actualizar Swagger de toda la API. (RF-20 a RF-28, RF-57, RF-58, RF-64 a RF-74, RNF-3, RNF-4)
       Hecho cuando: pruebas HTTP y OpenAPI verifican cada estado, código, `details` y esquema de éxito/error aplicable.
 
 - [ ] T9. Implementar liveness, readiness de PostgreSQL y cierre de recursos. (RF-41 a RF-45, RF-51, RNF-6)

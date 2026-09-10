@@ -1,17 +1,19 @@
-import { INVENTORY_LIMITS } from '@crm-photografy/shared';
+import { INVENTORY_LIMITS, InventoryErrorCode } from '@crm-photografy/shared';
+import { InventoryError } from '../inventory-error';
 
 const { maximumQuantity, minimumStock } = INVENTORY_LIMITS;
 
-export class InvalidQuantityError extends Error {
+export class InvalidQuantityError extends InventoryError {
   constructor(field: string) {
-    super(`${field} must be an integer within its allowed range`);
-    this.name = 'InvalidQuantityError';
+    super(InventoryErrorCode.Validation, `${field} must be an integer within its allowed range`);
   }
 }
 
-export class StockOutOfRangeError extends Error {
+export class StockOutOfRangeError extends InventoryError {
   constructor() {
-    super(`stock must be an integer between ${minimumStock} and ${maximumQuantity}`);
-    this.name = 'StockOutOfRangeError';
+    super(
+      InventoryErrorCode.StockOutOfRange,
+      `stock must be an integer between ${minimumStock} and ${maximumQuantity}`,
+    );
   }
 }

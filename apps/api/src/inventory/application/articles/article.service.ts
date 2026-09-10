@@ -1,4 +1,4 @@
-import { type PaginatedResponse } from '@crm-photografy/shared';
+import { InventoryErrorCode, type PaginatedResponse } from '@crm-photografy/shared';
 import { randomUUID } from 'node:crypto';
 
 import {
@@ -10,6 +10,7 @@ import { Article } from '../../domain/articles/article';
 import { Movement } from '../../domain/stock/movement';
 import { replayCurrentStock } from '../../domain/stock/stock-replay';
 import { normalizeName } from '../../domain/text/normalization';
+import { InventoryError, VersionConflictError } from '../../domain/inventory-error';
 import {
   type ArticleStateCommand,
   type CreateArticleCommand,
@@ -28,45 +29,52 @@ import {
   type RegisterFinalStockAdjustmentCommand,
 } from '../movements/movement.contracts';
 
-export class NegativeStockConfirmationRequiredError extends Error {
+export class NegativeStockConfirmationRequiredError extends InventoryError {
   constructor(readonly stockAfter: number) {
-    super('editing initial stock would produce negative stock');
-    this.name = 'NegativeStockConfirmationRequiredError';
+    super(
+      InventoryErrorCode.NegativeStockConfirmationRequired,
+      'editing initial stock would produce negative stock',
+      { stockAfter },
+    );
   }
 }
 
-export class ArticleNameConflictError extends Error {
+export class ArticleNameConflictError extends InventoryError {
   constructor() {
-    super('an article with the same normalized name already exists');
-    this.name = 'ArticleNameConflictError';
+    super(
+      InventoryErrorCode.NameConflict,
+      'an article with the same normalized name already exists',
+    );
   }
 }
 
-export class ArticleCategoryNotFoundError extends Error {
+export class ArticleCategoryNotFoundError extends InventoryError {
   constructor() {
-    super('article category was not found');
-    this.name = 'ArticleCategoryNotFoundError';
+    super(InventoryErrorCode.NotFound, 'article category was not found');
   }
 }
 
-export class ArticleNotFoundError extends Error {
+export class ArticleNotFoundError extends InventoryError {
   constructor() {
-    super('article was not found');
-    this.name = 'ArticleNotFoundError';
+    super(InventoryErrorCode.NotFound, 'article was not found');
   }
 }
 
-export class NoActiveCategoriesError extends Error {
+export class NoActiveCategoriesError extends InventoryError {
   constructor() {
-    super('at least one active category is required to create an article');
-    this.name = 'NoActiveCategoriesError';
+    super(
+      InventoryErrorCode.CategoryInactive,
+      'at least one active category is required to create an article',
+    );
   }
 }
 
-export class ConcurrentModificationError extends Error {
+export class ConcurrentModificationError extends InventoryError {
   constructor() {
-    super('article changed again while retrying the operation');
-    this.name = 'ConcurrentModificationError';
+    super(
+      InventoryErrorCode.ConcurrentModification,
+      'article changed again while retrying the operation',
+    );
   }
 }
 
@@ -384,7 +392,7 @@ export class ArticleService {
     try {
       return await operation(expectedVersion);
     } catch (error) {
-      if (!(error instanceof Error) || !error.name.endsWith('VersionConflictError')) {
+      if (!(error instanceof VersionConflictError)) {
         throw error;
       }
 
@@ -396,7 +404,7 @@ export class ArticleService {
       try {
         return await operation(current.version);
       } catch (retryError) {
-        if (retryError instanceof Error && retryError.name.endsWith('VersionConflictError')) {
+        if (retryError instanceof VersionConflictError) {
           throw new ConcurrentModificationError();
         }
 
