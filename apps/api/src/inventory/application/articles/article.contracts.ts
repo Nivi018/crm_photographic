@@ -1,7 +1,8 @@
 import { type ArticleType, type PaginatedResponse } from '@crm-photografy/shared';
 
 import { type Article } from '../../domain/articles/article';
-import { type ArticleListCriteria, type Versioned } from '../ports/inventory-ports';
+import { type ArticleListCriteria } from '../ports/article-repository.port';
+import { type Versioned } from '../ports/repository-types.port';
 
 export interface CreateArticleCommand {
   name: string;

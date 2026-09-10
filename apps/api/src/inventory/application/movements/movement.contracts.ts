@@ -2,7 +2,7 @@ import { type PaginatedResponse } from '@crm-photografy/shared';
 
 import { type Article } from '../../domain/articles/article';
 import { type Movement } from '../../domain/stock/movement';
-import { type Versioned } from '../ports/inventory-ports';
+import { type Versioned } from '../ports/repository-types.port';
 
 export interface ListMovementsQuery {
   page: number;

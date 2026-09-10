@@ -3,8 +3,8 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import {
   type CategoryListCriteria,
   type CategoryRepository,
-  type Versioned,
-} from '../../application/ports/inventory-ports';
+} from '../../application/ports/category-repository.port';
+import { type Versioned } from '../../application/ports/repository-types.port';
 import { Category } from '../../domain/categories/category';
 import { type CategoryArticleCounts } from '../../domain/categories/category.properties';
 import { PrismaClient } from '../../../infrastructure/prisma/generated/client';

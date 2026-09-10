@@ -4,8 +4,8 @@ import { describe, expect, it } from 'vitest';
 import {
   type CategoryListCriteria,
   type CategoryRepository,
-  type Versioned,
-} from '../ports/inventory-ports';
+} from '../ports/category-repository.port';
+import { type Versioned } from '../ports/repository-types.port';
 import { Category } from '../../domain/categories/category';
 import {
   ActiveArticleAssociationError,

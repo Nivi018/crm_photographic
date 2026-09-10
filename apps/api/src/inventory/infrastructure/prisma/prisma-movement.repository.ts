@@ -9,7 +9,7 @@ import {
 import {
   type MovementListCriteria,
   type MovementRepository,
-} from '../../application/ports/inventory-ports';
+} from '../../application/ports/movement-repository.port';
 import { Movement } from '../../domain/stock/movement';
 import { type PrismaClient } from '../../../infrastructure/prisma/generated/client';
 

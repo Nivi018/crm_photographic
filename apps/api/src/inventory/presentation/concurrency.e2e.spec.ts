@@ -6,11 +6,11 @@ import { INestApplication } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { PrismaClient } from '../../infrastructure/prisma/generated/client';
 import { ArticleService } from '../application/articles/article.service';
+import { type ArticleRepository } from '../application/ports/article-repository.port';
 import {
-  type ArticleRepository,
   type InventoryRepositories,
   type InventoryUnitOfWork,
-} from '../application/ports/inventory-ports';
+} from '../application/ports/inventory-unit-of-work.port';
 import { PrismaInventoryUnitOfWork } from '../infrastructure/prisma/prisma-inventory.unit-of-work';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { configureApplication } from '../../api.bootstrap';

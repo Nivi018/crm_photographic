@@ -3,7 +3,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import {
   type InventoryRepositories,
   type InventoryUnitOfWork,
-} from '../../application/ports/inventory-ports';
+} from '../../application/ports/inventory-unit-of-work.port';
 import { PrismaClient } from '../../../infrastructure/prisma/generated/client';
 import { PrismaInventoryUnitOfWork } from './prisma-inventory.unit-of-work';
 

@@ -4,8 +4,8 @@ import { randomUUID } from 'node:crypto';
 import {
   type InventoryRepositories,
   type InventoryUnitOfWork,
-  type Versioned,
-} from '../ports/inventory-ports';
+} from '../ports/inventory-unit-of-work.port';
+import { type Versioned } from '../ports/repository-types.port';
 import { Article } from '../../domain/articles/article';
 import { Movement } from '../../domain/stock/movement';
 import { replayCurrentStock } from '../../domain/stock/stock-replay';

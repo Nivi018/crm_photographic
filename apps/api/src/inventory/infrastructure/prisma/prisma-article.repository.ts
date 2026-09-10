@@ -7,9 +7,8 @@ import {
 import {
   type ArticleListCriteria,
   type ArticleRepository,
-  type PageRequest,
-  type Versioned,
-} from '../../application/ports/inventory-ports';
+} from '../../application/ports/article-repository.port';
+import { type PageRequest, type Versioned } from '../../application/ports/repository-types.port';
 import { Article } from '../../domain/articles/article';
 import { type Prisma, type PrismaClient } from '../../../infrastructure/prisma/generated/client';
 
