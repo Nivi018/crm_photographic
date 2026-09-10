@@ -1,6 +1,6 @@
 # Tareas - Spec 002 Mejora del backend de inventario
 
-- [ ] T1. Definir contratos públicos compartidos para envelopes, paginación, recursos, errores y códigos nuevos. (RF-6 a RF-19, RF-21 a RF-28, RF-64 a RF-75)
+- [x] T1. Definir contratos públicos compartidos para envelopes, paginación, recursos, errores y códigos nuevos. (RF-6 a RF-19, RF-21 a RF-28, RF-64 a RF-75)
       Hecho cuando: pruebas de contratos verifican tipos, enums, nulabilidad, `data`, `meta`, errores y ausencia de campos internos.
 
 - [ ] T2. Separar propiedades y errores de las entidades de dominio en módulos físicos. (RF-1, RF-3, RF-5, RF-56, RF-64 a RF-74)

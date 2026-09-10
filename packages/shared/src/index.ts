@@ -7,4 +7,19 @@ export {
   MovementKind,
   MovementSource,
 } from './contracts.js';
-export type { PaginatedResponse } from './contracts.js';
+export type {
+  ApiErrorResponse,
+  ApiPaginatedResponse,
+  ApiResponse,
+  ArticleResponse,
+  CategoryResponse,
+  DeleteResponse,
+  LivenessResponse,
+  MovementOperationResponse,
+  MovementResponse,
+  NegativeStockConfirmationDetails,
+  PaginatedResponse,
+  PaginationMeta,
+  ReadinessResponse,
+  ValidationErrorDetails,
+} from './contracts.js';
