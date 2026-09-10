@@ -18,7 +18,7 @@ export function configureApplication(app: INestApplication): void {
       exceptionFactory: (errors: ValidationError[]) =>
         new BadRequestException({
           code: InventoryErrorCode.Validation,
-          details: validationDetails(errors),
+          details: { fields: validationDetails(errors) },
           message: 'Request validation failed',
         }),
       forbidNonWhitelisted: true,

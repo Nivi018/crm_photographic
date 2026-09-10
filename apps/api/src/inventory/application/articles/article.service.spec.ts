@@ -33,8 +33,8 @@ describe('ArticleService', () => {
     });
 
     expect(created).toMatchObject({
-      version: 0,
-      entity: { name: 'Fondo blanco', isActive: true, currentStock: 0 },
+      version: 1,
+      entity: { name: 'Fondo blanco', isActive: true, currentStock: 4 },
     });
     expect(harness.savedMovements).toHaveLength(1);
     expect(harness.savedMovements[0]).toMatchObject({
@@ -260,7 +260,7 @@ describe('ArticleService', () => {
       expectedVersion: 0,
     });
 
-    expect(updated.entity.currentStock).toBe(4);
+    expect(updated.article.entity.currentStock).toBe(4);
     expect(harness.savedMovements).toHaveLength(1);
     expect(harness.savedMovements[0]).toMatchObject({
       articleId: article.id,
@@ -305,7 +305,7 @@ describe('ArticleService', () => {
       confirmNegativeStock: true,
     });
 
-    expect(updated.entity.currentStock).toBe(-1);
+    expect(updated.article.entity.currentStock).toBe(-1);
     expect(harness.savedMovements[0]).toMatchObject({ appliedQuantity: -3, stockAfter: -1 });
   });
 
@@ -321,7 +321,7 @@ describe('ArticleService', () => {
       expectedVersion: 0,
     });
 
-    expect(updated.entity.currentStock).toBe(2);
+    expect(updated.article.entity.currentStock).toBe(2);
     expect(harness.savedMovements[0]).toMatchObject({
       appliedQuantity: -3,
       reason: 'Ajuste de inventario',
@@ -360,7 +360,7 @@ describe('ArticleService', () => {
       expectedVersion: 0,
     });
 
-    expect(updated.entity.currentStock).toBe(1);
+    expect(updated.article.entity.currentStock).toBe(1);
     expect(harness.savedMovements).toHaveLength(1);
   });
 

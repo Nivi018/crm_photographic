@@ -88,7 +88,7 @@ describe('PrismaInventoryUnitOfWork', () => {
     await expect(
       prisma.article.findUnique({ where: { id: created.entity.id } }),
     ).resolves.toMatchObject({
-      currentStock: 0,
+      currentStock: 3,
       initialStock: 3,
     });
     await expect(

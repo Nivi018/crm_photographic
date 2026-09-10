@@ -58,7 +58,7 @@ describe('Inventory concurrency (E2E)', () => {
 
     await expect(
       service.registerEntry({
-        articleId: article.entity.id,
+        articleId: article.data.id,
         expectedVersion: 0,
         quantity: 1,
         reason: 'Conflicto E2E',
@@ -68,7 +68,7 @@ describe('Inventory concurrency (E2E)', () => {
 
   it('requires reconfirmation when the retried operation becomes negative', async () => {
     const article = await createArticle();
-    const entry = await request('POST', `/articles/${article.entity.id}/movements/entries`, {
+    const entry = await request('POST', `/articles/${article.data.id}/movements/entries`, {
       expectedVersion: 0,
       quantity: 1,
       reason: 'Existencia E2E',
@@ -81,7 +81,7 @@ describe('Inventory concurrency (E2E)', () => {
     await expect(
       service.registerExit({
         expectedVersion: 1,
-        articleId: article.entity.id,
+        articleId: article.data.id,
         quantity: 1,
         reason: 'Salida E2E',
       }),
@@ -93,16 +93,16 @@ describe('Inventory concurrency (E2E)', () => {
       name: `Concurrencia ${Date.now()}`,
     });
     const category = await categoryResponse.json();
-    categoryIds.push(category.entity.id);
+    categoryIds.push(category.data.id);
     const articleResponse = await request('POST', '/articles', {
-      categoryId: category.entity.id,
+      categoryId: category.data.id,
       initialStock: 0,
       minimumStock: 0,
-      name: `Articulo concurrencia ${category.entity.id}`,
+      name: `Articulo concurrencia ${category.data.id}`,
       type: 'SALE',
     });
     const article = await articleResponse.json();
-    articleIds.push(article.entity.id);
+    articleIds.push(article.data.id);
     return article;
   }
 

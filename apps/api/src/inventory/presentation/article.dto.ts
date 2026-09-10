@@ -1,12 +1,26 @@
-import { ArticleType } from '@crm-photografy/shared';
+import {
+  type ApiPaginatedResponse,
+  type ApiResponse,
+  type ArticleResponse,
+  ArticleType,
+} from '@crm-photografy/shared';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Min,
+} from 'class-validator';
 
 export class CreateArticleDto {
   @ApiProperty() @IsString() @IsNotEmpty() name!: string;
   @ApiProperty({ enum: ArticleType }) @IsEnum(ArticleType) type!: ArticleType;
-  @ApiProperty() @IsString() @IsNotEmpty() categoryId!: string;
+  @ApiProperty() @IsUUID() categoryId!: string;
   @ApiProperty({ minimum: 0 }) @IsInt() @Min(0) initialStock!: number;
   @ApiProperty({ minimum: 0 }) @IsInt() @Min(0) minimumStock!: number;
 }
@@ -21,13 +35,28 @@ export class ArticleStateDto {
 }
 
 export class ReactivateArticleDto extends ArticleStateDto {
-  @ApiPropertyOptional() @IsOptional() @IsString() categoryId?: string;
+  @ApiPropertyOptional() @IsOptional() @IsUUID() categoryId?: string;
+}
+
+export class ArticleIdParamDto {
+  @ApiProperty() @IsUUID() id!: string;
 }
 
 export class ListArticlesDto {
   @ApiPropertyOptional({ default: 1 }) @IsOptional() @Type(() => Number) @IsInt() @Min(1) page = 1;
   @ApiPropertyOptional() @IsOptional() @IsString() name?: string;
   @ApiPropertyOptional({ enum: ArticleType }) @IsOptional() @IsEnum(ArticleType) type?: ArticleType;
-  @ApiPropertyOptional() @IsOptional() @IsString() categoryId?: string;
-  @ApiPropertyOptional() @IsOptional() @Type(() => Boolean) @IsBoolean() isActive?: boolean;
+  @ApiPropertyOptional() @IsOptional() @IsUUID() categoryId?: string;
+  @ApiPropertyOptional()
+  @IsOptional()
+  @Transform(parseBooleanLiteral)
+  @IsBoolean()
+  isActive?: boolean;
+}
+
+export type ArticleResponseDto = ApiResponse<ArticleResponse>;
+export type ArticlePageResponseDto = ApiPaginatedResponse<ArticleResponse>;
+
+function parseBooleanLiteral({ value }: { value: unknown }): unknown {
+  return value === 'true' ? true : value === 'false' ? false : value;
 }

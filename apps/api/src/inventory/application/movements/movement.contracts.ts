@@ -34,4 +34,7 @@ export interface RegisterDeltaAdjustmentCommand extends RegisterEntryCommand {
 }
 
 export type MovementPage = PaginatedResponse<Movement>;
-export type MovementResult = Versioned<Article>;
+export interface MovementResult {
+  article: Versioned<Article>;
+  movement: Movement;
+}

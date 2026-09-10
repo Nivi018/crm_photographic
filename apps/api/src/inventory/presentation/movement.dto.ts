@@ -1,6 +1,12 @@
+import {
+  type ApiPaginatedResponse,
+  type ApiResponse,
+  type MovementOperationResponse,
+  type MovementResponse,
+} from '@crm-photografy/shared';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 
 export class MovementDto {
   @ApiProperty({ minimum: 1 }) @IsInt() @Min(1) quantity!: number;
@@ -24,3 +30,12 @@ export class DeltaAdjustmentDto {
 export class MovementListDto {
   @ApiPropertyOptional({ default: 1 }) @IsOptional() @Type(() => Number) @IsInt() @Min(1) page = 1;
 }
+
+export class ArticleIdParamDto {
+  @ApiProperty()
+  @IsUUID()
+  id!: string;
+}
+
+export type MovementResponseDto = ApiResponse<MovementOperationResponse>;
+export type MovementPageResponseDto = ApiPaginatedResponse<MovementResponse>;

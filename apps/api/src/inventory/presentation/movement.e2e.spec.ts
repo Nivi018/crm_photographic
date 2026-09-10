@@ -50,15 +50,17 @@ describe('Movement endpoints (E2E)', () => {
   it('records entries, confirmed negative exits, adjustments, and movement history through HTTP', async () => {
     const article = await createArticle();
 
-    const entry = await request('POST', `/articles/${article.entity.id}/movements/entries`, {
+    const entry = await request('POST', `/articles/${article.data.id}/movements/entries`, {
       expectedVersion: 0,
       quantity: 5,
       reason: 'Reposicion E2E',
     });
     expect(entry.status).toBe(201);
-    await expect(entry.json()).resolves.toMatchObject({ entity: { currentStock: 5 }, version: 1 });
+    await expect(entry.json()).resolves.toMatchObject({
+      data: { article: { currentStock: 5, version: 1 }, movement: { stockAfter: 5 } },
+    });
 
-    const exitWarning = await request('POST', `/articles/${article.entity.id}/movements/exits`, {
+    const exitWarning = await request('POST', `/articles/${article.data.id}/movements/exits`, {
       expectedVersion: 1,
       quantity: 7,
       reason: 'Uso E2E',
@@ -68,7 +70,7 @@ describe('Movement endpoints (E2E)', () => {
       code: 'NEGATIVE_STOCK_CONFIRMATION_REQUIRED',
     });
 
-    const confirmedExit = await request('POST', `/articles/${article.entity.id}/movements/exits`, {
+    const confirmedExit = await request('POST', `/articles/${article.data.id}/movements/exits`, {
       confirmNegativeStock: true,
       expectedVersion: 1,
       quantity: 7,
@@ -76,24 +78,22 @@ describe('Movement endpoints (E2E)', () => {
     });
     expect(confirmedExit.status).toBe(201);
     await expect(confirmedExit.json()).resolves.toMatchObject({
-      entity: { currentStock: -2 },
-      version: 2,
+      data: { article: { currentStock: -2, version: 2 }, movement: { stockAfter: -2 } },
     });
 
     const finalStock = await request(
       'POST',
-      `/articles/${article.entity.id}/movements/final-stock-adjustments`,
+      `/articles/${article.data.id}/movements/final-stock-adjustments`,
       { expectedVersion: 2, finalStock: 3 },
     );
     expect(finalStock.status).toBe(201);
     await expect(finalStock.json()).resolves.toMatchObject({
-      entity: { currentStock: 3 },
-      version: 3,
+      data: { article: { currentStock: 3, version: 3 }, movement: { stockAfter: 3 } },
     });
 
     const deltaWarning = await request(
       'POST',
-      `/articles/${article.entity.id}/movements/delta-adjustments`,
+      `/articles/${article.data.id}/movements/delta-adjustments`,
       {
         expectedVersion: 3,
         quantity: -5,
@@ -107,7 +107,7 @@ describe('Movement endpoints (E2E)', () => {
 
     const confirmedDelta = await request(
       'POST',
-      `/articles/${article.entity.id}/movements/delta-adjustments`,
+      `/articles/${article.data.id}/movements/delta-adjustments`,
       {
         confirmNegativeStock: true,
         expectedVersion: 3,
@@ -117,15 +117,14 @@ describe('Movement endpoints (E2E)', () => {
     );
     expect(confirmedDelta.status).toBe(201);
     await expect(confirmedDelta.json()).resolves.toMatchObject({
-      entity: { currentStock: -2 },
-      version: 4,
+      data: { article: { currentStock: -2, version: 4 }, movement: { stockAfter: -2 } },
     });
 
-    const history = await request('GET', `/articles/${article.entity.id}/movements?page=1`);
+    const history = await request('GET', `/articles/${article.data.id}/movements?page=1`);
     expect(history.status).toBe(200);
     const articleHistory = await history.json();
-    expect(articleHistory).toMatchObject({ page: 1, pageSize: 25, totalItems: 4 });
-    expect(articleHistory.items).toEqual(
+    expect(articleHistory).toMatchObject({ meta: { page: 1, pageSize: 25, totalItems: 4 } });
+    expect(articleHistory.data).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ kind: 'ENTRY', appliedQuantity: 5, reason: 'Reposicion E2E' }),
         expect.objectContaining({ kind: 'EXIT', appliedQuantity: -7, reason: 'Uso E2E' }),
@@ -146,22 +145,22 @@ describe('Movement endpoints (E2E)', () => {
     expect(globalHistory.status).toBe(200);
     const movements = await globalHistory.json();
     expect(
-      movements.items.some(
-        (movement: { articleId: string }) => movement.articleId === article.entity.id,
+      movements.data.some(
+        (movement: { articleId: string }) => movement.articleId === article.data.id,
       ),
     ).toBe(true);
   });
 
   it('rejects a movement that would exceed the stock range', async () => {
     const article = await createArticle();
-    const maximumEntry = await request('POST', `/articles/${article.entity.id}/movements/entries`, {
+    const maximumEntry = await request('POST', `/articles/${article.data.id}/movements/entries`, {
       expectedVersion: 0,
       quantity: 999_999_999,
       reason: 'Limite E2E',
     });
     expect(maximumEntry.status).toBe(201);
 
-    const response = await request('POST', `/articles/${article.entity.id}/movements/entries`, {
+    const response = await request('POST', `/articles/${article.data.id}/movements/entries`, {
       expectedVersion: 1,
       quantity: 1,
       reason: 'Fuera de rango E2E',
@@ -175,18 +174,18 @@ describe('Movement endpoints (E2E)', () => {
     const categoryResponse = await request('POST', '/categories', { name: 'Movimientos E2E' });
     expect(categoryResponse.status).toBe(201);
     const category = await categoryResponse.json();
-    categoryIds.push(category.entity.id);
+    categoryIds.push(category.data.id);
 
     const articleResponse = await request('POST', '/articles', {
-      categoryId: category.entity.id,
+      categoryId: category.data.id,
       initialStock: 0,
       minimumStock: 0,
-      name: `Articulo movimientos ${category.entity.id}`,
+      name: `Articulo movimientos ${category.data.id}`,
       type: 'SALE',
     });
     expect(articleResponse.status).toBe(201);
     const article = await articleResponse.json();
-    articleIds.push(article.entity.id);
+    articleIds.push(article.data.id);
     return article;
   }
 

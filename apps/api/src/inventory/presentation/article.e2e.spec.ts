@@ -53,7 +53,7 @@ describe('Article endpoints (E2E)', () => {
   it('creates, queries, filters, edits, and changes article state through HTTP', async () => {
     const category = await createCategory('Equipo E2E');
     const created = await request(articleUrl, 'POST', '', {
-      categoryId: category.entity.id,
+      categoryId: category.data.id,
       initialStock: 5,
       minimumStock: 5,
       name: '  Camara principal E2E  ',
@@ -62,14 +62,25 @@ describe('Article endpoints (E2E)', () => {
 
     expect(created.status).toBe(201);
     const article = await created.json();
-    articleIds.push(article.entity.id);
+    articleIds.push(article.data.id);
     expect(article).toMatchObject({
-      entity: { currentStock: 0, isActive: true, name: 'Camara principal E2E' },
-      version: 0,
+      data: { currentStock: 5, isActive: true, name: 'Camara principal E2E', version: 1 },
     });
+    expect(Object.keys(article.data).sort()).toEqual([
+      'categoryId',
+      'currentStock',
+      'hasLowStock',
+      'id',
+      'initialStock',
+      'isActive',
+      'minimumStock',
+      'name',
+      'type',
+      'version',
+    ]);
 
     const duplicate = await request(articleUrl, 'POST', '', {
-      categoryId: category.entity.id,
+      categoryId: category.data.id,
       initialStock: 0,
       minimumStock: 0,
       name: 'camara principal e2e',
@@ -78,33 +89,31 @@ describe('Article endpoints (E2E)', () => {
     expect(duplicate.status).toBe(409);
     await expect(duplicate.json()).resolves.toMatchObject({ code: 'NAME_CONFLICT' });
 
-    const found = await request(articleUrl, 'GET', `/${article.entity.id}`);
+    const found = await request(articleUrl, 'GET', `/${article.data.id}`);
     expect(found.status).toBe(200);
-    await expect(found.json()).resolves.toMatchObject({ entity: { id: article.entity.id } });
+    await expect(found.json()).resolves.toMatchObject({ data: { id: article.data.id } });
 
     const listed = await request(
       articleUrl,
       'GET',
-      `?name=CAMARA&type=SALE&categoryId=${category.entity.id}&isActive=true`,
+      `?name=CAMARA&type=SALE&categoryId=${category.data.id}&isActive=true`,
     );
     expect(listed.status).toBe(200);
     const articleList = await listed.json();
-    expect(articleList).toMatchObject({ page: 1, pageSize: 25, totalItems: 1 });
-    expect(articleList.items[0]).toMatchObject({ entity: { id: article.entity.id } });
+    expect(articleList).toMatchObject({ meta: { page: 1, pageSize: 25, totalItems: 1 } });
+    expect(articleList.data[0]).toMatchObject({ id: article.data.id });
 
     const lowStock = await request(articleUrl, 'GET', '/low-stock');
     expect(lowStock.status).toBe(200);
     const lowStockList = await lowStock.json();
-    expect(lowStockList.items).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ entity: expect.objectContaining({ id: article.entity.id }) }),
-      ]),
+    expect(lowStockList.data).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: article.data.id })]),
     );
 
-    const updated = await request(articleUrl, 'PATCH', `/${article.entity.id}`, {
-      categoryId: category.entity.id,
+    const updated = await request(articleUrl, 'PATCH', `/${article.data.id}`, {
+      categoryId: category.data.id,
       confirmNegativeStock: false,
-      expectedVersion: 0,
+      expectedVersion: 1,
       initialStock: 8,
       minimumStock: 3,
       name: 'Camara principal editada E2E',
@@ -113,56 +122,76 @@ describe('Article endpoints (E2E)', () => {
     expect(updated.status).toBe(200);
     const editedArticle = await updated.json();
     expect(editedArticle).toMatchObject({
-      entity: { currentStock: 8, name: 'Camara principal editada E2E', type: 'INTERNAL_SUPPLY' },
-      version: 1,
+      data: {
+        currentStock: 8,
+        name: 'Camara principal editada E2E',
+        type: 'INTERNAL_SUPPLY',
+        version: 2,
+      },
     });
 
-    const deactivated = await request(articleUrl, 'POST', `/${article.entity.id}/deactivate`, {
-      expectedVersion: 1,
-    });
-    expect(deactivated.status).toBe(201);
-    await expect(deactivated.json()).resolves.toMatchObject({
-      entity: { isActive: false },
-      version: 2,
-    });
-
-    const reactivated = await request(articleUrl, 'POST', `/${article.entity.id}/reactivate`, {
+    const deactivated = await request(articleUrl, 'POST', `/${article.data.id}/deactivate`, {
       expectedVersion: 2,
     });
-    expect(reactivated.status).toBe(201);
+    expect(deactivated.status).toBe(200);
+    await expect(deactivated.json()).resolves.toMatchObject({
+      data: { isActive: false, version: 3 },
+    });
+
+    const reactivated = await request(articleUrl, 'POST', `/${article.data.id}/reactivate`, {
+      expectedVersion: 3,
+    });
+    expect(reactivated.status).toBe(200);
     await expect(reactivated.json()).resolves.toMatchObject({
-      entity: { isActive: true },
-      version: 3,
+      data: { isActive: true, version: 4 },
     });
   });
 
   it('deletes an article with zero stock and no movements through HTTP', async () => {
     const category = await createCategory('Eliminacion E2E');
     const created = await request(articleUrl, 'POST', '', {
-      categoryId: category.entity.id,
+      categoryId: category.data.id,
       initialStock: 0,
       minimumStock: 0,
       name: 'Articulo eliminable E2E',
       type: 'SALE',
     });
     const article = await created.json();
-    articleIds.push(article.entity.id);
+    articleIds.push(article.data.id);
 
-    const removed = await request(articleUrl, 'DELETE', `/${article.entity.id}`, {
+    const removed = await request(articleUrl, 'DELETE', `/${article.data.id}`, {
       expectedVersion: 0,
     });
     expect(removed.status).toBe(200);
     articleIds.length = 0;
-    await expect(
-      prisma.article.findUnique({ where: { id: article.entity.id } }),
-    ).resolves.toBeNull();
+    await expect(prisma.article.findUnique({ where: { id: article.data.id } })).resolves.toBeNull();
+  });
+
+  it('validates UUID route parameters and boolean query values strictly', async () => {
+    const invalidId = await request(articleUrl, 'GET', '/not-a-uuid');
+    expect(invalidId.status).toBe(400);
+    await expect(invalidId.json()).resolves.toMatchObject({
+      code: 'VALIDATION_ERROR',
+      details: { fields: [expect.objectContaining({ field: 'id' })] },
+    });
+
+    const invalidBoolean = await request(articleUrl, 'GET', '?isActive=1');
+    expect(invalidBoolean.status).toBe(400);
+    await expect(invalidBoolean.json()).resolves.toMatchObject({
+      code: 'VALIDATION_ERROR',
+      details: { fields: [expect.objectContaining({ field: 'isActive' })] },
+    });
+
+    const missing = await request(articleUrl, 'GET', '/0198de9e-5f20-7c99-9ed4-623d44f8a2e1');
+    expect(missing.status).toBe(404);
+    await expect(missing.json()).resolves.toMatchObject({ code: 'NOT_FOUND' });
   });
 
   async function createCategory(name: string) {
     const response = await request(categoryUrl, 'POST', '', { name });
     expect(response.status).toBe(201);
     const category = await response.json();
-    categoryIds.push(category.entity.id);
+    categoryIds.push(category.data.id);
     return category;
   }
 

@@ -1,6 +1,11 @@
+import {
+  type ApiPaginatedResponse,
+  type ApiResponse,
+  type CategoryResponse,
+} from '@crm-photografy/shared';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 
 export class CreateCategoryDto {
   @ApiProperty()
@@ -23,6 +28,12 @@ export class CategoryStateDto {
   expectedVersion!: number;
 }
 
+export class CategoryIdParamDto {
+  @ApiProperty()
+  @IsUUID()
+  id!: string;
+}
+
 export class ListCategoriesDto {
   @ApiPropertyOptional({ minimum: 1, default: 1 })
   @IsOptional()
@@ -33,7 +44,14 @@ export class ListCategoriesDto {
 
   @ApiPropertyOptional()
   @IsOptional()
-  @Type(() => Boolean)
+  @Transform(parseBooleanLiteral)
   @IsBoolean()
   isActive?: boolean;
+}
+
+export type CategoryResponseDto = ApiResponse<CategoryResponse>;
+export type CategoryPageResponseDto = ApiPaginatedResponse<CategoryResponse>;
+
+function parseBooleanLiteral({ value }: { value: unknown }): unknown {
+  return value === 'true' ? true : value === 'false' ? false : value;
 }
