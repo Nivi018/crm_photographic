@@ -2,8 +2,6 @@ import { INVENTORY_LIMITS } from '@crm-photografy/shared';
 import { describe, expect, it } from 'vitest';
 
 import {
-  InvalidQuantityError,
-  StockOutOfRangeError,
   calculateStockAfter,
   validateAdjustmentDelta,
   validateEntryQuantity,
@@ -13,6 +11,7 @@ import {
   validateMinimumStock,
   validateStock,
 } from './quantities';
+import { InvalidQuantityError, StockOutOfRangeError } from './quantity.errors';
 
 const { maximumQuantity, minimumStock } = INVENTORY_LIMITS;
 

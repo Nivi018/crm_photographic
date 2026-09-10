@@ -1,16 +1,16 @@
 import { ArticleType, INVENTORY_LIMITS } from '@crm-photografy/shared';
 import { describe, expect, it } from 'vitest';
 
-import { RequiredTextError } from '../text/normalization';
+import { Article } from './article';
 import {
-  Article,
   ArticleHasMovementsError,
   ArticleInactiveError,
   ArticleNameTooLongError,
   ArticleStockNotZeroError,
   CategoryInactiveError,
   InvalidArticleTypeError,
-} from './article';
+} from './article.errors';
+import { RequiredTextError } from '../text/text.errors';
 
 const activeCategory = { id: 'category-1', isActive: true };
 const inactiveCategory = { id: 'category-2', isActive: false };

@@ -10,7 +10,7 @@ import { Category } from '../../domain/categories/category';
 import {
   ActiveArticleAssociationError,
   CategoryAssociationError,
-} from '../../domain/categories/category';
+} from '../../domain/categories/category.errors';
 import {
   CategoryNameConflictError,
   CategoryNotFoundError,

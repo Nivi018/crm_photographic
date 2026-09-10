@@ -1,9 +1,10 @@
 import { INVENTORY_LIMITS, MovementKind, MovementSource } from '@crm-photografy/shared';
 import { describe, expect, it, vi } from 'vitest';
 
-import { InvalidQuantityError, StockOutOfRangeError } from './quantities';
-import { Movement, MovementReasonTooLongError } from './movement';
-import { RequiredTextError } from '../text/normalization';
+import { Movement } from './movement';
+import { MovementReasonTooLongError } from './movement.errors';
+import { InvalidQuantityError, StockOutOfRangeError } from './quantity.errors';
+import { RequiredTextError } from '../text/text.errors';
 
 function movementInput() {
   return {

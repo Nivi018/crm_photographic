@@ -5,6 +5,14 @@ import {
   MovementSource,
 } from '@crm-photografy/shared';
 
+import { MovementReasonTooLongError, NoStockDifferenceError } from './movement.errors';
+import {
+  type FinalStockAdjustmentProperties,
+  type InitialStockMovementProperties,
+  type ManualMovementProperties,
+  type MovementIdentity,
+  type PersistedMovementProperties,
+} from './movement.properties';
 import { trimRequiredText } from '../text/normalization';
 import {
   calculateStockAfter,
@@ -14,53 +22,6 @@ import {
   validateFinalStock,
   validateInitialStock,
 } from './quantities';
-
-export interface MovementIdentity {
-  id: string;
-  sequence: bigint;
-  articleId: string;
-}
-
-export interface ManualMovementProperties extends MovementIdentity {
-  stockBefore: number;
-  quantity: number;
-  reason: string;
-}
-
-export interface FinalStockAdjustmentProperties extends MovementIdentity {
-  stockBefore: number;
-  finalStock: number;
-}
-
-export interface InitialStockMovementProperties extends MovementIdentity {
-  initialStock: number;
-}
-
-export interface PersistedMovementProperties extends MovementIdentity {
-  kind: MovementKind;
-  adjustmentMode: AdjustmentMode | null;
-  source: MovementSource;
-  appliedQuantity: number;
-  reason: string;
-  occurredAt: Date;
-  stockBefore: number;
-}
-
-export class MovementReasonTooLongError extends Error {
-  constructor() {
-    super(
-      `movement reason cannot exceed ${INVENTORY_LIMITS.maximumMovementReasonLength} characters`,
-    );
-    this.name = 'MovementReasonTooLongError';
-  }
-}
-
-export class NoStockDifferenceError extends Error {
-  constructor() {
-    super('final stock adjustment must produce a difference');
-    this.name = 'NoStockDifferenceError';
-  }
-}
 
 export class Movement {
   readonly id: string;

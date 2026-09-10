@@ -1,7 +1,8 @@
 import { type ArticleType, type PaginatedResponse } from '@crm-photografy/shared';
 
 import { type Article } from '../../domain/articles/article';
-import { type Category, type CategoryArticleCounts } from '../../domain/categories/category';
+import { type Category } from '../../domain/categories/category';
+import { type CategoryArticleCounts } from '../../domain/categories/category.properties';
 import { type Movement } from '../../domain/stock/movement';
 
 export interface Versioned<T> {

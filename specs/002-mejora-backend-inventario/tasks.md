@@ -3,7 +3,7 @@
 - [x] T1. Definir contratos públicos compartidos para envelopes, paginación, recursos, errores y códigos nuevos. (RF-6 a RF-19, RF-21 a RF-28, RF-64 a RF-75)
       Hecho cuando: pruebas de contratos verifican tipos, enums, nulabilidad, `data`, `meta`, errores y ausencia de campos internos.
 
-- [ ] T2. Separar propiedades y errores de las entidades de dominio en módulos físicos. (RF-1, RF-3, RF-5, RF-56, RF-64 a RF-74)
+- [x] T2. Separar propiedades y errores de las entidades de dominio en módulos físicos. (RF-1, RF-3, RF-5, RF-56, RF-64 a RF-74)
       Hecho cuando: pruebas de dominio permanecen en verde y el dominio no importa NestJS, Prisma ni DTOs HTTP.
 
 - [ ] T3. Extraer contratos e implementar los ocho casos de uso de artículos por operación. (RF-2, RF-3, RF-48, RF-53 a RF-55, RF-65, RF-69, RF-73, RF-74)
