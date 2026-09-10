@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { ArticleService } from '../article.service';
 import { CreateArticleUseCase } from './create-article.use-case';
 import { DeactivateArticleUseCase } from './deactivate-article.use-case';
 import { DeleteArticleUseCase } from './delete-article.use-case';
@@ -11,7 +12,7 @@ import { ReactivateArticleUseCase } from './reactivate-article.use-case';
 
 describe('article use cases', () => {
   it('delegates each article operation through its own executable module', async () => {
-    const service = {
+    const methods = {
       create: vi.fn().mockResolvedValue('created'),
       findById: vi.fn().mockResolvedValue('found'),
       list: vi.fn().mockResolvedValue('listed'),
@@ -20,7 +21,8 @@ describe('article use cases', () => {
       deactivate: vi.fn().mockResolvedValue('deactivated'),
       reactivate: vi.fn().mockResolvedValue('reactivated'),
       delete: vi.fn().mockResolvedValue(undefined),
-    } as never;
+    };
+    const service = methods as unknown as ArticleService;
 
     await expect(new CreateArticleUseCase(service).execute({} as never)).resolves.toBe('created');
     await expect(new GetArticleUseCase(service).execute({ id: 'article-1' })).resolves.toBe(
@@ -39,13 +41,13 @@ describe('article use cases', () => {
     );
     await expect(new DeleteArticleUseCase(service).execute({} as never)).resolves.toBeUndefined();
 
-    expect(service.create).toHaveBeenCalledOnce();
-    expect(service.findById).toHaveBeenCalledOnce();
-    expect(service.list).toHaveBeenCalledOnce();
-    expect(service.listLowStock).toHaveBeenCalledOnce();
-    expect(service.edit).toHaveBeenCalledOnce();
-    expect(service.deactivate).toHaveBeenCalledOnce();
-    expect(service.reactivate).toHaveBeenCalledOnce();
-    expect(service.delete).toHaveBeenCalledOnce();
+    expect(methods.create).toHaveBeenCalledOnce();
+    expect(methods.findById).toHaveBeenCalledOnce();
+    expect(methods.list).toHaveBeenCalledOnce();
+    expect(methods.listLowStock).toHaveBeenCalledOnce();
+    expect(methods.edit).toHaveBeenCalledOnce();
+    expect(methods.deactivate).toHaveBeenCalledOnce();
+    expect(methods.reactivate).toHaveBeenCalledOnce();
+    expect(methods.delete).toHaveBeenCalledOnce();
   });
 });

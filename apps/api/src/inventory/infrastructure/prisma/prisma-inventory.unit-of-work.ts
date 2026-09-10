@@ -1,7 +1,7 @@
 import {
   type InventoryRepositories,
   type InventoryUnitOfWork,
-} from '../../application/ports/inventory-ports';
+} from '../../application/ports/inventory-unit-of-work.port';
 import { type PrismaClient } from '../../../infrastructure/prisma/generated/client';
 import { PrismaArticleRepository } from './prisma-article.repository';
 import { PrismaCategoryRepository } from './prisma-category.repository';

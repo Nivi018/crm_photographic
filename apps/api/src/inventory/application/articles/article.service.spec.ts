@@ -1,12 +1,12 @@
 import { ArticleType, MovementSource } from '@crm-photografy/shared';
 import { describe, expect, it } from 'vitest';
 
+import { type ArticleListCriteria } from '../ports/article-repository.port';
 import {
-  type ArticleListCriteria,
   type InventoryRepositories,
   type InventoryUnitOfWork,
-  type Versioned,
-} from '../ports/inventory-ports';
+} from '../ports/inventory-unit-of-work.port';
+import { type Versioned } from '../ports/repository-types.port';
 import { Article } from '../../domain/articles/article';
 import { Category } from '../../domain/categories/category';
 import { Movement } from '../../domain/stock/movement';

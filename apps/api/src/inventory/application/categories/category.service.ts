@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
-import { type CategoryRepository, type Versioned } from '../ports/inventory-ports';
+import { type CategoryRepository } from '../ports/category-repository.port';
+import { type Versioned } from '../ports/repository-types.port';
 import { Category } from '../../domain/categories/category';
 import {
   type CategoryListQuery,

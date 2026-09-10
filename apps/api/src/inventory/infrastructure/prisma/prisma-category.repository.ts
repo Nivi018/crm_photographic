@@ -3,8 +3,8 @@ import { ARTICLE_PAGE_SIZE, type PaginatedResponse } from '@crm-photografy/share
 import {
   type CategoryListCriteria,
   type CategoryRepository,
-  type Versioned,
-} from '../../application/ports/inventory-ports';
+} from '../../application/ports/category-repository.port';
+import { type Versioned } from '../../application/ports/repository-types.port';
 import { Category } from '../../domain/categories/category';
 import { type CategoryArticleCounts } from '../../domain/categories/category.properties';
 import { type PrismaClient } from '../../../infrastructure/prisma/generated/client';

@@ -1,7 +1,8 @@
 import { type PaginatedResponse } from '@crm-photografy/shared';
 
 import { type Category } from '../../domain/categories/category';
-import { type CategoryListCriteria, type Versioned } from '../ports/inventory-ports';
+import { type CategoryListCriteria } from '../ports/category-repository.port';
+import { type Versioned } from '../ports/repository-types.port';
 
 export interface CreateCategoryCommand {
   name: string;
