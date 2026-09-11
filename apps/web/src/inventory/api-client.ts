@@ -55,6 +55,8 @@ export class InventoryApiError extends Error {
   }
 }
 
+export class UncertainMutationError extends InventoryApiError {}
+
 export type MovementRecord = MovementResponse;
 export interface MovementInput {
   confirmNegativeStock?: boolean;
@@ -174,14 +176,31 @@ export class InventoryApiClient {
   }
 
   private async send<T>(path: string, init?: RequestInit): Promise<T> {
-    const response = await this.fetcher(`${this.baseUrl}${path}`, {
-      ...init,
-      headers: { 'Content-Type': 'application/json', ...init?.headers },
-    });
+    const isMutation =
+      init?.method === 'POST' || init?.method === 'PATCH' || init?.method === 'DELETE';
+    let response: Response;
+    try {
+      response = await this.fetcher(`${this.baseUrl}${path}`, {
+        ...init,
+        headers: { 'Content-Type': 'application/json', ...init?.headers },
+      });
+    } catch (error) {
+      if (isMutation) {
+        throw new UncertainMutationError(
+          'No se pudo confirmar el resultado de la operacion. Verificando los datos actuales.',
+          undefined,
+          undefined,
+          undefined,
+        );
+      }
+      throw error;
+    }
 
     if (!response.ok) {
       const body = (await response.json().catch(() => null)) as Partial<ApiErrorResponse> | null;
-      throw new InventoryApiError(
+      const ErrorType =
+        isMutation && response.status === 500 ? UncertainMutationError : InventoryApiError;
+      throw new ErrorType(
         typeof body?.message === 'string'
           ? body.message
           : `Inventory request failed with status ${response.status}`,

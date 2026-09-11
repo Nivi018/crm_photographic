@@ -8,6 +8,7 @@ import type { ActiveCategoryClient } from './use-active-categories';
 import { useActiveCategories } from './use-active-categories';
 import type { ArticleRecordClient } from './use-article-record';
 import { useArticleRecord } from './use-article-record';
+import { MutationReconciliationNotice } from './mutation-reconciliation-notice';
 
 export function ArticleEditScreen({
   articleClient,
@@ -37,10 +38,20 @@ export function ArticleFormScreen({
   client?: ArticleFormClient | undefined;
 }): ReactElement {
   const { categories, error: categoryError, isLoading } = useActiveCategories(categoryClient);
-  const { errors, isSubmitting, setValue, submit, submitError, values } = useArticleForm(
-    client,
-    article,
-  );
+  const {
+    confirmManualRetry,
+    currentData,
+    errors,
+    isMutationBlocked,
+    isSubmitting,
+    phase,
+    retryMutation,
+    retryReconciliation,
+    setValue,
+    submit,
+    submitError,
+    values,
+  } = useArticleForm(client, article);
   const [success, setSuccess] = useState<string | null>(null);
   const isEditing = article !== undefined;
 
@@ -118,9 +129,16 @@ export function ArticleFormScreen({
         </Field>
         {submitError ? <p role="alert">{submitError}</p> : null}
         {success ? <p role="status">{success}</p> : null}
+        <MutationReconciliationNotice
+          currentData={currentData}
+          onConfirmManualRetry={confirmManualRetry}
+          onRetryMutation={() => void retryMutation()}
+          onRetryReconciliation={() => void retryReconciliation()}
+          phase={phase}
+        />
         <div className="article-form__actions">
           <a href="/inventory">Cancelar</a>
-          <button disabled={isSubmitting} type="submit">
+          <button disabled={isSubmitting || isMutationBlocked} type="submit">
             {isSubmitting ? 'Guardando...' : 'Guardar articulo'}
           </button>
         </div>

@@ -33,7 +33,7 @@
 - [x] T11. Adaptar el cliente API, tipos y pruebas web a los contratos normalizados. (RF-29, RF-57, RF-58, RF-75)
       Hecho cuando: los hooks y pantallas consumen `data`/`meta`, eliminaciones JSON y recursos públicos sin discrepancias de tipos.
 
-- [ ] T12. Diseñar e implementar la reconciliación de mutaciones con resultado incierto. (RF-77 a RF-80, RF-83 a RF-86)
+- [x] T12. Diseñar e implementar la reconciliación de mutaciones con resultado incierto. (RF-77 a RF-80, RF-83 a RF-86)
       Hecho cuando: pruebas de cliente cubren 500, timeout, corte de red y los resultados aplicado, no aplicado, indeterminado y consulta fallida.
 
 - [ ] T13. Verificar visualmente la recuperación de mutaciones inciertas en escritorio y móvil. (RF-29, RF-78 a RF-86)

@@ -6,6 +6,8 @@ import {
   type ArticleRecord,
   type UpdateArticleInput,
 } from './api-client';
+import { reconcileArticleMutation } from './reconcile-inventory-mutation';
+import { useMutationReconciliation } from './use-mutation-reconciliation';
 
 export interface ArticleFormValues {
   categoryId: string;
@@ -35,12 +37,14 @@ export function useArticleForm(client: ArticleFormClient = inventoryApi, article
   const [errors, setErrors] = useState<ArticleFormErrors>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const reconciliation = useMutationReconciliation();
 
   function setValue<Key extends keyof ArticleFormValues>(key: Key, value: ArticleFormValues[Key]) {
     setValues((currentValues) => ({ ...currentValues, [key]: value }));
   }
 
   async function submit(): Promise<ApiResponse<ArticleRecord> | null> {
+    if (reconciliation.isMutationBlocked) return null;
     const validationErrors = validateArticleForm(values);
     setErrors(validationErrors);
     setSubmitError(null);
@@ -56,12 +60,23 @@ export function useArticleForm(client: ArticleFormClient = inventoryApi, article
 
     setIsSubmitting(true);
     try {
-      return article
-        ? await client.updateArticle(article.id, {
-            ...input,
-            expectedVersion: article.version,
-          })
-        : await client.createArticle(input);
+      return await reconciliation.execute(
+        () =>
+          article
+            ? client.updateArticle(article.id, { ...input, expectedVersion: article.version })
+            : client.createArticle(input),
+        () =>
+          reconcileArticleMutation(
+            article
+              ? {
+                  id: article.id,
+                  input: { ...input, expectedVersion: article.version },
+                  kind: 'update',
+                }
+              : { input, kind: 'create' },
+            inventoryApi,
+          ),
+      );
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : 'No se pudo guardar el articulo.');
       return null;
@@ -70,7 +85,7 @@ export function useArticleForm(client: ArticleFormClient = inventoryApi, article
     }
   }
 
-  return { errors, isSubmitting, setValue, submit, submitError, values };
+  return { ...reconciliation, errors, isSubmitting, setValue, submit, submitError, values };
 }
 
 export function validateArticleForm(values: ArticleFormValues): ArticleFormErrors {
