@@ -35,12 +35,12 @@ export class CategoryIdParamDto {
 }
 
 export class ListCategoriesDto {
-  @ApiPropertyOptional({ minimum: 1, default: 1 })
+  @ApiPropertyOptional({ minimum: 1, default: 1, type: Number })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  page = 1;
+  page: number = 1;
 
   @ApiPropertyOptional()
   @IsOptional()

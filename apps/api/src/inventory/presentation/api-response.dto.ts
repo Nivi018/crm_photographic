@@ -5,7 +5,7 @@ import {
   MovementKind,
   MovementSource,
 } from '@crm-photografy/shared';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, getSchemaPath } from '@nestjs/swagger';
 
 export class ValidationFieldDto {
   @ApiProperty() field!: string;
@@ -26,8 +26,8 @@ export class ApiErrorResponseDto {
   @ApiProperty() statusCode!: number;
   @ApiPropertyOptional({
     oneOf: [
-      { $ref: '#/components/schemas/ValidationDetailsDto' },
-      { $ref: '#/components/schemas/NegativeStockConfirmationDetailsDto' },
+      { $ref: getSchemaPath(ValidationDetailsDto) },
+      { $ref: getSchemaPath(NegativeStockConfirmationDetailsDto) },
     ],
   })
   details?: ValidationDetailsDto | NegativeStockConfirmationDetailsDto;

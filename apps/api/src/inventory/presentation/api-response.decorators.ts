@@ -2,11 +2,18 @@ import { applyDecorators } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiConflictResponse,
+  ApiExtraModels,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
 
-import { ApiErrorResponseDto, NegativeStockConfirmationErrorResponseDto } from './api-response.dto';
+import {
+  ApiErrorResponseDto,
+  NegativeStockConfirmationDetailsDto,
+  NegativeStockConfirmationErrorResponseDto,
+  ValidationDetailsDto,
+  ValidationFieldDto,
+} from './api-response.dto';
 
 export function ApiInventoryErrorResponses(options: {
   badRequest: string;
@@ -15,6 +22,7 @@ export function ApiInventoryErrorResponses(options: {
   notFound?: string;
 }): MethodDecorator {
   return applyDecorators(
+    ApiExtraModels(ValidationFieldDto, ValidationDetailsDto, NegativeStockConfirmationDetailsDto),
     ApiBadRequestResponse({
       description: options.badRequest,
       type: options.negativeStockConfirmation

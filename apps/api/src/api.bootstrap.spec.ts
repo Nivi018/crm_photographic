@@ -126,6 +126,13 @@ describe('API bootstrap', () => {
       404: expect.any(Object),
       500: expect.any(Object),
     });
+    expect(document.paths['/api/inventory/articles']?.get?.parameters).toContainEqual(
+      expect.objectContaining({
+        in: 'query',
+        name: 'page',
+        schema: expect.objectContaining({ type: 'number' }),
+      }),
+    );
     expect(
       document.paths['/api/inventory/articles/{id}/movements/exits']?.post?.responses,
     ).toMatchObject({
@@ -139,6 +146,19 @@ describe('API bootstrap', () => {
       properties: { data: { $ref: '#/components/schemas/ArticlePublicDto' } },
     });
     expect(document.components?.schemas?.NegativeStockConfirmationErrorResponseDto).toBeDefined();
+    expect(document.components?.schemas?.ValidationFieldDto).toBeDefined();
+    expect(document.components?.schemas?.ValidationDetailsDto).toBeDefined();
+    expect(document.components?.schemas?.NegativeStockConfirmationDetailsDto).toBeDefined();
+    expect(document.components?.schemas?.ApiErrorResponseDto).toMatchObject({
+      properties: {
+        details: {
+          oneOf: [
+            { $ref: '#/components/schemas/ValidationDetailsDto' },
+            { $ref: '#/components/schemas/NegativeStockConfirmationDetailsDto' },
+          ],
+        },
+      },
+    });
   });
 
   it('maps category domain errors to the typed HTTP envelope', async () => {

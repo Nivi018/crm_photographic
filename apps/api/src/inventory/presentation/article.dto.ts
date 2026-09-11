@@ -43,7 +43,12 @@ export class ArticleIdParamDto {
 }
 
 export class ListArticlesDto {
-  @ApiPropertyOptional({ default: 1 }) @IsOptional() @Type(() => Number) @IsInt() @Min(1) page = 1;
+  @ApiPropertyOptional({ default: 1, minimum: 1, type: Number })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  page: number = 1;
   @ApiPropertyOptional() @IsOptional() @IsString() name?: string;
   @ApiPropertyOptional({ enum: ArticleType }) @IsOptional() @IsEnum(ArticleType) type?: ArticleType;
   @ApiPropertyOptional() @IsOptional() @IsUUID() categoryId?: string;

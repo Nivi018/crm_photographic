@@ -1,6 +1,7 @@
 import { Controller, Get, HttpStatus, ServiceUnavailableException } from '@nestjs/common';
 import {
   ApiInternalServerErrorResponse,
+  ApiExtraModels,
   ApiOkResponse,
   ApiOperation,
   ApiProperty,
@@ -9,7 +10,12 @@ import {
 } from '@nestjs/swagger';
 import { InventoryErrorCode } from '@crm-photografy/shared';
 
-import { ApiErrorResponseDto } from './inventory/presentation/api-response.dto';
+import {
+  ApiErrorResponseDto,
+  NegativeStockConfirmationDetailsDto,
+  ValidationDetailsDto,
+  ValidationFieldDto,
+} from './inventory/presentation/api-response.dto';
 
 import { HealthResponse, HealthService, ReadinessHealthResponse } from './health.service';
 
@@ -36,6 +42,7 @@ class ReadinessResponseEnvelopeDto {
 }
 
 @ApiTags('health')
+@ApiExtraModels(ValidationFieldDto, ValidationDetailsDto, NegativeStockConfirmationDetailsDto)
 @Controller('health')
 export class HealthController {
   constructor(private readonly healthService: HealthService) {}
