@@ -13,6 +13,7 @@ config();
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
+  app.enableShutdownHooks();
   configureApplication(app);
   setupSwagger(app);
   await app.listen(process.env.PORT ?? 3002);

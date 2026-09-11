@@ -58,7 +58,13 @@ function classifyHttpException(exception: HttpException): {
   const error = isErrorResponseBody(body) ? body : {};
   const code = validErrorCode(error.code) ?? defaultCodeForStatus(statusCode);
 
-  if (statusCode >= HttpStatus.INTERNAL_SERVER_ERROR) {
+  if (
+    statusCode >= HttpStatus.INTERNAL_SERVER_ERROR &&
+    !(
+      statusCode === HttpStatus.SERVICE_UNAVAILABLE &&
+      code === InventoryErrorCode.ServiceUnavailable
+    )
+  ) {
     return {
       code: InventoryErrorCode.Internal,
       message: 'An unexpected error occurred',

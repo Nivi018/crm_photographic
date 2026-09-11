@@ -100,6 +100,12 @@ describe('API bootstrap', () => {
 
     expect(document.info).toMatchObject({ title: 'CRM Photography API', version: '0.1.0' });
     expect(document.paths).toHaveProperty('/health');
+    expect(document.paths).toHaveProperty('/health/ready');
+    expect(document.paths['/health']?.get?.responses).toMatchObject({ 200: expect.any(Object) });
+    expect(document.paths['/health/ready']?.get?.responses).toMatchObject({
+      200: expect.any(Object),
+      503: expect.any(Object),
+    });
     expect(document.paths).toHaveProperty('/api/inventory/categories');
     expect(document.paths).toHaveProperty('/api/inventory/articles');
     expect(document.paths).toHaveProperty('/api/inventory/movements');
