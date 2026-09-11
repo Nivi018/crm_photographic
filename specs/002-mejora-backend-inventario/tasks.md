@@ -24,7 +24,7 @@
 - [x] T8. Implementar la clasificación explícita de errores y actualizar Swagger de toda la API. (RF-20 a RF-28, RF-57, RF-58, RF-64 a RF-74, RNF-3, RNF-4)
       Hecho cuando: pruebas HTTP y OpenAPI verifican cada estado, código, `details` y esquema de éxito/error aplicable.
 
-- [ ] T9. Implementar liveness, readiness de PostgreSQL y cierre de recursos. (RF-41 a RF-45, RF-51, RNF-6)
+- [x] T9. Implementar liveness, readiness de PostgreSQL y cierre de recursos. (RF-41 a RF-45, RF-51, RNF-6)
       Hecho cuando: `/health` responde sin PostgreSQL y `/health/ready` verifica tablas/columnas, timeout inclusivo, 503 y recuperación.
 
 - [ ] T10. Crear el seed de desarrollo idempotente, transaccional y no destructivo. (RF-30 a RF-40, RF-60 a RF-63, RF-76, RF-81, RF-82, RF-87 a RF-91, RNF-5)
