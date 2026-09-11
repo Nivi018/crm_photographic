@@ -2,7 +2,10 @@ import { useEffect, useEffectEvent, useState, type ReactElement } from 'react';
 import { type ApiPaginatedResponse } from '@crm-photografy/shared';
 import { DataState, DataTable, Pagination } from '../components/controls';
 import { inventoryApi, type MovementRecord } from './api-client';
+import { MutationReconciliationNotice } from './mutation-reconciliation-notice';
+import { type ArticleMutation, reconcileArticleMutation } from './reconcile-inventory-mutation';
 import { useArticleRecord, type ArticleRecordClient } from './use-article-record';
+import { useMutationReconciliation } from './use-mutation-reconciliation';
 
 export interface ArticleMovementClient {
   listArticleMovements(id: string, page: number): Promise<ApiPaginatedResponse<MovementRecord>>;
@@ -25,12 +28,18 @@ export function ArticleDetailScreen({
   } = useArticleRecord(articleId, articleClient);
   const [actionError, setActionError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  async function updateState(action: () => Promise<unknown>) {
+  const reconciliation = useMutationReconciliation();
+  async function updateState(action: () => Promise<unknown>, mutation: ArticleMutation) {
+    if (reconciliation.isMutationBlocked) return;
     setActionError(null);
     setIsSubmitting(true);
     try {
-      await action();
-      await reload();
+      const result = await reconciliation.execute(action, async () => {
+        const decision = await reconcileArticleMutation(mutation, inventoryApi);
+        await reload();
+        return decision;
+      });
+      if (result) await reload();
     } catch {
       setActionError('No se pudo completar la accion. Verifica el estado actual del articulo.');
     } finally {
@@ -70,12 +79,19 @@ export function ArticleDetailScreen({
         </p>
         <div className="article-actions">
           <button
-            disabled={isSubmitting}
+            disabled={isSubmitting || reconciliation.isMutationBlocked}
             onClick={() =>
-              void updateState(() =>
-                article.isActive
-                  ? inventoryApi.deactivateArticle(articleId, article.version)
-                  : inventoryApi.reactivateArticle(articleId, article.version),
+              void updateState(
+                () =>
+                  article.isActive
+                    ? inventoryApi.deactivateArticle(articleId, article.version)
+                    : inventoryApi.reactivateArticle(articleId, article.version),
+                {
+                  expectedVersion: article.version,
+                  id: articleId,
+                  isActive: !article.isActive,
+                  kind: 'state',
+                },
               )
             }
             type="button"
@@ -83,10 +99,14 @@ export function ArticleDetailScreen({
             {article.isActive ? 'Desactivar articulo' : 'Reactivar articulo'}
           </button>
           <button
-            disabled={isSubmitting}
+            disabled={isSubmitting || reconciliation.isMutationBlocked}
             onClick={() => {
               if (window.confirm('Eliminar este articulo de forma permanente?'))
-                void updateState(() => inventoryApi.deleteArticle(articleId, article.version));
+                void updateState(() => inventoryApi.deleteArticle(articleId, article.version), {
+                  expectedVersion: article.version,
+                  id: articleId,
+                  kind: 'delete',
+                });
             }}
             type="button"
           >
@@ -97,6 +117,13 @@ export function ArticleDetailScreen({
       {actionError ? (
         <DataState title="No se pudo completar la accion">{actionError}</DataState>
       ) : null}
+      <MutationReconciliationNotice
+        currentData={reconciliation.currentData}
+        onConfirmManualRetry={reconciliation.confirmManualRetry}
+        onRetryMutation={() => void reconciliation.retryMutation()}
+        onRetryReconciliation={() => void reconciliation.retryReconciliation()}
+        phase={reconciliation.phase}
+      />
       {isLoading ? (
         <DataState title="Cargando historial">Consultando movimientos...</DataState>
       ) : null}

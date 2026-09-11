@@ -1,6 +1,8 @@
 import { useState, type FormEvent, type ReactElement } from 'react';
 import { DataState, Field } from '../components/controls';
 import { inventoryApi } from './api-client';
+import { MutationReconciliationNotice } from './mutation-reconciliation-notice';
+import { reconcileMovementMutation } from './reconcile-inventory-mutation';
 import { useArticleRecord } from './use-article-record';
 import { useMovementOperation } from './use-movement-operation';
 
@@ -8,7 +10,17 @@ type MovementType = 'entry' | 'exit' | 'final' | 'delta';
 
 export function MovementFormScreen({ articleId }: { articleId: string }): ReactElement {
   const { article, error: articleError, isLoading } = useArticleRecord(articleId);
-  const { error, execute, isSubmitting } = useMovementOperation();
+  const {
+    confirmManualRetry,
+    currentData,
+    error,
+    execute,
+    isMutationBlocked,
+    isSubmitting,
+    phase,
+    retryMutation,
+    retryReconciliation,
+  } = useMovementOperation();
   const [type, setType] = useState<MovementType>('entry');
   const [quantity, setQuantity] = useState('');
   const [reason, setReason] = useState('');
@@ -24,17 +36,30 @@ export function MovementFormScreen({ articleId }: { articleId: string }): ReactE
       quantity: value,
       reason,
     };
-    const saved = await execute(() =>
-      type === 'entry'
-        ? inventoryApi.createEntry(articleId, input)
-        : type === 'exit'
-          ? inventoryApi.createExit(articleId, input)
-          : type === 'delta'
-            ? inventoryApi.createDeltaAdjustment(articleId, input)
-            : inventoryApi.createFinalStockAdjustment(articleId, {
-                expectedVersion: article.version,
-                finalStock: value,
-              }),
+    const saved = await execute(
+      () =>
+        type === 'entry'
+          ? inventoryApi.createEntry(articleId, input)
+          : type === 'exit'
+            ? inventoryApi.createExit(articleId, input)
+            : type === 'delta'
+              ? inventoryApi.createDeltaAdjustment(articleId, input)
+              : inventoryApi.createFinalStockAdjustment(articleId, {
+                  expectedVersion: article.version,
+                  finalStock: value,
+                }),
+      () =>
+        reconcileMovementMutation(
+          {
+            articleId,
+            currentStock: article.currentStock,
+            expectedVersion: article.version,
+            kind: type,
+            quantity: value,
+            reason,
+          },
+          inventoryApi,
+        ),
     );
     if (saved) setSuccess(true);
   }
@@ -83,9 +108,16 @@ export function MovementFormScreen({ articleId }: { articleId: string }): ReactE
         </label>
         {error ? <p role="alert">{error}</p> : null}
         {success ? <p role="status">Movimiento registrado correctamente.</p> : null}
+        <MutationReconciliationNotice
+          currentData={currentData}
+          onConfirmManualRetry={confirmManualRetry}
+          onRetryMutation={() => void retryMutation()}
+          onRetryReconciliation={() => void retryReconciliation()}
+          phase={phase}
+        />
         <div className="article-form__actions">
           <a href={`/inventory/articles/${articleId}`}>Cancelar</a>
-          <button disabled={isSubmitting} type="submit">
+          <button disabled={isSubmitting || isMutationBlocked} type="submit">
             {isSubmitting ? 'Registrando...' : 'Registrar movimiento'}
           </button>
         </div>

@@ -1,6 +1,6 @@
 import { InventoryErrorCode } from '@crm-photografy/shared';
 import { describe, expect, it } from 'vitest';
-import { InventoryApiClient, InventoryApiError } from './api-client';
+import { InventoryApiClient, InventoryApiError, UncertainMutationError } from './api-client';
 import { createMockFetch } from '../test/mock-fetch';
 
 describe('InventoryApiClient', () => {
@@ -48,5 +48,22 @@ describe('InventoryApiClient', () => {
       message: 'El nombre ya existe.',
       statusCode: 400,
     } satisfies Partial<InventoryApiError>);
+  });
+
+  it('treats an HTTP 500 mutation response as uncertain', async () => {
+    const client = new InventoryApiClient(
+      createMockFetch({ code: 'INTERNAL_ERROR', message: 'Error interno.', statusCode: 500 }, 500),
+    );
+
+    await expect(client.createCategory('Papel')).rejects.toBeInstanceOf(UncertainMutationError);
+  });
+
+  it.each([
+    ['timeout', new DOMException('The operation timed out.', 'TimeoutError')],
+    ['network disconnect', new TypeError('Failed to fetch')],
+  ])('treats a %s after sending a mutation as uncertain', async (_scenario, error) => {
+    const client = new InventoryApiClient((async () => Promise.reject(error)) as typeof fetch);
+
+    await expect(client.createCategory('Papel')).rejects.toBeInstanceOf(UncertainMutationError);
   });
 });
