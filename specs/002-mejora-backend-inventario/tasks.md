@@ -27,7 +27,7 @@
 - [x] T9. Implementar liveness, readiness de PostgreSQL y cierre de recursos. (RF-41 a RF-45, RF-51, RNF-6)
       Hecho cuando: `/health` responde sin PostgreSQL y `/health/ready` verifica tablas/columnas, timeout inclusivo, 503 y recuperación.
 
-- [ ] T10. Crear el seed de desarrollo idempotente, transaccional y no destructivo. (RF-30 a RF-40, RF-60 a RF-63, RF-76, RF-81, RF-82, RF-87 a RF-91, RNF-5)
+- [x] T10. Crear el seed de desarrollo idempotente, transaccional y no destructivo. (RF-30 a RF-40, RF-60 a RF-63, RF-76, RF-81, RF-82, RF-87 a RF-91, RNF-5)
       Hecho cuando: el seed requiere `NODE_ENV=development`, preserva registros, usa UUID reservados y produce el resumen codificado definido.
 
 - [ ] T11. Adaptar el cliente API, tipos y pruebas web a los contratos normalizados. (RF-29, RF-57, RF-58, RF-75)
