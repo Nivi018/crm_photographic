@@ -1,4 +1,14 @@
-import { ArticleType, type PaginatedResponse } from '@crm-photografy/shared';
+import {
+  ArticleType,
+  type ApiErrorResponse,
+  type ApiPaginatedResponse,
+  type ApiResponse,
+  type ArticleResponse,
+  type CategoryResponse,
+  type DeleteResponse,
+  type MovementOperationResponse,
+  type MovementResponse,
+} from '@crm-photografy/shared';
 
 export interface ArticleListQuery {
   categoryId?: string;
@@ -13,29 +23,14 @@ export interface CategoryListQuery {
   page?: number;
 }
 
-export interface CategoryRecord {
-  entity: { id: string; isActive: boolean; name: string };
-  version: number;
-}
+export type CategoryRecord = CategoryResponse;
 
 export interface UpdateCategoryInput {
   expectedVersion: number;
   name: string;
 }
 
-export interface ArticleRecord {
-  entity: {
-    categoryId: string;
-    currentStock: number;
-    id: string;
-    initialStock: number;
-    isActive: boolean;
-    minimumStock: number;
-    name: string;
-    type: string;
-  };
-  version: number;
-}
+export type ArticleRecord = ArticleResponse;
 
 export interface ArticleInput {
   categoryId: string;
@@ -52,24 +47,15 @@ export interface UpdateArticleInput extends ArticleInput {
 export class InventoryApiError extends Error {
   constructor(
     message: string,
-    readonly code?: string,
+    readonly code?: ApiErrorResponse['code'],
+    readonly statusCode?: number,
+    readonly details?: ApiErrorResponse['details'],
   ) {
     super(message);
   }
 }
 
-export interface MovementRecord {
-  adjustmentMode: string | null;
-  appliedQuantity: number;
-  articleId: string;
-  id: string;
-  kind: string;
-  occurredAt: string;
-  reason: string;
-  sequence: string;
-  stockAfter: number;
-  stockBefore: number;
-}
+export type MovementRecord = MovementResponse;
 export interface MovementInput {
   confirmNegativeStock?: boolean;
   expectedVersion: number;
@@ -87,7 +73,7 @@ export class InventoryApiClient {
     private readonly baseUrl = '/api/inventory',
   ) {}
 
-  listArticles(query: ArticleListQuery = {}): Promise<PaginatedResponse<ArticleRecord>> {
+  listArticles(query: ArticleListQuery = {}): Promise<ApiPaginatedResponse<ArticleRecord>> {
     const parameters = new URLSearchParams({ page: String(query.page ?? 1) });
 
     if (query.name) parameters.set('name', query.name);
@@ -97,82 +83,85 @@ export class InventoryApiClient {
 
     return this.get(`/articles?${parameters}`);
   }
-  listLowStock(page = 1): Promise<PaginatedResponse<ArticleRecord>> {
+  listLowStock(page = 1): Promise<ApiPaginatedResponse<ArticleRecord>> {
     return this.get(`/articles/low-stock?page=${page}`);
   }
 
-  createArticle(input: ArticleInput): Promise<ArticleRecord> {
+  createArticle(input: ArticleInput): Promise<ApiResponse<ArticleRecord>> {
     return this.post('/articles', input);
   }
 
-  updateArticle(id: string, input: UpdateArticleInput): Promise<ArticleRecord> {
+  updateArticle(id: string, input: UpdateArticleInput): Promise<ApiResponse<ArticleRecord>> {
     return this.send(`/articles/${id}`, { body: JSON.stringify(input), method: 'PATCH' });
   }
 
-  deactivateArticle(id: string, expectedVersion: number): Promise<ArticleRecord> {
+  deactivateArticle(id: string, expectedVersion: number): Promise<ApiResponse<ArticleRecord>> {
     return this.post(`/articles/${id}/deactivate`, { expectedVersion });
   }
 
-  reactivateArticle(id: string, expectedVersion: number): Promise<ArticleRecord> {
+  reactivateArticle(id: string, expectedVersion: number): Promise<ApiResponse<ArticleRecord>> {
     return this.post(`/articles/${id}/reactivate`, { expectedVersion });
   }
 
-  deleteArticle(id: string, expectedVersion: number): Promise<void> {
+  deleteArticle(id: string, expectedVersion: number): Promise<ApiResponse<DeleteResponse>> {
     return this.send(`/articles/${id}`, {
       body: JSON.stringify({ expectedVersion }),
       method: 'DELETE',
     });
   }
 
-  listCategories(query: CategoryListQuery = {}): Promise<PaginatedResponse<CategoryRecord>> {
+  listCategories(query: CategoryListQuery = {}): Promise<ApiPaginatedResponse<CategoryRecord>> {
     const parameters = new URLSearchParams({ page: String(query.page ?? 1) });
     if (query.isActive !== undefined) parameters.set('isActive', String(query.isActive));
     return this.get(`/categories?${parameters}`);
   }
 
-  createCategory(name: string): Promise<CategoryRecord> {
+  createCategory(name: string): Promise<ApiResponse<CategoryRecord>> {
     return this.post('/categories', { name });
   }
-  updateCategory(id: string, input: UpdateCategoryInput): Promise<CategoryRecord> {
+  updateCategory(id: string, input: UpdateCategoryInput): Promise<ApiResponse<CategoryRecord>> {
     return this.send(`/categories/${id}`, { body: JSON.stringify(input), method: 'PATCH' });
   }
-  deactivateCategory(id: string, expectedVersion: number): Promise<CategoryRecord> {
+  deactivateCategory(id: string, expectedVersion: number): Promise<ApiResponse<CategoryRecord>> {
     return this.post(`/categories/${id}/deactivate`, { expectedVersion });
   }
-  reactivateCategory(id: string, expectedVersion: number): Promise<CategoryRecord> {
+  reactivateCategory(id: string, expectedVersion: number): Promise<ApiResponse<CategoryRecord>> {
     return this.post(`/categories/${id}/reactivate`, { expectedVersion });
   }
-  deleteCategory(id: string, expectedVersion: number): Promise<void> {
+  deleteCategory(id: string, expectedVersion: number): Promise<ApiResponse<DeleteResponse>> {
     return this.send(`/categories/${id}`, {
       body: JSON.stringify({ expectedVersion }),
       method: 'DELETE',
     });
   }
 
-  findArticle(id: string): Promise<ArticleRecord> {
+  findArticle(id: string): Promise<ApiResponse<ArticleRecord>> {
     return this.get(`/articles/${id}`);
   }
 
-  listMovements(page = 1): Promise<PaginatedResponse<MovementRecord>> {
+  listMovements(page = 1): Promise<ApiPaginatedResponse<MovementRecord>> {
     return this.get(`/movements?page=${page}`);
   }
 
-  listArticleMovements(id: string, page = 1): Promise<PaginatedResponse<MovementRecord>> {
+  listArticleMovements(id: string, page = 1): Promise<ApiPaginatedResponse<MovementRecord>> {
     return this.get(`/articles/${id}/movements?page=${page}`);
   }
-  createEntry(id: string, input: MovementInput): Promise<MovementRecord> {
+  createEntry(id: string, input: MovementInput): Promise<ApiResponse<MovementOperationResponse>> {
     return this.post(`/articles/${id}/movements/entries`, input);
   }
-  createExit(id: string, input: MovementInput): Promise<MovementRecord> {
+  createExit(id: string, input: MovementInput): Promise<ApiResponse<MovementOperationResponse>> {
     return this.post(`/articles/${id}/movements/exits`, input);
   }
   createFinalStockAdjustment(
     id: string,
     input: FinalStockAdjustmentInput,
-  ): Promise<MovementRecord> {
+  ): Promise<ApiResponse<MovementOperationResponse>> {
     return this.post(`/articles/${id}/movements/final-stock-adjustments`, input);
   }
-  createDeltaAdjustment(id: string, input: MovementInput): Promise<MovementRecord> {
+  createDeltaAdjustment(
+    id: string,
+    input: MovementInput,
+  ): Promise<ApiResponse<MovementOperationResponse>> {
     return this.post(`/articles/${id}/movements/delta-adjustments`, input);
   }
 
@@ -191,15 +180,14 @@ export class InventoryApiClient {
     });
 
     if (!response.ok) {
-      const body = (await response.json().catch(() => null)) as {
-        code?: unknown;
-        message?: unknown;
-      } | null;
+      const body = (await response.json().catch(() => null)) as Partial<ApiErrorResponse> | null;
       throw new InventoryApiError(
         typeof body?.message === 'string'
           ? body.message
           : `Inventory request failed with status ${response.status}`,
         typeof body?.code === 'string' ? body.code : undefined,
+        typeof body?.statusCode === 'number' ? body.statusCode : response.status,
+        body?.details,
       );
     }
 

@@ -1,29 +1,28 @@
-import { ArticleType, type PaginatedResponse } from '@crm-photografy/shared';
+import {
+  ArticleType,
+  type ApiPaginatedResponse,
+  type ArticleResponse,
+} from '@crm-photografy/shared';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import type { ArticleRecord } from './api-client';
 import { ArticleListScreen } from './article-list-screen';
 
-const response: PaginatedResponse<ArticleRecord> = {
-  items: [
+const response: ApiPaginatedResponse<ArticleResponse> = {
+  data: [
     {
-      entity: {
-        categoryId: 'cat-1',
-        currentStock: 2,
-        id: 'article-1',
-        initialStock: 2,
-        isActive: true,
-        minimumStock: 2,
-        name: 'Papel fotografico',
-        type: ArticleType.InternalSupply,
-      },
+      categoryId: 'cat-1',
+      currentStock: 2,
+      hasLowStock: true,
+      id: 'article-1',
+      initialStock: 2,
+      isActive: true,
+      minimumStock: 2,
+      name: 'Papel fotografico',
+      type: ArticleType.InternalSupply,
       version: 1,
     },
   ],
-  page: 1,
-  pageSize: 25,
-  totalItems: 1,
-  totalPages: 1,
+  meta: { page: 1, pageSize: 25, totalItems: 1, totalPages: 1 },
 };
 
 describe('ArticleListScreen', () => {

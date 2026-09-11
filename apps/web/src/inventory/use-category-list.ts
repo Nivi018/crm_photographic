@@ -1,15 +1,15 @@
-import { type PaginatedResponse } from '@crm-photografy/shared';
+import { type ApiPaginatedResponse } from '@crm-photografy/shared';
 import { useEffect, useEffectEvent, useState } from 'react';
 import { inventoryApi, type CategoryListQuery, type CategoryRecord } from './api-client';
 
 export interface CategoryListClient {
-  listCategories(query: CategoryListQuery): Promise<PaginatedResponse<CategoryRecord>>;
+  listCategories(query: CategoryListQuery): Promise<ApiPaginatedResponse<CategoryRecord>>;
 }
 
 export function useCategoryList(client: CategoryListClient = inventoryApi) {
   const [isActive, setIsActive] = useState<boolean | undefined>(undefined);
   const [page, setPage] = useState(1);
-  const [result, setResult] = useState<PaginatedResponse<CategoryRecord> | null>(null);
+  const [result, setResult] = useState<ApiPaginatedResponse<CategoryRecord> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const reload = useEffectEvent(async () => {

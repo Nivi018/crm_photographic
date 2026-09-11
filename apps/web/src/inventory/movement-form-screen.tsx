@@ -47,7 +47,7 @@ export function MovementFormScreen({ articleId }: { articleId: string }): ReactE
       <header className="article-form-page__header">
         <h1>Registrar movimiento</h1>
         <p>
-          {article.entity.name}. Stock actual: {article.entity.currentStock}.
+          {article.name}. Stock actual: {article.currentStock}.
         </p>
       </header>
       <form className="article-form" onSubmit={submit}>

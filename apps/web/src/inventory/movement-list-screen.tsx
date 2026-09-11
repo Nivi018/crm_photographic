@@ -16,10 +16,10 @@ export function MovementListScreen(): ReactElement {
         <DataState title="Cargando movimientos">Consultando historial...</DataState>
       ) : null}
       {error ? <DataState title="No se pudo cargar el historial">{error}</DataState> : null}
-      {!isLoading && !error && result?.items.length === 0 ? (
+      {!isLoading && !error && result?.data.length === 0 ? (
         <DataState title="Sin movimientos">Aun no hay movimientos registrados.</DataState>
       ) : null}
-      {result?.items.length ? (
+      {result?.data.length ? (
         <section className="article-results">
           <DataTable
             headers={[
@@ -32,7 +32,7 @@ export function MovementListScreen(): ReactElement {
               'Stock posterior',
             ]}
           >
-            {result.items.map((movement) => (
+            {result.data.map((movement) => (
               <tr key={movement.id}>
                 <td>{movement.articleId}</td>
                 <td>
@@ -59,7 +59,7 @@ export function MovementListScreen(): ReactElement {
           <Pagination
             onPageChange={setPage}
             page={page}
-            totalPages={Math.max(result.totalPages, 1)}
+            totalPages={Math.max(result.meta.totalPages, 1)}
           />
         </section>
       ) : null}

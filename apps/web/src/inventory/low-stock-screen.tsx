@@ -13,8 +13,8 @@ export function LowStockScreen(): ReactElement {
     void inventoryApi
       .listLowStock(page)
       .then((result) => {
-        setItems(result.items);
-        setTotalPages(Math.max(result.totalPages, 1));
+        setItems(result.data);
+        setTotalPages(Math.max(result.meta.totalPages, 1));
       })
       .catch(() => setError('No se pudieron cargar las alertas de stock bajo.'))
       .finally(() => setIsLoading(false));
@@ -37,13 +37,13 @@ export function LowStockScreen(): ReactElement {
       {items.length ? (
         <section className="article-results">
           <DataTable headers={['Articulo', 'Existencia actual', 'Stock minimo']}>
-            {items.map(({ entity }) => (
-              <tr key={entity.id}>
+            {items.map((article) => (
+              <tr key={article.id}>
                 <td>
-                  <strong>{entity.name}</strong>
+                  <strong>{article.name}</strong>
                 </td>
-                <td className="stock-low">{entity.currentStock}</td>
-                <td>{entity.minimumStock}</td>
+                <td className="stock-low">{article.currentStock}</td>
+                <td>{article.minimumStock}</td>
               </tr>
             ))}
           </DataTable>
