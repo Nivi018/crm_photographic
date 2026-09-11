@@ -71,7 +71,7 @@ export interface FinalStockAdjustmentInput {
 
 export class InventoryApiClient {
   constructor(
-    private readonly fetcher: typeof fetch = fetch,
+    private readonly fetcher: typeof fetch = (...args) => fetch(...args),
     private readonly baseUrl = '/api/inventory',
   ) {}
 
