@@ -36,11 +36,12 @@
 - [x] T12. Diseñar e implementar la reconciliación de mutaciones con resultado incierto. (RF-77 a RF-80, RF-83 a RF-86)
       Hecho cuando: pruebas de cliente cubren 500, timeout, corte de red y los resultados aplicado, no aplicado, indeterminado y consulta fallida.
 
-- [ ] T13. Verificar visualmente la recuperación de mutaciones inciertas en escritorio y móvil. (RF-29, RF-78 a RF-86)
+- [x] T13. Verificar visualmente la recuperación de mutaciones inciertas en escritorio y móvil. (RF-29, RF-78 a RF-86)
       Hecho cuando: tras cargar `impeccable`, la UI comunica el estado, bloquea reintentos y permite las acciones aprobadas a 1440 px y 390 px.
 
-- [ ] T14. Ejecutar la verificación integral y revisar contratos finales. (RNF-3 a RNF-7, Criterios de finalización)
+- [x] T14. Ejecutar la verificación integral y revisar contratos finales. (RNF-3 a RNF-7, Criterios de finalización)
       Hecho cuando: `npm run test`, `npm run lint`, `npm run format:check` y `npm run build` pasan, y se reportan las verificaciones manuales o bloqueos de PostgreSQL.
+      Verificado: los cuatro comandos raíz finalizaron correctamente. No se ejecutaron verificaciones manuales de seed, concurrencia ni readiness contra PostgreSQL; requieren usar la configuración local ignorada. `npm run test` sí incluyó las pruebas E2E configuradas, que cargan ese `.env` internamente y crean/eliminan datos de prueba; no se ejecutaron seeds, migraciones ni escrituras manuales adicionales.
 
 ## Orden y dependencias
 

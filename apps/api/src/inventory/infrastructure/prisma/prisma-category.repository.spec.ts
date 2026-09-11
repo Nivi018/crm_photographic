@@ -89,18 +89,26 @@ describe('PrismaCategoryRepository', () => {
   it('lists categories by normalized name with twenty-five items per page', async () => {
     await Promise.all(
       Array.from({ length: 26 }, (_, index) =>
-        repository.save(createCategory(`Categoria ${String(index).padStart(2, '0')}`)),
+        repository.save(
+          createCategory(`Test paginacion categoria ${String(index).padStart(2, '0')}`),
+        ),
       ),
     );
 
-    const firstPage = await repository.list({ page: 1 });
-    const secondPage = await repository.list({ page: 2 });
+    const firstPage = await repository.list({
+      page: 1,
+      normalizedName: 'test paginacion categoria',
+    });
+    const secondPage = await repository.list({
+      page: 2,
+      normalizedName: 'test paginacion categoria',
+    });
 
     expect(firstPage).toMatchObject({ page: 1, pageSize: 25, totalItems: 26, totalPages: 2 });
     expect(firstPage.items).toHaveLength(25);
-    expect(firstPage.items[0]?.entity.normalizedName).toBe('categoria 00');
+    expect(firstPage.items[0]?.entity.normalizedName).toBe('test paginacion categoria 00');
     expect(secondPage.items).toHaveLength(1);
-    expect(secondPage.items[0]?.entity.normalizedName).toBe('categoria 25');
+    expect(secondPage.items[0]?.entity.normalizedName).toBe('test paginacion categoria 25');
   });
 });
 

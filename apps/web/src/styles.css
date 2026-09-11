@@ -59,6 +59,66 @@ select {
   padding: 2rem;
   text-align: center;
 }
+
+.reconciliation-notice {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  text-align: left;
+}
+
+.reconciliation-notice h2,
+.reconciliation-notice p {
+  margin: 0;
+}
+
+.reconciliation-notice h2 {
+  font-size: 1.125rem;
+}
+
+.reconciliation-notice p {
+  max-width: 70ch;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.reconciliation-notice[data-phase='applied'] {
+  border-color: rgb(54 179 126 / 48%);
+}
+
+.reconciliation-notice[data-phase='indeterminate'] {
+  border-color: rgb(242 169 0 / 58%);
+}
+
+.reconciliation-notice[data-phase='query-failed'] {
+  border-color: rgb(233 75 95 / 58%);
+}
+
+.reconciliation-notice__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.reconciliation-notice__actions button {
+  min-height: 2.75rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--accent-blue);
+  border-radius: 8px;
+  color: #f7faff;
+  background: var(--accent-blue);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.reconciliation-notice__actions button:focus-visible {
+  outline: 3px solid var(--accent-gold);
+  outline-offset: 2px;
+}
 .data-table {
   overflow-x: auto;
 }
