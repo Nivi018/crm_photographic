@@ -1,15 +1,15 @@
-import { ArticleType, type PaginatedResponse } from '@crm-photografy/shared';
+import {
+  ArticleType,
+  type ApiPaginatedResponse,
+  type ArticleResponse,
+} from '@crm-photografy/shared';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import type { ArticleRecord } from './api-client';
 import { useArticleList } from './use-article-list';
 
-const page: PaginatedResponse<ArticleRecord> = {
-  items: [],
-  page: 1,
-  pageSize: 25,
-  totalItems: 0,
-  totalPages: 0,
+const page: ApiPaginatedResponse<ArticleResponse> = {
+  data: [],
+  meta: { page: 1, pageSize: 25, totalItems: 0, totalPages: 0 },
 };
 
 describe('useArticleList', () => {

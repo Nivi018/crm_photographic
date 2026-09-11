@@ -5,20 +5,21 @@ import { ArticleDetailScreen } from './article-detail-screen';
 describe('ArticleDetailScreen', () => {
   it('shows the article stock and its immutable movement history', async () => {
     const findArticle = vi.fn().mockResolvedValue({
-      entity: {
+      data: {
         categoryId: 'cat',
         currentStock: 4,
+        hasLowStock: false,
         id: 'article-1',
         initialStock: 3,
         isActive: true,
         minimumStock: 1,
         name: 'Papel',
         type: 'INTERNAL_SUPPLY',
+        version: 1,
       },
-      version: 1,
     });
     const listArticleMovements = vi.fn().mockResolvedValue({
-      items: [
+      data: [
         {
           adjustmentMode: null,
           appliedQuantity: 1,
@@ -28,11 +29,12 @@ describe('ArticleDetailScreen', () => {
           occurredAt: '2026-01-01T10:00:00.000Z',
           reason: 'Compra',
           sequence: '1',
+          source: 'MANUAL',
           stockAfter: 4,
           stockBefore: 3,
         },
       ],
-      totalPages: 1,
+      meta: { page: 1, pageSize: 25, totalItems: 1, totalPages: 1 },
     });
     render(
       <ArticleDetailScreen

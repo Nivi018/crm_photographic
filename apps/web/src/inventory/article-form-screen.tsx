@@ -95,9 +95,9 @@ export function ArticleFormScreen({
             value={values.categoryId}
           >
             <option value="">Selecciona una categoria</option>
-            {categories.map(({ entity }) => (
-              <option key={entity.id} value={entity.id}>
-                {entity.name}
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
               </option>
             ))}
           </select>

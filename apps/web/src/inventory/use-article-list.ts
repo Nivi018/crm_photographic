@@ -1,4 +1,4 @@
-import { ArticleType, type PaginatedResponse } from '@crm-photografy/shared';
+import { ArticleType, type ApiPaginatedResponse } from '@crm-photografy/shared';
 import { useEffect, useEffectEvent, useState } from 'react';
 import { inventoryApi, type ArticleListQuery, type ArticleRecord } from './api-client';
 
@@ -10,7 +10,7 @@ export interface ArticleListFilters {
 }
 
 export interface ArticleListClient {
-  listArticles(query: ArticleListQuery): Promise<PaginatedResponse<ArticleRecord>>;
+  listArticles(query: ArticleListQuery): Promise<ApiPaginatedResponse<ArticleRecord>>;
 }
 
 const initialFilters: ArticleListFilters = {
@@ -23,7 +23,7 @@ const initialFilters: ArticleListFilters = {
 export function useArticleList(client: ArticleListClient = inventoryApi) {
   const [filters, setFilters] = useState<ArticleListFilters>(initialFilters);
   const [page, setPage] = useState(1);
-  const [result, setResult] = useState<PaginatedResponse<ArticleRecord> | null>(null);
+  const [result, setResult] = useState<ApiPaginatedResponse<ArticleRecord> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 

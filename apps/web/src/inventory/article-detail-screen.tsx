@@ -1,13 +1,11 @@
 import { useEffect, useEffectEvent, useState, type ReactElement } from 'react';
+import { type ApiPaginatedResponse } from '@crm-photografy/shared';
 import { DataState, DataTable, Pagination } from '../components/controls';
 import { inventoryApi, type MovementRecord } from './api-client';
 import { useArticleRecord, type ArticleRecordClient } from './use-article-record';
 
 export interface ArticleMovementClient {
-  listArticleMovements(
-    id: string,
-    page: number,
-  ): Promise<{ items: MovementRecord[]; totalPages: number }>;
+  listArticleMovements(id: string, page: number): Promise<ApiPaginatedResponse<MovementRecord>>;
 }
 
 export function ArticleDetailScreen({
@@ -47,8 +45,8 @@ export function ArticleDetailScreen({
   const loadMovements = useEffectEvent(async () => {
     try {
       const result = await (movementClient ?? inventoryApi).listArticleMovements(articleId, page);
-      setItems(result.items);
-      setTotalPages(Math.max(result.totalPages, 1));
+      setItems(result.data);
+      setTotalPages(Math.max(result.meta.totalPages, 1));
     } catch {
       setError('No se pudo cargar el historial del articulo.');
     } finally {
@@ -66,23 +64,23 @@ export function ArticleDetailScreen({
   return (
     <main className="article-detail">
       <header>
-        <h1>{article.entity.name}</h1>
+        <h1>{article.name}</h1>
         <p>
-          Stock actual: <strong>{article.entity.currentStock}</strong>
+          Stock actual: <strong>{article.currentStock}</strong>
         </p>
         <div className="article-actions">
           <button
             disabled={isSubmitting}
             onClick={() =>
               void updateState(() =>
-                article.entity.isActive
+                article.isActive
                   ? inventoryApi.deactivateArticle(articleId, article.version)
                   : inventoryApi.reactivateArticle(articleId, article.version),
               )
             }
             type="button"
           >
-            {article.entity.isActive ? 'Desactivar articulo' : 'Reactivar articulo'}
+            {article.isActive ? 'Desactivar articulo' : 'Reactivar articulo'}
           </button>
           <button
             disabled={isSubmitting}

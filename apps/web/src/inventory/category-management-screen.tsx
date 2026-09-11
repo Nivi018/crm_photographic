@@ -58,30 +58,30 @@ export function CategoryManagementScreen(): ReactElement {
       {error || actionError ? (
         <DataState title="No se pudo actualizar categorias">{error ?? actionError}</DataState>
       ) : null}
-      {!isLoading && !error && result?.items.length === 0 ? (
+      {!isLoading && !error && result?.data.length === 0 ? (
         <DataState title="No hay categorias">
           Crea la primera categoria para clasificar articulos.
         </DataState>
       ) : null}
-      {result?.items.length ? (
+      {result?.data.length ? (
         <section className="article-results">
           <DataTable headers={['Categoria', 'Estado', 'Acciones']}>
-            {result.items.map(({ entity, version }) => (
-              <tr key={entity.id}>
+            {result.data.map((category) => (
+              <tr key={category.id}>
                 <td>
-                  <strong>{entity.name}</strong>
+                  <strong>{category.name}</strong>
                 </td>
                 <td>
-                  <span className="status-chip">{entity.isActive ? 'Activa' : 'Inactiva'}</span>
+                  <span className="status-chip">{category.isActive ? 'Activa' : 'Inactiva'}</span>
                 </td>
                 <td>
                   <button
                     onClick={() => {
-                      const next = window.prompt('Nuevo nombre de categoria', entity.name);
+                      const next = window.prompt('Nuevo nombre de categoria', category.name);
                       if (next)
                         void execute(() =>
-                          inventoryApi.updateCategory(entity.id, {
-                            expectedVersion: version,
+                          inventoryApi.updateCategory(category.id, {
+                            expectedVersion: category.version,
                             name: next,
                           }),
                         );
@@ -93,19 +93,21 @@ export function CategoryManagementScreen(): ReactElement {
                   <button
                     onClick={() =>
                       void execute(() =>
-                        entity.isActive
-                          ? inventoryApi.deactivateCategory(entity.id, version)
-                          : inventoryApi.reactivateCategory(entity.id, version),
+                        category.isActive
+                          ? inventoryApi.deactivateCategory(category.id, category.version)
+                          : inventoryApi.reactivateCategory(category.id, category.version),
                       )
                     }
                     type="button"
                   >
-                    {entity.isActive ? 'Desactivar' : 'Reactivar'}
+                    {category.isActive ? 'Desactivar' : 'Reactivar'}
                   </button>
                   <button
                     onClick={() => {
                       if (window.confirm('Eliminar esta categoria de forma permanente?'))
-                        void execute(() => inventoryApi.deleteCategory(entity.id, version));
+                        void execute(() =>
+                          inventoryApi.deleteCategory(category.id, category.version),
+                        );
                     }}
                     type="button"
                   >
@@ -118,7 +120,7 @@ export function CategoryManagementScreen(): ReactElement {
           <Pagination
             onPageChange={setPage}
             page={page}
-            totalPages={Math.max(result.totalPages, 1)}
+            totalPages={Math.max(result.meta.totalPages, 1)}
           />
         </section>
       ) : null}

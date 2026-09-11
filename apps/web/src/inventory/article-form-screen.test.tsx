@@ -1,15 +1,15 @@
-import { ArticleType, type PaginatedResponse } from '@crm-photografy/shared';
+import {
+  ArticleType,
+  type ApiPaginatedResponse,
+  type CategoryResponse,
+} from '@crm-photografy/shared';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import type { CategoryRecord } from './api-client';
 import { ArticleFormScreen } from './article-form-screen';
 
-const categories: PaginatedResponse<CategoryRecord> = {
-  items: [{ entity: { id: 'cat-1', isActive: true, name: 'Insumos' }, version: 1 }],
-  page: 1,
-  pageSize: 25,
-  totalItems: 1,
-  totalPages: 1,
+const categories: ApiPaginatedResponse<CategoryResponse> = {
+  data: [{ id: 'cat-1', isActive: true, name: 'Insumos', version: 1 }],
+  meta: { page: 1, pageSize: 25, totalItems: 1, totalPages: 1 },
 };
 
 describe('ArticleFormScreen', () => {

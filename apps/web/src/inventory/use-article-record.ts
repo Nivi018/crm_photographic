@@ -1,8 +1,9 @@
 import { useEffect, useEffectEvent, useState } from 'react';
+import { type ApiResponse } from '@crm-photografy/shared';
 import { inventoryApi, type ArticleRecord } from './api-client';
 
 export interface ArticleRecordClient {
-  findArticle(id: string): Promise<ArticleRecord>;
+  findArticle(id: string): Promise<ApiResponse<ArticleRecord>>;
 }
 
 export function useArticleRecord(id: string, client: ArticleRecordClient = inventoryApi) {
@@ -11,7 +12,7 @@ export function useArticleRecord(id: string, client: ArticleRecordClient = inven
   const [isLoading, setIsLoading] = useState(true);
   const reload = useEffectEvent(async () => {
     try {
-      setArticle(await client.findArticle(id));
+      setArticle((await client.findArticle(id)).data);
     } catch {
       setError('No se pudo cargar el articulo para editarlo.');
     } finally {

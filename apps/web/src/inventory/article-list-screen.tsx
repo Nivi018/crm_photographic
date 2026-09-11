@@ -68,27 +68,27 @@ export function ArticleListScreen({ client }: { client?: ArticleListClient }): R
 
       {isLoading ? <DataState title="Cargando inventario">Buscando articulos...</DataState> : null}
       {error ? <DataState title="No se pudo cargar el inventario">{error}</DataState> : null}
-      {!isLoading && !error && result?.items.length === 0 ? (
+      {!isLoading && !error && result?.data.length === 0 ? (
         <DataState title="No hay articulos">
           Ajusta los filtros o crea el primer articulo.
         </DataState>
       ) : null}
-      {!isLoading && !error && result?.items.length ? (
+      {!isLoading && !error && result?.data.length ? (
         <section className="article-results" aria-label="Articulos encontrados">
           <DataTable headers={['Articulo', 'Tipo', 'Categoria', 'Existencia', 'Estado']}>
-            {result.items.map(({ entity }) => {
-              const isLowStock = entity.isActive && entity.currentStock <= entity.minimumStock;
+            {result.data.map((article) => {
+              const isLowStock = article.isActive && article.hasLowStock;
               return (
-                <tr key={entity.id}>
+                <tr key={article.id}>
                   <td>
-                    <strong>{entity.name}</strong>
+                    <strong>{article.name}</strong>
                   </td>
-                  <td>{entity.type === ArticleType.Sale ? 'Para venta' : 'Insumo interno'}</td>
-                  <td>{entity.categoryId}</td>
-                  <td className={isLowStock ? 'stock-low' : undefined}>{entity.currentStock}</td>
+                  <td>{article.type === ArticleType.Sale ? 'Para venta' : 'Insumo interno'}</td>
+                  <td>{article.categoryId}</td>
+                  <td className={isLowStock ? 'stock-low' : undefined}>{article.currentStock}</td>
                   <td>
                     <span className={isLowStock ? 'status-chip status-chip--low' : 'status-chip'}>
-                      {entity.isActive ? (isLowStock ? 'Stock bajo' : 'Activo') : 'Inactivo'}
+                      {article.isActive ? (isLowStock ? 'Stock bajo' : 'Activo') : 'Inactivo'}
                     </span>
                   </td>
                 </tr>
@@ -98,7 +98,7 @@ export function ArticleListScreen({ client }: { client?: ArticleListClient }): R
           <Pagination
             onPageChange={setPage}
             page={page}
-            totalPages={Math.max(result.totalPages, 1)}
+            totalPages={Math.max(result.meta.totalPages, 1)}
           />
         </section>
       ) : null}

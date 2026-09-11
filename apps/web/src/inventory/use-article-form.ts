@@ -1,4 +1,4 @@
-import { ArticleType, INVENTORY_LIMITS } from '@crm-photografy/shared';
+import { ArticleType, INVENTORY_LIMITS, type ApiResponse } from '@crm-photografy/shared';
 import { useState } from 'react';
 import {
   inventoryApi,
@@ -16,8 +16,8 @@ export interface ArticleFormValues {
 }
 
 export interface ArticleFormClient {
-  createArticle(input: ArticleInput): Promise<ArticleRecord>;
-  updateArticle(id: string, input: UpdateArticleInput): Promise<ArticleRecord>;
+  createArticle(input: ArticleInput): Promise<ApiResponse<ArticleRecord>>;
+  updateArticle(id: string, input: UpdateArticleInput): Promise<ApiResponse<ArticleRecord>>;
 }
 
 type ArticleFormErrors = Partial<Record<keyof ArticleFormValues, string>>;
@@ -40,7 +40,7 @@ export function useArticleForm(client: ArticleFormClient = inventoryApi, article
     setValues((currentValues) => ({ ...currentValues, [key]: value }));
   }
 
-  async function submit(): Promise<ArticleRecord | null> {
+  async function submit(): Promise<ApiResponse<ArticleRecord> | null> {
     const validationErrors = validateArticleForm(values);
     setErrors(validationErrors);
     setSubmitError(null);
@@ -57,7 +57,7 @@ export function useArticleForm(client: ArticleFormClient = inventoryApi, article
     setIsSubmitting(true);
     try {
       return article
-        ? await client.updateArticle(article.entity.id, {
+        ? await client.updateArticle(article.id, {
             ...input,
             expectedVersion: article.version,
           })
@@ -104,10 +104,10 @@ function validateQuantity(
 function articleValues(article?: ArticleRecord): ArticleFormValues {
   if (!article) return emptyValues;
   return {
-    categoryId: article.entity.categoryId,
-    initialStock: String(article.entity.initialStock),
-    minimumStock: String(article.entity.minimumStock),
-    name: article.entity.name,
-    type: article.entity.type as ArticleType,
+    categoryId: article.categoryId,
+    initialStock: String(article.initialStock),
+    minimumStock: String(article.minimumStock),
+    name: article.name,
+    type: article.type,
   };
 }

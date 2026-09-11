@@ -30,7 +30,7 @@
 - [x] T10. Crear el seed de desarrollo idempotente, transaccional y no destructivo. (RF-30 a RF-40, RF-60 a RF-63, RF-76, RF-81, RF-82, RF-87 a RF-91, RNF-5)
       Hecho cuando: el seed requiere `NODE_ENV=development`, preserva registros, usa UUID reservados y produce el resumen codificado definido.
 
-- [ ] T11. Adaptar el cliente API, tipos y pruebas web a los contratos normalizados. (RF-29, RF-57, RF-58, RF-75)
+- [x] T11. Adaptar el cliente API, tipos y pruebas web a los contratos normalizados. (RF-29, RF-57, RF-58, RF-75)
       Hecho cuando: los hooks y pantallas consumen `data`/`meta`, eliminaciones JSON y recursos públicos sin discrepancias de tipos.
 
 - [ ] T12. Diseñar e implementar la reconciliación de mutaciones con resultado incierto. (RF-77 a RF-80, RF-83 a RF-86)
