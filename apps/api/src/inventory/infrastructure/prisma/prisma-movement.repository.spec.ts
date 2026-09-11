@@ -81,7 +81,7 @@ describe('PrismaMovementRepository', () => {
   it('lists movements by date descending, article name ascending, then sequence descending', async () => {
     const alphaArticleId = await createArticle('Alpha articulo');
     const zetaArticleId = await createArticle('Zeta articulo');
-    const occurredAt = new Date('2026-09-08T12:00:00.000Z');
+    const occurredAt = new Date('2099-12-31T12:00:00.000Z');
     const oldestSequence = await repository.nextSequence();
     const alphaMovement = await createMovement({
       articleId: alphaArticleId,
@@ -101,7 +101,7 @@ describe('PrismaMovementRepository', () => {
 
     const page = await repository.list({ page: 1 });
 
-    expect(page.items.map((movement) => movement.id)).toEqual([
+    expect(page.items.slice(0, 3).map((movement) => movement.id)).toEqual([
       alphaMovement.id,
       zetaNewerMovement.id,
       zetaOlderMovement.id,

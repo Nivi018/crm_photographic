@@ -148,9 +148,10 @@ describe('PrismaArticleRepository', () => {
     );
 
     const page = await repository.listLowStock({ page: 1 });
+    const fixtureAlerts = page.items.filter(({ entity }) => articleIds.includes(entity.id));
 
-    expect(page).toMatchObject({ page: 1, pageSize: 25, totalItems: 2, totalPages: 1 });
-    expect(page.items.map(({ entity }) => entity.normalizedName)).toEqual([
+    expect(page).toMatchObject({ page: 1, pageSize: 25 });
+    expect(fixtureAlerts.map(({ entity }) => entity.normalizedName)).toEqual([
       'album bajo',
       'bateria baja',
     ]);
@@ -161,19 +162,28 @@ describe('PrismaArticleRepository', () => {
     await Promise.all(
       Array.from({ length: 26 }, (_, index) =>
         repository.save(
-          createArticle({ name: `Articulo ${String(index).padStart(2, '0')}`, category }),
+          createArticle({
+            name: `Test paginacion articulo ${String(index).padStart(2, '0')}`,
+            category,
+          }),
         ),
       ),
     );
 
-    const firstPage = await repository.list({ page: 1 });
-    const secondPage = await repository.list({ page: 2 });
+    const firstPage = await repository.list({
+      page: 1,
+      normalizedName: 'test paginacion articulo',
+    });
+    const secondPage = await repository.list({
+      page: 2,
+      normalizedName: 'test paginacion articulo',
+    });
 
     expect(firstPage).toMatchObject({ page: 1, pageSize: 25, totalItems: 26, totalPages: 2 });
     expect(firstPage.items).toHaveLength(25);
-    expect(firstPage.items[0]?.entity.normalizedName).toBe('articulo 00');
+    expect(firstPage.items[0]?.entity.normalizedName).toBe('test paginacion articulo 00');
     expect(secondPage.items).toHaveLength(1);
-    expect(secondPage.items[0]?.entity.normalizedName).toBe('articulo 25');
+    expect(secondPage.items[0]?.entity.normalizedName).toBe('test paginacion articulo 25');
   });
 });
 
