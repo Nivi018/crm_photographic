@@ -18,7 +18,7 @@
 - [x] T6. Migrar detalle de articulo, historial, acciones de estado y eliminacion a hooks y reconciliacion inyectada. (RF-1, RF-5 a RF-19, RF-22 a RF-23, RF-43 a RF-45)
   Hecho cuando: la pantalla de detalle solo renderiza estado y callbacks, y sus pruebas cubren carga, error, reintento, exito y mutaciones inciertas.
 
-- [ ] T7. Extraer gestion de categorias a hooks de consulta y mutacion con confirmaciones accesibles. (RF-1, RF-5 a RF-19, RF-21 a RF-22, RF-28 a RF-30, RF-43 a RF-46)
+- [x] T7. Extraer gestion de categorias a hooks de consulta y mutacion con confirmaciones accesibles. (RF-1, RF-5 a RF-19, RF-21 a RF-22, RF-28 a RF-30, RF-43 a RF-46)
   Hecho cuando: categorias no usan clientes globales ni cuadros nativos, recorren todas las paginas durante reconciliacion y bloquean correctamente tras resultados inciertos.
 
 - [ ] T8. Migrar listados, formulario y operaciones de movimientos a puertos y hooks inyectados. (RF-1, RF-5 a RF-19, RF-22, RF-43 a RF-45)
