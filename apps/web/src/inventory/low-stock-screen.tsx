@@ -1,24 +1,13 @@
-import { useEffect, useState, type ReactElement } from 'react';
+import type { ReactElement } from 'react';
 import { DataState, DataTable, Pagination } from '../components/controls';
-import { inventoryApi, type ArticleRecord } from './api-client';
+import {
+  type LowStockClient,
+  useLowStock,
+} from '../features/inventory/application/hooks/use-low-stock';
 
-export function LowStockScreen(): ReactElement {
-  const [items, setItems] = useState<ArticleRecord[]>([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    setIsLoading(true);
-    void inventoryApi
-      .listLowStock(page)
-      .then((result) => {
-        setItems(result.data);
-        setTotalPages(Math.max(result.meta.totalPages, 1));
-      })
-      .catch(() => setError('No se pudieron cargar las alertas de stock bajo.'))
-      .finally(() => setIsLoading(false));
-  }, [page]);
+export function LowStockScreen({ client }: { client?: LowStockClient }): ReactElement {
+  const stock = useLowStock(client);
+  const items = stock.result?.data ?? [];
   return (
     <main className="article-list">
       <header className="article-list__header">
@@ -27,9 +16,18 @@ export function LowStockScreen(): ReactElement {
           <p>Articulos activos que requieren reposicion.</p>
         </div>
       </header>
-      {isLoading ? <DataState title="Cargando alertas">Revisando existencias...</DataState> : null}
-      {error ? <DataState title="No se pudieron cargar las alertas">{error}</DataState> : null}
-      {!isLoading && !error && !items.length ? (
+      {stock.isLoading ? (
+        <DataState title="Cargando alertas">Revisando existencias...</DataState>
+      ) : null}
+      {stock.error ? (
+        <DataState title="No se pudieron cargar las alertas">
+          {stock.error}
+          <button onClick={() => void stock.reload()} type="button">
+            Reintentar
+          </button>
+        </DataState>
+      ) : null}
+      {!stock.isLoading && !stock.error && !items.length ? (
         <DataState title="Sin alertas">
           Todos los articulos activos superan su stock minimo.
         </DataState>
@@ -47,7 +45,11 @@ export function LowStockScreen(): ReactElement {
               </tr>
             ))}
           </DataTable>
-          <Pagination onPageChange={setPage} page={page} totalPages={totalPages} />
+          <Pagination
+            onPageChange={stock.setPage}
+            page={stock.page}
+            totalPages={stock.totalPages}
+          />
         </section>
       ) : null}
     </main>

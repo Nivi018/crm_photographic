@@ -21,6 +21,7 @@ export function App({ inventoryApi }: { inventoryApi: InventoryApiPort }): React
           <a href="/inventory">Inventario</a>
           <a href="/inventory/categories">Categorias</a>
           <a href="/inventory/movements">Movimientos</a>
+          <a href="/inventory/low-stock">Stock bajo</a>
         </nav>
         <div className="theme-control">
           <button
