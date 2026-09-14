@@ -1,8 +1,10 @@
 import { Component, type ErrorInfo, type ReactElement, type ReactNode } from 'react';
+import { InventoryApiProvider } from './features/inventory/application/inventory-api-context';
+import type { InventoryApiPort } from './features/inventory/application/ports/inventory-api.port';
 import { InventoryRouter } from './router';
 import { useTheme } from './theme';
 
-export function App(): ReactElement {
+export function App({ inventoryApi }: { inventoryApi: InventoryApiPort }): ReactElement {
   const { message, theme, toggleTheme } = useTheme();
 
   return (
@@ -33,9 +35,11 @@ export function App(): ReactElement {
         </div>
       </header>
 
-      <InventoryErrorBoundary>
-        <InventoryRouter />
-      </InventoryErrorBoundary>
+      <InventoryApiProvider inventoryApi={inventoryApi}>
+        <InventoryErrorBoundary>
+          <InventoryRouter />
+        </InventoryErrorBoundary>
+      </InventoryApiProvider>
     </div>
   );
 }
