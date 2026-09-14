@@ -1,6 +1,6 @@
 # Tareas - Spec 003 Refactorizacion y mejora integral del frontend de inventario
 
-- [ ] T1. Añadir pruebas de caracterizacion para rutas, consultas, mutaciones y reconciliacion actualmente sin cobertura. (RF-1 a RF-4, RF-10 a RF-19, RF-20 a RF-23, RF-43, RF-46, RNF-5)
+- [x] T1. Añadir pruebas de caracterizacion para rutas, consultas, mutaciones y reconciliacion actualmente sin cobertura. (RF-1 a RF-4, RF-10 a RF-19, RF-20 a RF-23, RF-43, RF-46, RNF-5)
   Hecho cuando: las pruebas cubren categorias, movimientos, stock bajo, detalle, rutas y decisiones de reconciliacion existentes antes de reubicar su codigo.
 
 - [ ] T2. Definir tipos de dominio, validacion pura y decisiones de reconciliacion por agregado sin dependencias de React ni HTTP. (RF-4, RF-10 a RF-14, RF-41, RNF-1)
