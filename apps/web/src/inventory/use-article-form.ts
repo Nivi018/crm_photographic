@@ -1,25 +1,22 @@
 import { ArticleType, type ApiResponse } from '@crm-photografy/shared';
 import { useState } from 'react';
+import { useOptionalInventoryApi } from '../features/inventory/application/inventory-api-context';
+import type { InventoryApiPort } from '../features/inventory/application/ports/inventory-api.port';
+import { reconcileArticleMutation } from '../features/inventory/application/reconciliation/reconcile-article-mutation';
 import {
   type ArticleFormErrors,
   type ArticleFormValues,
 } from '../features/inventory/domain/inventory.types';
 import { validateArticleForm } from '../features/inventory/domain/article-form.validation';
-import {
-  inventoryApi,
-  type ArticleInput,
-  type ArticleRecord,
-  type UpdateArticleInput,
-} from './api-client';
-import { reconcileArticleMutation } from './reconcile-inventory-mutation';
+import type { ArticleRecord } from './api-client';
 import { useMutationReconciliation } from './use-mutation-reconciliation';
 
 export type { ArticleFormValues } from '../features/inventory/domain/inventory.types';
 
-export interface ArticleFormClient {
-  createArticle(input: ArticleInput): Promise<ApiResponse<ArticleRecord>>;
-  updateArticle(id: string, input: UpdateArticleInput): Promise<ApiResponse<ArticleRecord>>;
-}
+export type ArticleFormClient = Pick<
+  InventoryApiPort,
+  'createArticle' | 'findArticle' | 'listArticles' | 'updateArticle'
+>;
 
 const emptyValues: ArticleFormValues = {
   categoryId: '',
@@ -29,7 +26,12 @@ const emptyValues: ArticleFormValues = {
   type: '',
 };
 
-export function useArticleForm(client: ArticleFormClient = inventoryApi, article?: ArticleRecord) {
+export function useArticleForm(client?: ArticleFormClient, article?: ArticleRecord) {
+  const injectedInventoryApi = useOptionalInventoryApi();
+  const inventoryApi = client ?? injectedInventoryApi;
+  if (!inventoryApi)
+    throw new Error('El formulario de articulos requiere un puerto de inventario.');
+  const articleApi = inventoryApi;
   const [values, setValues] = useState<ArticleFormValues>(() => articleValues(article));
   const [errors, setErrors] = useState<ArticleFormErrors>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -47,7 +49,7 @@ export function useArticleForm(client: ArticleFormClient = inventoryApi, article
     setSubmitError(null);
     if (Object.keys(validationErrors).length > 0) return null;
 
-    const input: ArticleInput = {
+    const input = {
       categoryId: values.categoryId.trim(),
       initialStock: Number(values.initialStock),
       minimumStock: Number(values.minimumStock),
@@ -60,8 +62,8 @@ export function useArticleForm(client: ArticleFormClient = inventoryApi, article
       return await reconciliation.execute(
         () =>
           article
-            ? client.updateArticle(article.id, { ...input, expectedVersion: article.version })
-            : client.createArticle(input),
+            ? articleApi.updateArticle(article.id, { ...input, expectedVersion: article.version })
+            : articleApi.createArticle(input),
         () =>
           reconcileArticleMutation(
             article
@@ -71,7 +73,7 @@ export function useArticleForm(client: ArticleFormClient = inventoryApi, article
                   kind: 'update',
                 }
               : { input, kind: 'create' },
-            inventoryApi,
+            articleApi,
           ),
       );
     } catch (error) {

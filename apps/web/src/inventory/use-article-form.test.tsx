@@ -7,7 +7,9 @@ describe('useArticleForm', () => {
   it('validates required values and sends typed, normalized article data', async () => {
     const createArticle = vi.fn().mockResolvedValue({});
     const updateArticle = vi.fn();
-    const { result } = renderHook(() => useArticleForm({ createArticle, updateArticle }));
+    const { result } = renderHook(() =>
+      useArticleForm({ createArticle, findArticle: vi.fn(), listArticles: vi.fn(), updateArticle }),
+    );
 
     await act(async () => result.current.submit());
     expect(result.current.errors).toMatchObject({
@@ -38,7 +40,14 @@ describe('useArticleForm', () => {
 
   it('exposes the server error after a valid submission', async () => {
     const createArticle = vi.fn().mockRejectedValue(new Error('El nombre ya existe.'));
-    const { result } = renderHook(() => useArticleForm({ createArticle, updateArticle: vi.fn() }));
+    const { result } = renderHook(() =>
+      useArticleForm({
+        createArticle,
+        findArticle: vi.fn(),
+        listArticles: vi.fn(),
+        updateArticle: vi.fn(),
+      }),
+    );
 
     act(() => {
       result.current.setValue('name', 'Papel');

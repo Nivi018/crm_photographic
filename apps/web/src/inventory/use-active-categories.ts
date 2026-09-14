@@ -1,21 +1,21 @@
-import { type ApiPaginatedResponse } from '@crm-photografy/shared';
 import { useEffect, useEffectEvent, useState } from 'react';
-import { inventoryApi, type CategoryRecord } from './api-client';
+import { useOptionalInventoryApi } from '../features/inventory/application/inventory-api-context';
+import type { InventoryApiPort } from '../features/inventory/application/ports/inventory-api.port';
 
-export interface ActiveCategoryClient {
-  listCategories(query: {
-    isActive: true;
-    page: number;
-  }): Promise<ApiPaginatedResponse<CategoryRecord>>;
-}
+export type ActiveCategoryClient = Pick<InventoryApiPort, 'listCategories'>;
 
-export function useActiveCategories(client: ActiveCategoryClient = inventoryApi) {
-  const [categories, setCategories] = useState<CategoryRecord[]>([]);
+export function useActiveCategories(client?: ActiveCategoryClient) {
+  const injectedInventoryApi = useOptionalInventoryApi();
+  const inventoryApi = client ?? injectedInventoryApi;
+  if (!inventoryApi) throw new Error('Las categorias activas requieren un puerto de inventario.');
+  const [categories, setCategories] = useState<
+    Awaited<ReturnType<InventoryApiPort['listCategories']>>['data']
+  >([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const loadCategories = useEffectEvent(async () => {
     try {
-      setCategories((await client.listCategories({ isActive: true, page: 1 })).data);
+      setCategories((await inventoryApi.listCategories({ isActive: true, page: 1 })).data);
     } catch {
       setError('No se pudieron cargar las categorias activas.');
     } finally {

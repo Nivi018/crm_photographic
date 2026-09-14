@@ -1,6 +1,11 @@
-import { ArticleType, type ApiPaginatedResponse } from '@crm-photografy/shared';
-import { useEffect, useEffectEvent, useState } from 'react';
-import { inventoryApi, type ArticleListQuery, type ArticleRecord } from './api-client';
+import { ArticleType } from '@crm-photografy/shared';
+import { useState } from 'react';
+import { useOptionalInventoryApi } from '../features/inventory/application/inventory-api-context';
+import { useInventoryQuery } from '../features/inventory/application/hooks/use-inventory-query';
+import type {
+  InventoryApiPort,
+  InventoryArticleListQuery,
+} from '../features/inventory/application/ports/inventory-api.port';
 
 export interface ArticleListFilters {
   categoryId: string | undefined;
@@ -9,9 +14,7 @@ export interface ArticleListFilters {
   type: ArticleType | undefined;
 }
 
-export interface ArticleListClient {
-  listArticles(query: ArticleListQuery): Promise<ApiPaginatedResponse<ArticleRecord>>;
-}
+export type ArticleListClient = Pick<InventoryApiPort, 'listArticles'>;
 
 const initialFilters: ArticleListFilters = {
   categoryId: undefined,
@@ -20,38 +23,26 @@ const initialFilters: ArticleListFilters = {
   type: undefined,
 };
 
-export function useArticleList(client: ArticleListClient = inventoryApi) {
+export function useArticleList(client?: ArticleListClient) {
+  const injectedInventoryApi = useOptionalInventoryApi();
+  const inventoryApi = client ?? injectedInventoryApi;
+  if (!inventoryApi) throw new Error('La lista de articulos requiere un puerto de inventario.');
   const [filters, setFilters] = useState<ArticleListFilters>(initialFilters);
   const [page, setPage] = useState(1);
-  const [result, setResult] = useState<ApiPaginatedResponse<ArticleRecord> | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const loadArticles = useEffectEvent(async () => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const query: ArticleListQuery = { name: filters.name, page };
-      if (filters.categoryId !== undefined) query.categoryId = filters.categoryId;
-      if (filters.isActive !== undefined) query.isActive = filters.isActive;
-      if (filters.type !== undefined) query.type = filters.type;
-      setResult(await client.listArticles(query));
-    } catch {
-      setError('No se pudo cargar el inventario. Intenta nuevamente.');
-    } finally {
-      setIsLoading(false);
-    }
+  const articleQuery: InventoryArticleListQuery = { name: filters.name, page };
+  if (filters.categoryId !== undefined) articleQuery.categoryId = filters.categoryId;
+  if (filters.isActive !== undefined) articleQuery.isActive = filters.isActive;
+  if (filters.type !== undefined) articleQuery.type = filters.type;
+  const query = useInventoryQuery({
+    errorMessage: () => 'No se pudo cargar el inventario. Intenta nuevamente.',
+    query: () => inventoryApi.listArticles(articleQuery),
+    queryKey: JSON.stringify({ filters, page }),
   });
-
-  useEffect(() => {
-    void loadArticles();
-  }, [filters, page]);
 
   function updateFilters(nextFilters: Partial<ArticleListFilters>) {
     setFilters((currentFilters) => ({ ...currentFilters, ...nextFilters }));
     setPage(1);
   }
 
-  return { error, filters, isLoading, page, result, setPage, updateFilters };
+  return { ...query, filters, page, setPage, updateFilters };
 }

@@ -18,7 +18,12 @@ describe('ArticleFormScreen', () => {
     render(
       <ArticleFormScreen
         categoryClient={{ listCategories: vi.fn().mockResolvedValue(categories) }}
-        client={{ createArticle, updateArticle: vi.fn() }}
+        client={{
+          createArticle,
+          findArticle: vi.fn(),
+          listArticles: vi.fn(),
+          updateArticle: vi.fn(),
+        }}
       />,
     );
     await screen.findByRole('option', { name: 'Insumos' });
