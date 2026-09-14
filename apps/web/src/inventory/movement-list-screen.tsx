@@ -3,7 +3,7 @@ import { DataState, DataTable, Pagination } from '../components/controls';
 import { useMovementList } from './use-movement-list';
 
 export function MovementListScreen(): ReactElement {
-  const { error, isLoading, page, result, setPage } = useMovementList();
+  const { error, isLoading, page, reload, result, setPage } = useMovementList();
   return (
     <main className="article-list">
       <header className="article-list__header">
@@ -15,7 +15,14 @@ export function MovementListScreen(): ReactElement {
       {isLoading ? (
         <DataState title="Cargando movimientos">Consultando historial...</DataState>
       ) : null}
-      {error ? <DataState title="No se pudo cargar el historial">{error}</DataState> : null}
+      {error ? (
+        <DataState title="No se pudo cargar el historial">
+          {error}
+          <button onClick={() => void reload()} type="button">
+            Reintentar
+          </button>
+        </DataState>
+      ) : null}
       {!isLoading && !error && result?.data.length === 0 ? (
         <DataState title="Sin movimientos">Aun no hay movimientos registrados.</DataState>
       ) : null}
