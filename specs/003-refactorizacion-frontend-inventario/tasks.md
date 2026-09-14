@@ -6,7 +6,7 @@
 - [x] T2. Definir tipos de dominio, validacion pura y decisiones de reconciliacion por agregado sin dependencias de React ni HTTP. (RF-4, RF-10 a RF-14, RF-41, RNF-1)
   Hecho cuando: las validaciones y decisiones de articulo, categoria y movimiento tienen pruebas unitarias puras.
 
-- [ ] T3. Crear `InventoryApiPort`, migrar el cliente HTTP a infraestructura y configurar `main.tsx` como composition root. (RF-3, RF-5 a RF-9, RF-41, RNF-2)
+- [x] T3. Crear `InventoryApiPort`, migrar el cliente HTTP a infraestructura y configurar `main.tsx` como composition root. (RF-3, RF-5 a RF-9, RF-41, RNF-2)
   Hecho cuando: la aplicacion recibe un puerto inyectado, el cliente conserva endpoints y errores actuales, y la infraestructura no se filtra a presentacion.
 
 - [ ] T4. Crear una base reutilizable de estado de consulta inyectado con `reload` y proteccion ante respuestas atrasadas. (RF-15 a RF-17, RF-36, RF-45)
