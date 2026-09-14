@@ -9,7 +9,7 @@
 - [x] T3. Crear `InventoryApiPort`, migrar el cliente HTTP a infraestructura y configurar `main.tsx` como composition root. (RF-3, RF-5 a RF-9, RF-41, RNF-2)
   Hecho cuando: la aplicacion recibe un puerto inyectado, el cliente conserva endpoints y errores actuales, y la infraestructura no se filtra a presentacion.
 
-- [ ] T4. Crear una base reutilizable de estado de consulta inyectado con `reload` y proteccion ante respuestas atrasadas. (RF-15 a RF-17, RF-36, RF-45)
+- [x] T4. Crear una base reutilizable de estado de consulta inyectado con `reload` y proteccion ante respuestas atrasadas. (RF-15 a RF-17, RF-36, RF-45)
   Hecho cuando: pruebas de hook demuestran carga, error, reintento que conserva criterios y descarte de respuestas obsoletas.
 
 - [ ] T5. Migrar listados, formulario y reconciliacion de articulos al puerto inyectado y a las capas objetivo. (RF-1, RF-5 a RF-19, RF-20, RF-22 a RF-23, RF-43 a RF-45)
