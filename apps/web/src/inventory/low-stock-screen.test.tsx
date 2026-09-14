@@ -35,7 +35,7 @@ describe('LowStockScreen', () => {
   it('shows only the active low-stock alert data returned by the existing endpoint', async () => {
     vi.mocked(inventoryApi.listLowStock).mockResolvedValue(response);
 
-    render(<LowStockScreen />);
+    render(<LowStockScreen client={inventoryApi} />);
 
     expect(await screen.findByText('Papel fotografico')).toBeInTheDocument();
     expect(screen.getByText('1')).toBeInTheDocument();
