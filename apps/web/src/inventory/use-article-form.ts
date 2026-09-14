@@ -1,5 +1,10 @@
-import { ArticleType, INVENTORY_LIMITS, type ApiResponse } from '@crm-photografy/shared';
+import { ArticleType, type ApiResponse } from '@crm-photografy/shared';
 import { useState } from 'react';
+import {
+  type ArticleFormErrors,
+  type ArticleFormValues,
+} from '../features/inventory/domain/inventory.types';
+import { validateArticleForm } from '../features/inventory/domain/article-form.validation';
 import {
   inventoryApi,
   type ArticleInput,
@@ -9,20 +14,12 @@ import {
 import { reconcileArticleMutation } from './reconcile-inventory-mutation';
 import { useMutationReconciliation } from './use-mutation-reconciliation';
 
-export interface ArticleFormValues {
-  categoryId: string;
-  initialStock: string;
-  minimumStock: string;
-  name: string;
-  type: ArticleType | '';
-}
+export type { ArticleFormValues } from '../features/inventory/domain/inventory.types';
 
 export interface ArticleFormClient {
   createArticle(input: ArticleInput): Promise<ApiResponse<ArticleRecord>>;
   updateArticle(id: string, input: UpdateArticleInput): Promise<ApiResponse<ArticleRecord>>;
 }
-
-type ArticleFormErrors = Partial<Record<keyof ArticleFormValues, string>>;
 
 const emptyValues: ArticleFormValues = {
   categoryId: '',
@@ -86,34 +83,6 @@ export function useArticleForm(client: ArticleFormClient = inventoryApi, article
   }
 
   return { ...reconciliation, errors, isSubmitting, setValue, submit, submitError, values };
-}
-
-export function validateArticleForm(values: ArticleFormValues): ArticleFormErrors {
-  const errors: ArticleFormErrors = {};
-  const name = values.name.trim();
-  if (!name) errors.name = 'El nombre es obligatorio.';
-  else if (name.length > INVENTORY_LIMITS.maximumArticleNameLength) {
-    errors.name = `El nombre no puede superar ${INVENTORY_LIMITS.maximumArticleNameLength} caracteres.`;
-  }
-  if (!Object.values(ArticleType).includes(values.type as ArticleType)) {
-    errors.type = 'Selecciona un tipo de articulo.';
-  }
-  if (!values.categoryId.trim()) errors.categoryId = 'Selecciona una categoria activa.';
-  validateQuantity('initialStock', values.initialStock, errors);
-  validateQuantity('minimumStock', values.minimumStock, errors);
-  return errors;
-}
-
-function validateQuantity(
-  field: 'initialStock' | 'minimumStock',
-  value: string,
-  errors: ArticleFormErrors,
-) {
-  if (!/^\d+$/.test(value)) {
-    errors[field] = 'Ingresa un numero entero no negativo.';
-  } else if (Number(value) > INVENTORY_LIMITS.maximumQuantity) {
-    errors[field] = `La cantidad maxima es ${INVENTORY_LIMITS.maximumQuantity}.`;
-  }
 }
 
 function articleValues(article?: ArticleRecord): ArticleFormValues {
