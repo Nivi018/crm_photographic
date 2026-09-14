@@ -3,7 +3,7 @@
 - [x] T1. Añadir pruebas de caracterizacion para rutas, consultas, mutaciones y reconciliacion actualmente sin cobertura. (RF-1 a RF-4, RF-10 a RF-19, RF-20 a RF-23, RF-43, RF-46, RNF-5)
   Hecho cuando: las pruebas cubren categorias, movimientos, stock bajo, detalle, rutas y decisiones de reconciliacion existentes antes de reubicar su codigo.
 
-- [ ] T2. Definir tipos de dominio, validacion pura y decisiones de reconciliacion por agregado sin dependencias de React ni HTTP. (RF-4, RF-10 a RF-14, RF-41, RNF-1)
+- [x] T2. Definir tipos de dominio, validacion pura y decisiones de reconciliacion por agregado sin dependencias de React ni HTTP. (RF-4, RF-10 a RF-14, RF-41, RNF-1)
   Hecho cuando: las validaciones y decisiones de articulo, categoria y movimiento tienen pruebas unitarias puras.
 
 - [ ] T3. Crear `InventoryApiPort`, migrar el cliente HTTP a infraestructura y configurar `main.tsx` como composition root. (RF-3, RF-5 a RF-9, RF-41, RNF-2)
