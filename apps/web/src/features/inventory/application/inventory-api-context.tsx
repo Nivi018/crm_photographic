@@ -16,8 +16,12 @@ export function InventoryApiProvider({
 }
 
 export function useInventoryApi(): InventoryApiPort {
-  const inventoryApi = useContext(InventoryApiContext);
+  const inventoryApi = useOptionalInventoryApi();
   if (!inventoryApi)
     throw new Error('La aplicacion de inventario no tiene una dependencia configurada.');
   return inventoryApi;
+}
+
+export function useOptionalInventoryApi(): InventoryApiPort | null {
+  return useContext(InventoryApiContext);
 }
