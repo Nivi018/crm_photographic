@@ -1,40 +1,22 @@
-import { useState, type FormEvent, type ReactElement } from 'react';
+import { type FormEvent, type ReactElement } from 'react';
 import { DataState, DataTable, Field, Pagination } from '../components/controls';
-import { inventoryApi, InventoryApiError } from './api-client';
-import { type CategoryMutation, reconcileCategoryMutation } from './reconcile-inventory-mutation';
+import {
+  type CategoryManagementClient,
+  useCategoryManagement,
+} from '../features/inventory/application/hooks/use-category-management';
 import { MutationReconciliationNotice } from './mutation-reconciliation-notice';
-import { useCategoryList } from './use-category-list';
-import { useMutationReconciliation } from './use-mutation-reconciliation';
 
-export function CategoryManagementScreen(): ReactElement {
-  const { error, isActive, isLoading, page, reload, result, setPage, updateState } =
-    useCategoryList();
-  const [name, setName] = useState('');
-  const [actionError, setActionError] = useState<string | null>(null);
-  const reconciliation = useMutationReconciliation();
-  async function execute(action: () => Promise<unknown>, mutation: CategoryMutation) {
-    if (reconciliation.isMutationBlocked) return;
-    try {
-      setActionError(null);
-      const result = await reconciliation.execute(action, async () => {
-        const decision = await reconcileCategoryMutation(mutation, inventoryApi);
-        await reload();
-        return decision;
-      });
-      if (result) await reload();
-    } catch (cause) {
-      setActionError(
-        cause instanceof InventoryApiError ? cause.message : 'No se pudo completar la accion.',
-      );
-    }
-  }
-  function create(event: FormEvent<HTMLFormElement>) {
+export function CategoryManagementScreen({
+  client,
+}: {
+  client?: CategoryManagementClient;
+}): ReactElement {
+  const categories = useCategoryManagement(client);
+  function create(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
-    if (name.trim()) {
-      void execute(() => inventoryApi.createCategory(name), { kind: 'create', name });
-      setName('');
-    }
+    void categories.createCategory();
   }
+
   return (
     <main className="article-list">
       <header className="article-list__header">
@@ -45,17 +27,23 @@ export function CategoryManagementScreen(): ReactElement {
       </header>
       <form className="article-filters" onSubmit={create}>
         <Field label="Nueva categoria">
-          <input onChange={(event) => setName(event.target.value)} required value={name} />
+          <input
+            onChange={(event) => categories.setName(event.target.value)}
+            required
+            value={categories.name}
+          />
         </Field>
-        <button disabled={reconciliation.isMutationBlocked} type="submit">
+        <button disabled={categories.reconciliation.isMutationBlocked} type="submit">
           Crear categoria
         </button>
         <Field label="Estado">
           <select
             onChange={(event) =>
-              updateState(event.target.value === '' ? undefined : event.target.value === 'true')
+              categories.updateState(
+                event.target.value === '' ? undefined : event.target.value === 'true',
+              )
             }
-            value={String(isActive ?? '')}
+            value={String(categories.isActive ?? '')}
           >
             <option value="">Todas</option>
             <option value="true">Activas</option>
@@ -63,28 +51,33 @@ export function CategoryManagementScreen(): ReactElement {
           </select>
         </Field>
       </form>
-      {isLoading ? (
+      {categories.isLoading ? (
         <DataState title="Cargando categorias">Consultando categorias...</DataState>
       ) : null}
-      {error || actionError ? (
-        <DataState title="No se pudo actualizar categorias">{error ?? actionError}</DataState>
+      {categories.error || categories.actionError ? (
+        <DataState title="No se pudo actualizar categorias">
+          {categories.error ?? categories.actionError}
+          <button onClick={() => void categories.reload()} type="button">
+            Reintentar
+          </button>
+        </DataState>
       ) : null}
       <MutationReconciliationNotice
-        currentData={reconciliation.currentData}
-        onConfirmManualRetry={reconciliation.confirmManualRetry}
-        onRetryMutation={() => void reconciliation.retryMutation()}
-        onRetryReconciliation={() => void reconciliation.retryReconciliation()}
-        phase={reconciliation.phase}
+        currentData={categories.reconciliation.currentData}
+        onConfirmManualRetry={categories.reconciliation.confirmManualRetry}
+        onRetryMutation={() => void categories.reconciliation.retryMutation()}
+        onRetryReconciliation={() => void categories.reconciliation.retryReconciliation()}
+        phase={categories.reconciliation.phase}
       />
-      {!isLoading && !error && result?.data.length === 0 ? (
+      {!categories.isLoading && !categories.error && categories.result?.data.length === 0 ? (
         <DataState title="No hay categorias">
           Crea la primera categoria para clasificar articulos.
         </DataState>
       ) : null}
-      {result?.data.length ? (
+      {categories.result?.data.length ? (
         <section className="article-results">
           <DataTable headers={['Categoria', 'Estado', 'Acciones']}>
-            {result.data.map((category) => (
+            {categories.result.data.map((category) => (
               <tr key={category.id}>
                 <td>
                   <strong>{category.name}</strong>
@@ -94,56 +87,22 @@ export function CategoryManagementScreen(): ReactElement {
                 </td>
                 <td>
                   <button
-                    disabled={reconciliation.isMutationBlocked}
-                    onClick={() => {
-                      const next = window.prompt('Nuevo nombre de categoria', category.name);
-                      if (next)
-                        void execute(
-                          () =>
-                            inventoryApi.updateCategory(category.id, {
-                              expectedVersion: category.version,
-                              name: next,
-                            }),
-                          {
-                            id: category.id,
-                            input: { expectedVersion: category.version, name: next },
-                            kind: 'update',
-                          },
-                        );
-                    }}
+                    disabled={categories.reconciliation.isMutationBlocked}
+                    onClick={() => categories.startEditing(category)}
                     type="button"
                   >
                     Editar
                   </button>
                   <button
-                    disabled={reconciliation.isMutationBlocked}
-                    onClick={() =>
-                      void execute(
-                        () =>
-                          category.isActive
-                            ? inventoryApi.deactivateCategory(category.id, category.version)
-                            : inventoryApi.reactivateCategory(category.id, category.version),
-                        {
-                          expectedVersion: category.version,
-                          id: category.id,
-                          isActive: !category.isActive,
-                          kind: 'state',
-                        },
-                      )
-                    }
+                    disabled={categories.reconciliation.isMutationBlocked}
+                    onClick={() => void categories.toggleCategoryState(category)}
                     type="button"
                   >
                     {category.isActive ? 'Desactivar' : 'Reactivar'}
                   </button>
                   <button
-                    disabled={reconciliation.isMutationBlocked}
-                    onClick={() => {
-                      if (window.confirm('Eliminar esta categoria de forma permanente?'))
-                        void execute(
-                          () => inventoryApi.deleteCategory(category.id, category.version),
-                          { expectedVersion: category.version, id: category.id, kind: 'delete' },
-                        );
-                    }}
+                    disabled={categories.reconciliation.isMutationBlocked}
+                    onClick={() => categories.startDeletion(category)}
                     type="button"
                   >
                     Eliminar
@@ -153,10 +112,52 @@ export function CategoryManagementScreen(): ReactElement {
             ))}
           </DataTable>
           <Pagination
-            onPageChange={setPage}
-            page={page}
-            totalPages={Math.max(result.meta.totalPages, 1)}
+            onPageChange={categories.setPage}
+            page={categories.page}
+            totalPages={Math.max(categories.result.meta.totalPages, 1)}
           />
+        </section>
+      ) : null}
+      {categories.editingCategory ? (
+        <section aria-labelledby="edit-category-title" role="dialog">
+          <h2 id="edit-category-title">Editar categoria</h2>
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              void categories.saveEdit();
+            }}
+          >
+            <Field label="Nombre de categoria">
+              <input
+                autoFocus
+                onChange={(event) => categories.setEditingName(event.target.value)}
+                required
+                value={categories.editingName}
+              />
+            </Field>
+            <button type="submit">Guardar</button>
+            <button onClick={categories.cancelEditing} type="button">
+              Cancelar
+            </button>
+          </form>
+        </section>
+      ) : null}
+      {categories.deletingCategory ? (
+        <section
+          aria-describedby="delete-category-description"
+          aria-labelledby="delete-category-title"
+          role="alertdialog"
+        >
+          <h2 id="delete-category-title">Eliminar categoria</h2>
+          <p id="delete-category-description">
+            Eliminaras {categories.deletingCategory.name} de forma permanente.
+          </p>
+          <button onClick={() => void categories.confirmDeletion()} type="button">
+            Confirmar eliminacion
+          </button>
+          <button onClick={categories.cancelDeletion} type="button">
+            Cancelar
+          </button>
         </section>
       ) : null}
     </main>
