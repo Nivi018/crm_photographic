@@ -1,75 +1,33 @@
-import { useEffect, useEffectEvent, useState, type ReactElement } from 'react';
-import { type ApiPaginatedResponse } from '@crm-photografy/shared';
+import { type ReactElement } from 'react';
 import { DataState, DataTable, Pagination } from '../components/controls';
-import { inventoryApi, type MovementRecord } from './api-client';
+import {
+  type ArticleDetailClient,
+  useArticleDetail,
+} from '../features/inventory/application/hooks/use-article-detail';
 import { MutationReconciliationNotice } from './mutation-reconciliation-notice';
-import { type ArticleMutation, reconcileArticleMutation } from './reconcile-inventory-mutation';
-import { useArticleRecord, type ArticleRecordClient } from './use-article-record';
-import { useMutationReconciliation } from './use-mutation-reconciliation';
-
-export interface ArticleMovementClient {
-  listArticleMovements(id: string, page: number): Promise<ApiPaginatedResponse<MovementRecord>>;
-}
 
 export function ArticleDetailScreen({
   articleClient,
   articleId,
-  movementClient,
 }: {
-  articleClient?: ArticleRecordClient | undefined;
+  articleClient?: ArticleDetailClient;
   articleId: string;
-  movementClient?: ArticleMovementClient | undefined;
 }): ReactElement {
-  const {
-    article,
-    error: articleError,
-    isLoading: isArticleLoading,
-    reload,
-  } = useArticleRecord(articleId, articleClient);
-  const [actionError, setActionError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const reconciliation = useMutationReconciliation();
-  async function updateState(action: () => Promise<unknown>, mutation: ArticleMutation) {
-    if (reconciliation.isMutationBlocked) return;
-    setActionError(null);
-    setIsSubmitting(true);
-    try {
-      const result = await reconciliation.execute(action, async () => {
-        const decision = await reconcileArticleMutation(mutation, inventoryApi);
-        await reload();
-        return decision;
-      });
-      if (result) await reload();
-    } catch {
-      setActionError('No se pudo completar la accion. Verifica el estado actual del articulo.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
-  const [items, setItems] = useState<MovementRecord[]>([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const loadMovements = useEffectEvent(async () => {
-    try {
-      const result = await (movementClient ?? inventoryApi).listArticleMovements(articleId, page);
-      setItems(result.data);
-      setTotalPages(Math.max(result.meta.totalPages, 1));
-    } catch {
-      setError('No se pudo cargar el historial del articulo.');
-    } finally {
-      setIsLoading(false);
-    }
-  });
-  useEffect(() => {
-    void loadMovements();
-  }, [articleId, page]);
+  const detail = useArticleDetail(articleId, articleClient);
 
-  if (isArticleLoading)
+  if (detail.isArticleLoading)
     return <DataState title="Cargando articulo">Preparando el detalle...</DataState>;
-  if (articleError || !article)
-    return <DataState title="No se pudo cargar el articulo">{articleError}</DataState>;
+  if (detail.articleError || !detail.article)
+    return (
+      <DataState title="No se pudo cargar el articulo">
+        {detail.articleError}
+        <button onClick={() => void detail.reloadArticle()} type="button">
+          Reintentar
+        </button>
+      </DataState>
+    );
+
+  const article = detail.article;
   return (
     <main className="article-detail">
       <header>
@@ -79,34 +37,17 @@ export function ArticleDetailScreen({
         </p>
         <div className="article-actions">
           <button
-            disabled={isSubmitting || reconciliation.isMutationBlocked}
-            onClick={() =>
-              void updateState(
-                () =>
-                  article.isActive
-                    ? inventoryApi.deactivateArticle(articleId, article.version)
-                    : inventoryApi.reactivateArticle(articleId, article.version),
-                {
-                  expectedVersion: article.version,
-                  id: articleId,
-                  isActive: !article.isActive,
-                  kind: 'state',
-                },
-              )
-            }
+            disabled={detail.isSubmitting || detail.reconciliation.isMutationBlocked}
+            onClick={() => void detail.toggleArticleState(article)}
             type="button"
           >
             {article.isActive ? 'Desactivar articulo' : 'Reactivar articulo'}
           </button>
           <button
-            disabled={isSubmitting || reconciliation.isMutationBlocked}
+            disabled={detail.isSubmitting || detail.reconciliation.isMutationBlocked}
             onClick={() => {
               if (window.confirm('Eliminar este articulo de forma permanente?'))
-                void updateState(() => inventoryApi.deleteArticle(articleId, article.version), {
-                  expectedVersion: article.version,
-                  id: articleId,
-                  kind: 'delete',
-                });
+                void detail.deleteArticle(article);
             }}
             type="button"
           >
@@ -114,31 +55,38 @@ export function ArticleDetailScreen({
           </button>
         </div>
       </header>
-      {actionError ? (
-        <DataState title="No se pudo completar la accion">{actionError}</DataState>
+      {detail.actionError ? (
+        <DataState title="No se pudo completar la accion">{detail.actionError}</DataState>
       ) : null}
       <MutationReconciliationNotice
-        currentData={reconciliation.currentData}
-        onConfirmManualRetry={reconciliation.confirmManualRetry}
-        onRetryMutation={() => void reconciliation.retryMutation()}
-        onRetryReconciliation={() => void reconciliation.retryReconciliation()}
-        phase={reconciliation.phase}
+        currentData={detail.reconciliation.currentData}
+        onConfirmManualRetry={detail.reconciliation.confirmManualRetry}
+        onRetryMutation={() => void detail.reconciliation.retryMutation()}
+        onRetryReconciliation={() => void detail.reconciliation.retryReconciliation()}
+        phase={detail.reconciliation.phase}
       />
-      {isLoading ? (
+      {detail.isHistoryLoading ? (
         <DataState title="Cargando historial">Consultando movimientos...</DataState>
       ) : null}
-      {error ? <DataState title="No se pudo cargar el historial">{error}</DataState> : null}
-      {!isLoading && !error && !items.length ? (
+      {detail.historyError ? (
+        <DataState title="No se pudo cargar el historial">
+          {detail.historyError}
+          <button onClick={() => void detail.reloadHistory()} type="button">
+            Reintentar
+          </button>
+        </DataState>
+      ) : null}
+      {!detail.isHistoryLoading && !detail.historyError && !detail.history.length ? (
         <DataState title="Sin movimientos">
           Este articulo aun no tiene movimientos registrados.
         </DataState>
       ) : null}
-      {!isLoading && !error && items.length ? (
+      {!detail.isHistoryLoading && !detail.historyError && detail.history.length ? (
         <section className="article-results">
           <DataTable
             headers={['Tipo', 'Cantidad', 'Motivo', 'Fecha', 'Stock anterior', 'Stock posterior']}
           >
-            {items.map((movement) => (
+            {detail.history.map((movement) => (
               <tr key={movement.id}>
                 <td>{movement.kind}</td>
                 <td>
@@ -158,7 +106,11 @@ export function ArticleDetailScreen({
               </tr>
             ))}
           </DataTable>
-          <Pagination onPageChange={setPage} page={page} totalPages={totalPages} />
+          <Pagination
+            onPageChange={detail.setPage}
+            page={detail.page}
+            totalPages={detail.totalPages}
+          />
         </section>
       ) : null}
     </main>

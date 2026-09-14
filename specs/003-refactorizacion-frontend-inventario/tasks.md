@@ -15,7 +15,7 @@
 - [x] T5. Migrar listados, formulario y reconciliacion de articulos al puerto inyectado y a las capas objetivo. (RF-1, RF-5 a RF-19, RF-20, RF-22 a RF-23, RF-43 a RF-45)
   Hecho cuando: listado y formulario de articulos no importan infraestructura, conservan sus flujos y prueban estados, mutacion y reconciliacion con el mismo puerto.
 
-- [ ] T6. Migrar detalle de articulo, historial, acciones de estado y eliminacion a hooks y reconciliacion inyectada. (RF-1, RF-5 a RF-19, RF-22 a RF-23, RF-43 a RF-45)
+- [x] T6. Migrar detalle de articulo, historial, acciones de estado y eliminacion a hooks y reconciliacion inyectada. (RF-1, RF-5 a RF-19, RF-22 a RF-23, RF-43 a RF-45)
   Hecho cuando: la pantalla de detalle solo renderiza estado y callbacks, y sus pruebas cubren carga, error, reintento, exito y mutaciones inciertas.
 
 - [ ] T7. Extraer gestion de categorias a hooks de consulta y mutacion con confirmaciones accesibles. (RF-1, RF-5 a RF-19, RF-21 a RF-22, RF-28 a RF-30, RF-43 a RF-46)

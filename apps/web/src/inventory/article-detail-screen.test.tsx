@@ -38,9 +38,15 @@ describe('ArticleDetailScreen', () => {
     });
     render(
       <ArticleDetailScreen
-        articleClient={{ findArticle }}
+        articleClient={{
+          deactivateArticle: vi.fn(),
+          deleteArticle: vi.fn(),
+          findArticle,
+          listArticleMovements,
+          listArticles: vi.fn(),
+          reactivateArticle: vi.fn(),
+        }}
         articleId="article-1"
-        movementClient={{ listArticleMovements }}
       />,
     );
     expect(await screen.findByRole('heading', { name: 'Papel' })).toBeInTheDocument();
