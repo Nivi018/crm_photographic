@@ -1,29 +1,19 @@
-import { type ApiPaginatedResponse } from '@crm-photografy/shared';
-import { useEffect, useEffectEvent, useState } from 'react';
-import { inventoryApi, type MovementRecord } from './api-client';
+import { useState } from 'react';
+import { useOptionalInventoryApi } from '../features/inventory/application/inventory-api-context';
+import { useInventoryQuery } from '../features/inventory/application/hooks/use-inventory-query';
+import type { InventoryApiPort } from '../features/inventory/application/ports/inventory-api.port';
 
-export interface MovementListClient {
-  listMovements(page: number): Promise<ApiPaginatedResponse<MovementRecord>>;
-}
+export type MovementListClient = Pick<InventoryApiPort, 'listMovements'>;
 
-export function useMovementList(client: MovementListClient = inventoryApi) {
+export function useMovementList(client?: MovementListClient) {
+  const injectedInventoryApi = useOptionalInventoryApi();
+  const inventoryApi = client ?? injectedInventoryApi;
+  if (!inventoryApi) throw new Error('La lista de movimientos requiere un puerto de inventario.');
   const [page, setPage] = useState(1);
-  const [result, setResult] = useState<ApiPaginatedResponse<MovementRecord> | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const reload = useEffectEvent(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      setResult(await client.listMovements(page));
-    } catch {
-      setError('No se pudieron cargar los movimientos. Intenta nuevamente.');
-    } finally {
-      setIsLoading(false);
-    }
+  const query = useInventoryQuery({
+    errorMessage: () => 'No se pudieron cargar los movimientos. Intenta nuevamente.',
+    query: () => inventoryApi.listMovements(page),
+    queryKey: String(page),
   });
-  useEffect(() => {
-    void reload();
-  }, [page]);
-  return { error, isLoading, page, reload, result, setPage };
+  return { ...query, page, setPage };
 }

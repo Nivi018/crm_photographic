@@ -1,6 +1,6 @@
 import { useState, type FormEvent, type ReactElement } from 'react';
 import { DataState, Field } from '../components/controls';
-import { inventoryApi } from './api-client';
+import { useInventoryApi } from '../features/inventory/application/inventory-api-context';
 import { MutationReconciliationNotice } from './mutation-reconciliation-notice';
 import { reconcileMovementMutation } from './reconcile-inventory-mutation';
 import { useArticleRecord } from './use-article-record';
@@ -9,6 +9,7 @@ import { useMovementOperation } from './use-movement-operation';
 type MovementType = 'entry' | 'exit' | 'final' | 'delta';
 
 export function MovementFormScreen({ articleId }: { articleId: string }): ReactElement {
+  const inventoryApi = useInventoryApi();
   const { article, error: articleError, isLoading } = useArticleRecord(articleId);
   const {
     confirmManualRetry,

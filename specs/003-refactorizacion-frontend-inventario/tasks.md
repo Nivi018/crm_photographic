@@ -21,7 +21,7 @@
 - [x] T7. Extraer gestion de categorias a hooks de consulta y mutacion con confirmaciones accesibles. (RF-1, RF-5 a RF-19, RF-21 a RF-22, RF-28 a RF-30, RF-43 a RF-46)
   Hecho cuando: categorias no usan clientes globales ni cuadros nativos, recorren todas las paginas durante reconciliacion y bloquean correctamente tras resultados inciertos.
 
-- [ ] T8. Migrar listados, formulario y operaciones de movimientos a puertos y hooks inyectados. (RF-1, RF-5 a RF-19, RF-22, RF-43 a RF-45)
+- [x] T8. Migrar listados, formulario y operaciones de movimientos a puertos y hooks inyectados. (RF-1, RF-5 a RF-19, RF-22, RF-43 a RF-45)
   Hecho cuando: pantallas de movimientos no importan infraestructura y las pruebas conservan entradas, salidas, ajustes y sus reconciliaciones.
 
 - [ ] T9. Extraer stock bajo a un hook de aplicacion y completar el router manual y la navegacion existente. (RF-1 a RF-2, RF-15 a RF-17, RF-20, RF-23, RF-39, RF-43, RF-45)
