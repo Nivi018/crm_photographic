@@ -10,7 +10,9 @@ describe('SuccessNotification', () => {
       <SuccessNotification message="Articulo creado correctamente." onDismiss={onDismiss} />,
     );
 
-    rerender(<SuccessNotification message="Articulo actualizado correctamente." onDismiss={onDismiss} />);
+    rerender(
+      <SuccessNotification message="Articulo actualizado correctamente." onDismiss={onDismiss} />,
+    );
     expect(screen.getByRole('status')).toHaveTextContent('Articulo actualizado correctamente.');
 
     act(() => vi.advanceTimersByTime(5_000));

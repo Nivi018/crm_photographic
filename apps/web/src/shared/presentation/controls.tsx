@@ -7,17 +7,25 @@ export function Field({
   label,
   children,
 }: {
-  children: ReactElement<{ id?: string }>;
+  children: ReactElement<{ 'aria-describedby'?: string; id?: string }>;
   error?: string | undefined;
   label: string;
 }) {
   const id = useId();
+  const errorId = `${id}-error`;
 
   return (
     <div className="field">
       <label htmlFor={id}>{label}</label>
-      {cloneElement(children, { id })}
-      {error ? <small role="alert">{error}</small> : null}
+      {cloneElement(children, {
+        ...(error ? { 'aria-describedby': errorId } : {}),
+        id,
+      })}
+      {error ? (
+        <small id={errorId} role="alert">
+          {error}
+        </small>
+      ) : null}
     </div>
   );
 }

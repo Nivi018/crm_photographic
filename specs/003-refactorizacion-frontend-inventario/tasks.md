@@ -39,7 +39,7 @@
 - [x] T13. Implementar la matriz de estados, notificaciones accesibles y prevencion de acciones duplicadas en la presentacion. (RF-15 a RF-19, RF-28 a RF-30, RF-43 a RF-44)
   Hecho cuando: listados, detalle y formularios demuestran sus estados definidos, y las confirmaciones de exito se anuncian durante cinco segundos y se reemplazan correctamente.
 
-- [ ] T14. Añadir pruebas arquitectonicas y de accesibilidad para los limites cerrados, foco, teclado, etiquetas, errores, movimiento reducido y contraste. (RF-28 a RF-32, RF-41, RNF-4, RNF-6)
+- [x] T14. Añadir pruebas arquitectonicas y de accesibilidad para los limites cerrados, foco, teclado, etiquetas, errores, movimiento reducido y contraste. (RF-28 a RF-32, RF-41, RNF-4, RNF-6)
   Hecho cuando: la suite rechaza imports no permitidos y verifica los requisitos accesibles definidos por la spec.
 
 - [ ] T15. Ejecutar la verificacion visual, de rendimiento y de calidad integral de la iteracion. (RF-35 a RF-36, RF-42, RF-45, RNF-7 a RNF-8)
