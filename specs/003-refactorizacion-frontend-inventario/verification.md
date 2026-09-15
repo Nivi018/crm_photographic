@@ -12,14 +12,14 @@
 
 | Ruta | Tema | Ancho | Captura | Resultado |
 | --- | --- | ---: | --- | --- |
-| `/inventory` | Claro | 320 px | Pendiente | Pendiente |
-| `/inventory` | Claro | 390 px | Pendiente | Pendiente |
-| `/inventory` | Claro | 1440 px | Pendiente | Pendiente |
-| `/inventory` | Oscuro | 320 px | Pendiente | Pendiente |
-| `/inventory` | Oscuro | 390 px | Pendiente | Pendiente |
-| `/inventory` | Oscuro | 1440 px | Pendiente | Pendiente |
+| `/inventory` | Claro | 320 px | `inventory-320-light.png` | Capturada |
+| `/inventory` | Claro | 390 px | `inventory-390-light.png` | Capturada |
+| `/inventory` | Claro | 1440 px | `inventory-1440-light.png` | Capturada |
+| `/inventory` | Oscuro | 320 px | `inventory-320-dark.png` | Capturada |
+| `/inventory` | Oscuro | 390 px | `inventory-390-dark.png` | Capturada |
+| `/inventory` | Oscuro | 1440 px | `inventory-1440-dark.png` | Capturada |
 
-## Rendimiento pendiente
+## Rendimiento
 
 1. Con cache desactivada, navegar a `/inventory`.
 2. Medir hasta que resultados, estado vacio o error permitan usar busqueda, filtros y Crear articulo.
@@ -29,3 +29,9 @@
 ## Calidad automatizada
 
 Los comandos raiz requeridos son `npm run test`, `npm run lint`, `npm run format:check` y `npm run build`.
+
+## Resultados observados
+
+- Navegacion a `/inventory`: LCP de 369 ms y CLS de 0.00, sin throttling de CPU ni red. La pantalla presento resultados y controles disponibles por debajo de dos segundos.
+- Busqueda `venta`: INP de 46 ms y CLS de 0.00, por debajo del umbral de 300 ms para feedback visible.
+- Trazas: `inventory-performance.json` e `inventory-search-performance.json`.
