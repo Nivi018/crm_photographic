@@ -1,5 +1,6 @@
 import type { ReactElement } from 'react';
 import { DataState, DataTable, Pagination } from '../shared/presentation/controls';
+import './movement-list-screen.css';
 import { useMovementList } from './use-movement-list';
 
 export function MovementListScreen(): ReactElement {

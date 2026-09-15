@@ -33,7 +33,7 @@
 - [x] T11. Separar tokens, reset, estilos globales, shell y controles compartidos desde la hoja global actual. (RF-24 a RF-25, RF-31 a RF-34, RF-37 a RF-38)
   Hecho cuando: los temas usan variables, los estilos globales no contienen reglas de pantallas y los controles cargan su CSS asociado.
 
-- [ ] T12. Separar estilos por pantalla y refinar jerarquia, acciones, tablas, formularios y estados de inventario. (RF-23 a RF-27, RF-31 a RF-32, RF-37 a RF-38)
+- [x] T12. Separar estilos por pantalla y refinar jerarquia, acciones, tablas, formularios y estados de inventario. (RF-23 a RF-27, RF-31 a RF-32, RF-37 a RF-38)
   Hecho cuando: cada pantalla importa CSS propio, mantiene la identidad TONY y conserva acciones principales sin desbordamiento horizontal entre 320 px y 767 px.
 
 - [ ] T13. Implementar la matriz de estados, notificaciones accesibles y prevencion de acciones duplicadas en la presentacion. (RF-15 a RF-19, RF-28 a RF-30, RF-43 a RF-44)

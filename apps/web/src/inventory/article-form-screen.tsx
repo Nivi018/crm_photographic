@@ -1,6 +1,7 @@
 import { ArticleType } from '@crm-photografy/shared';
 import { useState, type FormEvent, type ReactElement } from 'react';
 import { DataState, Field } from '../shared/presentation/controls';
+import './article-form-screen.css';
 import type { ArticleRecord } from './api-client';
 import type { ArticleFormClient } from './use-article-form';
 import { useArticleForm } from './use-article-form';

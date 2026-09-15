@@ -1,6 +1,7 @@
 import { ArticleType } from '@crm-photografy/shared';
 import type { ChangeEvent, ReactElement } from 'react';
 import { DataState, DataTable, Field, Pagination } from '../shared/presentation/controls';
+import './article-list-screen.css';
 import type { ArticleListClient } from './use-article-list';
 import { useArticleList } from './use-article-list';
 

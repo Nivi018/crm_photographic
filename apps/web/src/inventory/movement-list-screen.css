@@ -1,0 +1,10 @@
+.movement-list {
+  width: min(100% - 3rem, 90rem);
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 4.5rem) 0;
+}
+@media (max-width: 560px) {
+  .movement-list {
+    width: min(100% - 2.5rem, 90rem);
+  }
+}

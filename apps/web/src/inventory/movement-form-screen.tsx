@@ -1,5 +1,6 @@
 import { useState, type FormEvent, type ReactElement } from 'react';
 import { DataState, Field } from '../shared/presentation/controls';
+import './movement-form-screen.css';
 import { useInventoryApi } from '../features/inventory/application/inventory-api-context';
 import { MutationReconciliationNotice } from './mutation-reconciliation-notice';
 import { reconcileMovementMutation } from './reconcile-inventory-mutation';

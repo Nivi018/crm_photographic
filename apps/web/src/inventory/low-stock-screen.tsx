@@ -1,5 +1,6 @@
 import type { ReactElement } from 'react';
 import { DataState, DataTable, Pagination } from '../shared/presentation/controls';
+import './low-stock-screen.css';
 import {
   type LowStockClient,
   useLowStock,
