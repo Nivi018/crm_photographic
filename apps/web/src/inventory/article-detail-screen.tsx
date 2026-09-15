@@ -1,5 +1,6 @@
 import { type ReactElement } from 'react';
 import { DataState, DataTable, Pagination } from '../shared/presentation/controls';
+import './article-detail-screen.css';
 import {
   type ArticleDetailClient,
   useArticleDetail,
