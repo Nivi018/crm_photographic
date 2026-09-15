@@ -30,7 +30,7 @@
 - [x] T10. Reubicar shell, router, tema y controles compartidos respetando los limites de dependencia. (RF-2, RF-24 a RF-25, RF-28 a RF-30, RF-41, RNF-3)
   Hecho cuando: `app`, componentes compartidos y pantallas compilan desde sus nuevas ubicaciones sin importar dependencias prohibidas.
 
-- [ ] T11. Separar tokens, reset, estilos globales, shell y controles compartidos desde la hoja global actual. (RF-24 a RF-25, RF-31 a RF-34, RF-37 a RF-38)
+- [x] T11. Separar tokens, reset, estilos globales, shell y controles compartidos desde la hoja global actual. (RF-24 a RF-25, RF-31 a RF-34, RF-37 a RF-38)
   Hecho cuando: los temas usan variables, los estilos globales no contienen reglas de pantallas y los controles cargan su CSS asociado.
 
 - [ ] T12. Separar estilos por pantalla y refinar jerarquia, acciones, tablas, formularios y estados de inventario. (RF-23 a RF-27, RF-31 a RF-32, RF-37 a RF-38)
