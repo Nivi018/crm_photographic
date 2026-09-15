@@ -1,0 +1,15 @@
+:root {
+  --accent-blue: #2f64b8;
+  --accent-gold: #ffc955;
+  --border: #d8e2ef;
+  --content: #0c1f3a;
+  --muted: #47627e;
+  --surface: #f7faff;
+}
+
+:root[data-theme='dark'] {
+  --border: rgb(247 250 255 / 14%);
+  --content: #f7faff;
+  --muted: #c3d1e0;
+  --surface: #071a2d;
+}
