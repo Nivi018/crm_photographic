@@ -42,7 +42,7 @@
 - [x] T14. Añadir pruebas arquitectonicas y de accesibilidad para los limites cerrados, foco, teclado, etiquetas, errores, movimiento reducido y contraste. (RF-28 a RF-32, RF-41, RNF-4, RNF-6)
   Hecho cuando: la suite rechaza imports no permitidos y verifica los requisitos accesibles definidos por la spec.
 
-- [ ] T15. Ejecutar la verificacion visual, de rendimiento y de calidad integral de la iteracion. (RF-35 a RF-36, RF-42, RF-45, RNF-7 a RNF-8)
+- [x] T15. Ejecutar la verificacion visual, de rendimiento y de calidad integral de la iteracion. (RF-35 a RF-36, RF-42, RF-45, RNF-7 a RNF-8)
   Hecho cuando: se documentan capturas a 320 px, 390 px y 1440 px en ambos temas, las mediciones locales cumplen los umbrales y los comandos raiz terminan correctamente.
 
 ## Orden y dependencias

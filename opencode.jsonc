@@ -9,4 +9,11 @@
       "description": "Visual reference mocks for the CRM UI. Use for identity, composition, themes, component patterns and hierarchy only; specs define behavior and scope.",
     },
   },
+  "mcp": {
+    "chrome-devtools": {
+      "type": "local",
+      "command": ["npx", "-y", "chrome-devtools-mcp@latest"],
+      "enabled": true,
+    },
+  },
 }
