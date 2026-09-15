@@ -27,7 +27,7 @@
 - [x] T9. Extraer stock bajo a un hook de aplicacion y completar el router manual y la navegacion existente. (RF-1 a RF-2, RF-15 a RF-17, RF-20, RF-23, RF-39, RF-43, RF-45)
   Hecho cuando: stock bajo usa consulta inyectada con estados y reintento, y la navegacion muestra el enlace a `/inventory/low-stock` sin crear rutas nuevas.
 
-- [ ] T10. Reubicar shell, router, tema y controles compartidos respetando los limites de dependencia. (RF-2, RF-24 a RF-25, RF-28 a RF-30, RF-41, RNF-3)
+- [x] T10. Reubicar shell, router, tema y controles compartidos respetando los limites de dependencia. (RF-2, RF-24 a RF-25, RF-28 a RF-30, RF-41, RNF-3)
   Hecho cuando: `app`, componentes compartidos y pantallas compilan desde sus nuevas ubicaciones sin importar dependencias prohibidas.
 
 - [ ] T11. Separar tokens, reset, estilos globales, shell y controles compartidos desde la hoja global actual. (RF-24 a RF-25, RF-31 a RF-34, RF-37 a RF-38)

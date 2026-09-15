@@ -24,7 +24,7 @@ vi.mock('./inventory/low-stock-screen', () => ({
   LowStockScreen: () => <h1>Stock bajo</h1>,
 }));
 
-import { InventoryRouter } from './router';
+import { InventoryRouter } from './app/router';
 
 describe('InventoryRouter', () => {
   beforeEach(() => window.history.replaceState({}, '', '/inventory'));

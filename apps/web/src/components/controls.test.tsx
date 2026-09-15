@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { DataState, DataTable, Field, Pagination } from './controls';
+import { DataState, DataTable, Field, Pagination } from '../shared/presentation/controls';
 
 describe('reusable controls', () => {
   it('renders accessible form, table, state, and pagination controls', () => {

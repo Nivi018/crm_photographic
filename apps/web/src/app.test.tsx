@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { App } from './app';
+import { App } from './app/app';
 import type { InventoryApiPort } from './features/inventory/application/ports/inventory-api.port';
 
 describe('App', () => {
