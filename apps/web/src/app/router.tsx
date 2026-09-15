@@ -1,11 +1,11 @@
 import { useSyncExternalStore, type ReactElement } from 'react';
-import { ArticleListScreen } from './inventory/article-list-screen';
-import { ArticleEditScreen, ArticleFormScreen } from './inventory/article-form-screen';
-import { ArticleDetailScreen } from './inventory/article-detail-screen';
-import { CategoryManagementScreen } from './inventory/category-management-screen';
-import { MovementFormScreen } from './inventory/movement-form-screen';
-import { MovementListScreen } from './inventory/movement-list-screen';
-import { LowStockScreen } from './inventory/low-stock-screen';
+import { ArticleListScreen } from '../inventory/article-list-screen';
+import { ArticleEditScreen, ArticleFormScreen } from '../inventory/article-form-screen';
+import { ArticleDetailScreen } from '../inventory/article-detail-screen';
+import { CategoryManagementScreen } from '../inventory/category-management-screen';
+import { MovementFormScreen } from '../inventory/movement-form-screen';
+import { MovementListScreen } from '../inventory/movement-list-screen';
+import { LowStockScreen } from '../inventory/low-stock-screen';
 
 export type InventoryRoute = '/inventory' | '/inventory/categories' | '/inventory/movements';
 

@@ -1,5 +1,5 @@
 import { type ReactElement } from 'react';
-import { DataState, DataTable, Pagination } from '../components/controls';
+import { DataState, DataTable, Pagination } from '../shared/presentation/controls';
 import {
   type ArticleDetailClient,
   useArticleDetail,

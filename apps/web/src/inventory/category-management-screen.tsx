@@ -1,5 +1,5 @@
 import { type FormEvent, type ReactElement } from 'react';
-import { DataState, DataTable, Field, Pagination } from '../components/controls';
+import { DataState, DataTable, Field, Pagination } from '../shared/presentation/controls';
 import {
   type CategoryManagementClient,
   useCategoryManagement,

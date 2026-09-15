@@ -1,6 +1,6 @@
 import { Component, type ErrorInfo, type ReactElement, type ReactNode } from 'react';
-import { InventoryApiProvider } from './features/inventory/application/inventory-api-context';
-import type { InventoryApiPort } from './features/inventory/application/ports/inventory-api.port';
+import { InventoryApiProvider } from '../features/inventory/application/inventory-api-context';
+import type { InventoryApiPort } from '../features/inventory/application/ports/inventory-api.port';
 import { InventoryRouter } from './router';
 import { useTheme } from './theme';
 

@@ -1,5 +1,5 @@
 import { useState, type FormEvent, type ReactElement } from 'react';
-import { DataState, Field } from '../components/controls';
+import { DataState, Field } from '../shared/presentation/controls';
 import { useInventoryApi } from '../features/inventory/application/inventory-api-context';
 import { MutationReconciliationNotice } from './mutation-reconciliation-notice';
 import { reconcileMovementMutation } from './reconcile-inventory-mutation';

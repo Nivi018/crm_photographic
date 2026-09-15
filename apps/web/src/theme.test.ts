@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { readTheme, saveTheme } from './theme';
+import { readTheme, saveTheme } from './app/theme';
 
 describe('theme preference', () => {
   beforeEach(() => {
