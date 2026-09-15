@@ -1,0 +1,10 @@
+.success-notification {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #08734d;
+  font-weight: 650;
+}
+
+:root[data-theme='dark'] .success-notification {
+  color: #6fe2ad;
+}

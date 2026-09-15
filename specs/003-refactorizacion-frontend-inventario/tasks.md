@@ -36,7 +36,7 @@
 - [x] T12. Separar estilos por pantalla y refinar jerarquia, acciones, tablas, formularios y estados de inventario. (RF-23 a RF-27, RF-31 a RF-32, RF-37 a RF-38)
   Hecho cuando: cada pantalla importa CSS propio, mantiene la identidad TONY y conserva acciones principales sin desbordamiento horizontal entre 320 px y 767 px.
 
-- [ ] T13. Implementar la matriz de estados, notificaciones accesibles y prevencion de acciones duplicadas en la presentacion. (RF-15 a RF-19, RF-28 a RF-30, RF-43 a RF-44)
+- [x] T13. Implementar la matriz de estados, notificaciones accesibles y prevencion de acciones duplicadas en la presentacion. (RF-15 a RF-19, RF-28 a RF-30, RF-43 a RF-44)
   Hecho cuando: listados, detalle y formularios demuestran sus estados definidos, y las confirmaciones de exito se anuncian durante cinco segundos y se reemplazan correctamente.
 
 - [ ] T14. Añadir pruebas arquitectonicas y de accesibilidad para los limites cerrados, foco, teclado, etiquetas, errores, movimiento reducido y contraste. (RF-28 a RF-32, RF-41, RNF-4, RNF-6)

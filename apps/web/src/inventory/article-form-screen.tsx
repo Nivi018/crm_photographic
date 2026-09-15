@@ -1,6 +1,7 @@
 import { ArticleType } from '@crm-photografy/shared';
-import { useState, type FormEvent, type ReactElement } from 'react';
+import { useCallback, useState, type FormEvent, type ReactElement } from 'react';
 import { DataState, Field } from '../shared/presentation/controls';
+import { SuccessNotification } from '../shared/presentation/success-notification';
 import './article-form-screen.css';
 import type { ArticleRecord } from './api-client';
 import type { ArticleFormClient } from './use-article-form';
@@ -55,6 +56,7 @@ export function ArticleFormScreen({
   } = useArticleForm(client, article);
   const [success, setSuccess] = useState<string | null>(null);
   const isEditing = article !== undefined;
+  const dismissSuccess = useCallback(() => setSuccess(null), []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -129,7 +131,7 @@ export function ArticleFormScreen({
           />
         </Field>
         {submitError ? <p role="alert">{submitError}</p> : null}
-        {success ? <p role="status">{success}</p> : null}
+        <SuccessNotification message={success} onDismiss={dismissSuccess} />
         <MutationReconciliationNotice
           currentData={currentData}
           onConfirmManualRetry={confirmManualRetry}
