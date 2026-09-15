@@ -1,5 +1,6 @@
-import { useState, type FormEvent, type ReactElement } from 'react';
+import { useCallback, useState, type FormEvent, type ReactElement } from 'react';
 import { DataState, Field } from '../shared/presentation/controls';
+import { SuccessNotification } from '../shared/presentation/success-notification';
 import './movement-form-screen.css';
 import { useInventoryApi } from '../features/inventory/application/inventory-api-context';
 import { MutationReconciliationNotice } from './mutation-reconciliation-notice';
@@ -27,7 +28,8 @@ export function MovementFormScreen({ articleId }: { articleId: string }): ReactE
   const [quantity, setQuantity] = useState('');
   const [reason, setReason] = useState('');
   const [confirmNegativeStock, setConfirmNegativeStock] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [success, setSuccess] = useState<string | null>(null);
+  const dismissSuccess = useCallback(() => setSuccess(null), []);
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!article) return;
@@ -63,7 +65,7 @@ export function MovementFormScreen({ articleId }: { articleId: string }): ReactE
           inventoryApi,
         ),
     );
-    if (saved) setSuccess(true);
+    if (saved) setSuccess('Movimiento registrado correctamente.');
   }
   if (isLoading)
     return <DataState title="Cargando articulo">Preparando el movimiento...</DataState>;
@@ -109,7 +111,7 @@ export function MovementFormScreen({ articleId }: { articleId: string }): ReactE
           Confirmo continuar si el resultado queda con stock negativo.
         </label>
         {error ? <p role="alert">{error}</p> : null}
-        {success ? <p role="status">Movimiento registrado correctamente.</p> : null}
+        <SuccessNotification message={success} onDismiss={dismissSuccess} />
         <MutationReconciliationNotice
           currentData={currentData}
           onConfirmManualRetry={confirmManualRetry}
